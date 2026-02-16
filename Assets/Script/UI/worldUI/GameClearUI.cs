@@ -40,6 +40,20 @@ public class GameClearUI : MonoBehaviour
         gameObject.SetActive(false);
         _indicatorToClear.SetActive(false);
     }
+    
+    public void RestartShootableButton()
+    {
+        GameManager.Current.ReloadCurrentScene();
+    }
+    public void GoBackTitleShootableButton()
+    {
+        GameManager.Current.LoadTitle();
+    }
+    public void LoadStageShootableButton(string stageName)
+    {
+        GameManager.Current.LoadScene(stageName);
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
