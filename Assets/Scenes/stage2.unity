@@ -176,6 +176,11 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 712113951802571415, guid: 16e02ef117bf89a4093eb481aa2d599d, type: 3}
   m_PrefabInstance: {fileID: 2071564105}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &232579236 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4225667004338859756, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+  m_PrefabInstance: {fileID: 1237107923160260062}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &376414632
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -485,11 +490,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1245945917111376567, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
   m_PrefabInstance: {fileID: 376414632}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &447766451 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5544918139465247867, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
-  m_PrefabInstance: {fileID: 1237107923160260062}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &451433358 stripped
 MonoBehaviour:
@@ -889,11 +889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 167d6dcb253e2304a83699fa4584e7c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!95 &1027209448 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 3988621235576756576, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
-  m_PrefabInstance: {fileID: 1237107923160260062}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1042582456 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 8836619283341090870, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
@@ -1906,7 +1901,7 @@ PrefabInstance:
     - target: {fileID: 1325169620497805264, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: _shellEjectPs
       value: 
-      objectReference: {fileID: 1237107923160260063}
+      objectReference: {fileID: 232579236}
     - target: {fileID: 1325169620497805264, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: _materialsForAddIntensity.Array.size
       value: 4
@@ -1930,7 +1925,7 @@ PrefabInstance:
     - target: {fileID: 1607326501893218220, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: _redGunAnim
       value: 
-      objectReference: {fileID: 1027209448}
+      objectReference: {fileID: 0}
     - target: {fileID: 1607326501893218220, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: _blueGunAnim
       value: 
@@ -2084,11 +2079,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
---- !u!198 &1237107923160260063 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 4225667004338859756, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
-  m_PrefabInstance: {fileID: 1237107923160260062}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2660047632040438855
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2658,7 +2648,7 @@ PrefabInstance:
     - target: {fileID: 8420335595588004673, guid: aa38c4caf73da8d409e36990b0eda9ba, type: 3}
       propertyPath: GunTr
       value: 
-      objectReference: {fileID: 447766451}
+      objectReference: {fileID: 0}
     - target: {fileID: 8420335595588004673, guid: aa38c4caf73da8d409e36990b0eda9ba, type: 3}
       propertyPath: Camera
       value: 
@@ -2666,7 +2656,7 @@ PrefabInstance:
     - target: {fileID: 8420335595588004673, guid: aa38c4caf73da8d409e36990b0eda9ba, type: 3}
       propertyPath: GunMuzzleTr
       value: 
-      objectReference: {fileID: 447766451}
+      objectReference: {fileID: 0}
     - target: {fileID: 8504804561339018034, guid: aa38c4caf73da8d409e36990b0eda9ba, type: 3}
       propertyPath: _regenDelay
       value: 1

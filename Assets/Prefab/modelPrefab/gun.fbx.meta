@@ -7,12 +7,22 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: metalickBlack
+    second: {fileID: 2100000, guid: 074728f7d95a67b4a9ff039cb0386227, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: metalickBlack.001
     second: {fileID: 2100000, guid: 074728f7d95a67b4a9ff039cb0386227, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: metalickDarkRed
+    second: {fileID: 2100000, guid: 745c19989c691f947a72700d15278386, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metalickMainColor
     second: {fileID: 2100000, guid: 745c19989c691f947a72700d15278386, type: 2}
   - first:
       type: UnityEngine:Material
