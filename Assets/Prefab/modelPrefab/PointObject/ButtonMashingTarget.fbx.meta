@@ -12,12 +12,12 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: WhiteRadiation
+      name: doubleWhiteRadiation.001
     second: {fileID: 2100000, guid: 1d209541af73b284290cfe62b35e82c4, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: wood
+      name: wood.001
     second: {fileID: 2100000, guid: df95f25b68be15442be7599d73a9a102, type: 2}
   materials:
     materialImportMode: 2

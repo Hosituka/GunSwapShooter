@@ -62,7 +62,7 @@ public class RedPlaneForLineUp : PlaneForLineUp
         Line_UpTarget.DecrementPlaneCount();
         Utility.ChangeEnabledColliders(ColliderArray,false);
 
-        _targetBreakAnimator.PlayExplosion(_effectPivotTr.position,Color.red,12,fadeTargetList);
+        _targetBreakAnimator.PlayFadeOut(fadeTargetList,0.2f);
         yield return new WaitWhile(()=> _targetBreakAnimator.CurtExplosionPhase != BreakAnimator.ExplosionPhase.Completed);
         Destroy(gameObject);
     }

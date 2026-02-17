@@ -31,11 +31,18 @@ public class BreakAnimator : MonoBehaviour
         SpinAndFadeOutPhase,
         Completed,
     }
+    public enum FadeOutPhase
+    {
+        NotPlayed,
+        Fade,
+        Completed,
+    }
     [Header("表示用")]
     public ExplosionPhase CurtExplosionPhase{private set;get;}
     public SpinThenExplodePhase CurtSpinThenExplodePhase{private set;get;} 
     public SpinAndFadeOutPhase CurtSpinAndFadeOutPhase{private set;get;}
     public SpinThenFadeOutPhase CurtSpinThenFadeOutPhase{private set;get;}   
+    public FadeOutPhase CurtFadeOutPhase{private set; get;}
     public void PlayExplosion(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize,List<TMPandMeshRenderer> disableTMPandMeshRenderers)
     {
         StartCoroutine(ExplosionCoroutine());
@@ -115,6 +122,23 @@ public class BreakAnimator : MonoBehaviour
                 yield return null;
             }
             CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.Completed;
+        }
+    }
+    public void PlayFadeOut(List<TMPandMeshRenderer> fadeTargetList,float duration)
+    {
+        StartCoroutine(FadeOutCoroutine());
+        IEnumerator FadeOutCoroutine()
+        {
+            //フェードアウトのアニメーション
+            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / duration)){
+                foreach(TMPandMeshRenderer fadeTarget in fadeTargetList)
+                {
+                    fadeTarget.SetFadeOfMeshRenderers(playback);
+                    fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
+                }
+                yield return null;
+            }
+
         }
 
     }

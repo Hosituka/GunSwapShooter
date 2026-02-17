@@ -51,6 +51,7 @@ public class AR_BackGround : MonoBehaviour
     }
     IEnumerator SetWebCamTex()
     {
+        
         if(GameManager.Current.WebCamTexture == null)
         {
             Debug.LogError("webCamTextureの参照渡し元が存在しません");

@@ -179,13 +179,13 @@ public class TMPandMeshRenderer
             textMeshPro.color = color;
         }
     }
-    public void SetFadeOfMeshRenderers(float dithering)
+    public void SetFadeOfMeshRenderers(float fadeValue)
     {
         _propBlock.Clear();
         foreach(MeshRenderer meshRenderer in MeshRendererList)
         {
             if(meshRenderer == null)continue;
-            _propBlock.SetFloat("_Fade",dithering);
+            _propBlock.SetFloat("_Fade",fadeValue);
             for(int propertyBlockIndex = 0; propertyBlockIndex < meshRenderer.sharedMaterials.Length; propertyBlockIndex++)
             {
                 meshRenderer.SetPropertyBlock(_propBlock,propertyBlockIndex);
