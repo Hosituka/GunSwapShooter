@@ -59,7 +59,7 @@ public class GunSwapPlaneForLineUp : PlaneForLineUp,IHitGunSwapRayHandler
     {
         Line_UpTarget.DecrementPlaneCount();
         Utility.ChangeEnabledColliders(ColliderArray,false);
-        _targetBreakAnimator.PlayFadeOut(fadeTargetList,0.2f);
+        _targetBreakAnimator.PlayFadeOut(fadeTargetList,0.1f);
         yield return new WaitWhile(()=> _targetBreakAnimator.CurtExplosionPhase != BreakAnimator.ExplosionPhase.Completed);
         Destroy(gameObject);
     }
