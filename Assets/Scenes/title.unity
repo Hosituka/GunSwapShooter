@@ -8243,7 +8243,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 100
+      scalar: 50
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -15735,7 +15735,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 687712275}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5082371037475652642, guid: aee6cae856a75b641a9b7af3b70cf337, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3416076764614583617, guid: aee6cae856a75b641a9b7af3b70cf337, type: 3}
@@ -16694,7 +16695,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 10
       minScalar: 10
       maxCurve:
         serializedVersion: 2

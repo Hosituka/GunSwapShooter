@@ -20885,6 +20885,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: _shootableButtonMR
+      value: 
+      objectReference: {fileID: 4540889821906653492}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2108528734225898052}
@@ -20893,14 +20897,31 @@ PrefabInstance:
       value: RestartShootableButton
       objectReference: {fileID: 0}
     - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: TMPorMeshRendererList.Array.data[0].MeshRendererList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: 'TMPorMeshRendererList.Array.data[0].MeshRendererList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1065701639135709300}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GameClearUI, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882447698699997451, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: m_Name
+      value: shootableButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+--- !u!23 &1065701639135709300 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4936967495494430942, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+  m_PrefabInstance: {fileID: 5352950615375100074}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4928243711129878577 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1021511939535616155, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
@@ -20963,6 +20984,10 @@ PrefabInstance:
       value: "\u30BF\u30A4\u30C8\u30EB\u3078"
       objectReference: {fileID: 0}
     - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: _shootableButtonMR
+      value: 
+      objectReference: {fileID: 1169539602274961502}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2108528734225898052}
@@ -20971,14 +20996,31 @@ PrefabInstance:
       value: GoBackTitleShootableButton
       objectReference: {fileID: 0}
     - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: TMPorMeshRendererList.Array.data[0].MeshRendererList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: 'TMPorMeshRendererList.Array.data[0].MeshRendererList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1169539602274961502}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GameClearUI, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882447698699997451, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: m_Name
+      value: shootableButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+--- !u!23 &1169539602274961502 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4936967495494430942, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+  m_PrefabInstance: {fileID: 6104818229652338816}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6527273213810343963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1021511939535616155, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
@@ -21045,6 +21087,10 @@ PrefabInstance:
       value: -30
       objectReference: {fileID: 0}
     - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: _shootableButtonMR
+      value: 
+      objectReference: {fileID: 4540889821906653492}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -21077,6 +21123,14 @@ PrefabInstance:
       value: RestartShootableButton
       objectReference: {fileID: 0}
     - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: TMPorMeshRendererList.Array.data[0].MeshRendererList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: 'TMPorMeshRendererList.Array.data[0].MeshRendererList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 4540889821906653492}
+    - target: {fileID: 6040566091181166554, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GameClearUI, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -21092,11 +21146,20 @@ PrefabInstance:
       propertyPath: _onShoot.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6882447698699997451, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+      propertyPath: m_Name
+      value: shootableButton
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+--- !u!23 &4540889821906653492 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4936967495494430942, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}
+  m_PrefabInstance: {fileID: 8901323965771194858}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8478863362747373937 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1021511939535616155, guid: fb511847fd5f8cf4b8c96c5dc4687f19, type: 3}

@@ -8,7 +8,7 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
 {
     [SerializeField] List<TMPandMeshRenderer> TMPorMeshRendererList;
     [SerializeField] Collider[] _colliderArray;
-    [SerializeField] MeshRenderer _baseMR;
+    [SerializeField] MeshRenderer _shootableButtonMR;
     [SerializeField,Range(0,1)] float _aimBrightness = 0.8f;
     [SerializeField] TextMeshPro _explain3dTMP;
     [SerializeField] TextMeshPro _needShotCount3dTMP;
@@ -25,7 +25,8 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
     Coroutine _currentRegenCoroutine;
     void Start()
     {
-        _startMaterialColor = _baseMR.sharedMaterial.GetColor("_BaseColor");
+        //sharedMatrials[1]はpurpleマテリアルでないといけません。
+        _startMaterialColor = _shootableButtonMR.sharedMaterials[1].GetColor("_BaseColor");
         _startExplain3dTMP_Color = _explain3dTMP.color;
         _startNeedShotCount3dTMP_Color = _needShotCount3dTMP.color;
 
@@ -55,7 +56,7 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
         _onAimCount++;
         if(_onAimCount != 1) return;
         _propBlock.SetColor("_BaseColor",_startMaterialColor * _aimBrightness);
-        _baseMR.SetPropertyBlock(_propBlock);
+        _shootableButtonMR.SetPropertyBlock(_propBlock,1);
         _explain3dTMP.color = _startExplain3dTMP_Color * _aimBrightness; 
         _needShotCount3dTMP.color = _startNeedShotCount3dTMP_Color * _aimBrightness;
     }
@@ -64,7 +65,7 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
         _onAimCount--;
         if(_onAimCount != 0) return;
         _propBlock.SetColor("_BaseColor",_startMaterialColor);
-        _baseMR.SetPropertyBlock(_propBlock);
+        _shootableButtonMR.SetPropertyBlock(_propBlock,1);
         _explain3dTMP.color = _startExplain3dTMP_Color; 
         _needShotCount3dTMP.color = _startNeedShotCount3dTMP_Color;
     }
