@@ -12,20 +12,20 @@ public class RedPlaneForLineUp : PlaneForLineUp
     // Update is called once per frame
     void Update()
     {
-        _dot = Vector3.Dot(transform.right, LineUpTargetTr.right);
+        _dot = Vector3.Dot(transform.right, _lineUpTargetTr.right);
         if (_dot > 0 + 0.001)
         {
             if (_isShow == true) return;
             _isShow = true;
-            Utility.ChangeEnabledColliders(ColliderArray,true);
-            Utility.ChangeEnabledTMPorMeshRenderers(fadeTargetList,true);
+            Utility.ChangeEnabledColliders(Colliders,true);
+            Utility.ChangeEnabledTMPorMeshRenderers(FadeTargets,true);
         }
         else
         {
             if (_isShow == false) return;
             _isShow = false;
-            Utility.ChangeEnabledColliders(ColliderArray,false);
-            Utility.ChangeEnabledTMPorMeshRenderers(fadeTargetList,false);
+            Utility.ChangeEnabledColliders(Colliders,false);
+            Utility.ChangeEnabledTMPorMeshRenderers(FadeTargets,false);
         }
 
     }
@@ -59,11 +59,11 @@ public class RedPlaneForLineUp : PlaneForLineUp
     }
     protected override IEnumerator BreakCoroutine()
     {
-        Line_UpTarget.DecrementPlaneCount();
-        Utility.ChangeEnabledColliders(ColliderArray,false);
+        _lineUpTarget.NoticeDestruction(this);
+        Utility.ChangeEnabledColliders(Colliders,false);
 
-        _targetBreakAnimator.PlayFadeOut(fadeTargetList,0.1f);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtExplosionPhase != BreakAnimator.ExplosionPhase.Completed);
+        _targetBreakAnimator.PlayFadeOut(FadeTargets,0.05f);
+        yield return new WaitWhile(()=> _targetBreakAnimator.CurtFadeOutPhase != BreakAnimator.FadeOutPhase.Completed);
         Destroy(gameObject);
     }
 

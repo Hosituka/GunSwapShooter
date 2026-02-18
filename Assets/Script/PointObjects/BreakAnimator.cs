@@ -129,6 +129,7 @@ public class BreakAnimator : MonoBehaviour
         StartCoroutine(FadeOutCoroutine());
         IEnumerator FadeOutCoroutine()
         {
+            CurtFadeOutPhase = FadeOutPhase.Fade;
             //フェードアウトのアニメーション
             for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / duration)){
                 foreach(TMPandMeshRenderer fadeTarget in fadeTargetList)
@@ -138,7 +139,7 @@ public class BreakAnimator : MonoBehaviour
                 }
                 yield return null;
             }
-
+            CurtFadeOutPhase = FadeOutPhase.Completed;
         }
 
     }
