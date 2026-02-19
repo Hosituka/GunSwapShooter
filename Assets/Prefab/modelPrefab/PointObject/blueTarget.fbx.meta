@@ -17,6 +17,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: BlueTarget
+    second: {fileID: 2100000, guid: 9c88af0357a910c42909b5792aaeb563, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blueTarget
+    second: {fileID: 2100000, guid: 9c88af0357a910c42909b5792aaeb563, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: doubleWhiteRadiation
     second: {fileID: 2100000, guid: 1d209541af73b284290cfe62b35e82c4, type: 2}
   - first:

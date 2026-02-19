@@ -360,7 +360,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 476a096b6b9c32949bb1b96333b3d27c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 4f9b5d2616a497942bf5b1265ada0eda, type: 2}
+      objectReference: {fileID: 2100000, guid: 61a00e12b20708443b83ca851d6c0019, type: 2}
     - target: {fileID: -7062313874366494050, guid: 476a096b6b9c32949bb1b96333b3d27c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

@@ -27,6 +27,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: GunSwapTarget
+    second: {fileID: 2100000, guid: 660e9aa35ea159848bd6b2d0244dca53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: doubleWhiteRadiation.002
     second: {fileID: 2100000, guid: 1d209541af73b284290cfe62b35e82c4, type: 2}
   - first:

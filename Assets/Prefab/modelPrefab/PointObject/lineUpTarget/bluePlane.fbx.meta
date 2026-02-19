@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: BluePlane
+    second: {fileID: 2100000, guid: 07c9539fac4ee9b46a7130a602aae8d2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: doubleWhiteRadiation.004
     second: {fileID: 2100000, guid: 1d209541af73b284290cfe62b35e82c4, type: 2}
   materials:

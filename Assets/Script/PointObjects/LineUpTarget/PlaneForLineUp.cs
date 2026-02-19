@@ -25,7 +25,7 @@ public abstract class PlaneForLineUp : MonoBehaviour
     {
         //回転軸となるゲームオブジェクトを親として設定し、そこを中心に花びらのような感じで配置
         transform.SetParent(axisTr,false);
-        transform.rotation = Quaternion.AngleAxis(pitchRotation, transform.up) * axisTr.rotation;
+        transform.rotation = Quaternion.AngleAxis(pitchRotation, axisTr.up) * axisTr.rotation;
 
     }
     //##残りの的の個数を示す文字をセットする処理

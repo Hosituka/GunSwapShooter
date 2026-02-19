@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: GunSwapPlane
+    second: {fileID: 2100000, guid: 403e73576aa05204aaa297cb2baa7c37, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: GunSwapShooter_plane.001
     second: {fileID: 2100000, guid: 5c88e0fe4d1d68346bd392fc4a93b5ba, type: 2}
   - first:

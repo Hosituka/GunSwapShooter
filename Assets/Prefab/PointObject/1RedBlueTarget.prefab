@@ -137,7 +137,6 @@ MonoBehaviour:
   - TextMeshProList: []
     MeshRendererList:
     - {fileID: 2359716859909294343}
-    - {fileID: 2719259789206329820}
   - TextMeshProList: []
     MeshRendererList:
     - {fileID: 8131345419210143638}
@@ -657,7 +656,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: cc9922604d2f0b744a7de1f2cdfa39f5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 4f9b5d2616a497942bf5b1265ada0eda, type: 2}
+      objectReference: {fileID: 2100000, guid: 01c713030ba7ca740b90b34163d4d0c5, type: 2}
     - target: {fileID: 919132149155446097, guid: cc9922604d2f0b744a7de1f2cdfa39f5, type: 3}
       propertyPath: m_Name
       value: bluePlane

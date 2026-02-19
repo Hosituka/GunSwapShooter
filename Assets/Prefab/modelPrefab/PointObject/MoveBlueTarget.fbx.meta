@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: MoveBlueTarget
+    second: {fileID: 2100000, guid: ec2696e495c760949971de339e00f45f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: doubleWhiteRadiation.003
     second: {fileID: 2100000, guid: 1d209541af73b284290cfe62b35e82c4, type: 2}
   - first:

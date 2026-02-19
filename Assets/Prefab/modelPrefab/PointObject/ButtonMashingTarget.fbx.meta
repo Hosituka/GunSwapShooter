@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: ButtonMashingTarget
+    second: {fileID: 2100000, guid: 70652a55f14e62b4cbb005421f1798f3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Purple
     second: {fileID: 2100000, guid: 6c845cbdbecabd04085ed9dff51188c0, type: 2}
   - first:
