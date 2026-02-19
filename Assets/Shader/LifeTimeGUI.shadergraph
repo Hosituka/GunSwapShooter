@@ -466,7 +466,7 @@
     },
     "m_PreviewData": {
         "serializedMesh": {
-            "m_SerializedMesh": "{\"mesh\":{\"fileID\":10200,\"guid\":\"0000000000000000e000000000000000\",\"type\":0}}",
+            "m_SerializedMesh": "{\"mesh\":{\"fileID\":10210,\"guid\":\"0000000000000000e000000000000000\",\"type\":0}}",
             "m_Guid": ""
         },
         "preventRotation": false
@@ -686,7 +686,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.9800000190734863,
+    "m_Value": 0.0,
     "m_FloatType": 1,
     "m_RangeValues": {
         "x": 0.0,
@@ -1241,7 +1241,7 @@
         "opposite"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": false,
+    "m_PreviewExpanded": true,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -1400,7 +1400,7 @@
     "m_Title": "Dithering",
     "m_Position": {
         "x": -329.3333740234375,
-        "y": 880.0001831054688
+        "y": 880.0
     }
 }
 
@@ -1484,7 +1484,7 @@
     "m_Title": "composition",
     "m_Position": {
         "x": 300.0,
-        "y": 918.6666870117188
+        "y": 918.6666259765625
     }
 }
 
@@ -1508,7 +1508,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.6299999952316284,
+    "m_Value": 0.0,
     "m_FloatType": 1,
     "m_RangeValues": {
         "x": 0.0,
@@ -1747,7 +1747,7 @@
     "m_Title": "outerFrameAnim",
     "m_Position": {
         "x": -1086.6666259765625,
-        "y": -831.3333129882813
+        "y": -831.3334350585938
     }
 }
 
@@ -2441,7 +2441,7 @@
     "m_Title": "outerFrame",
     "m_Position": {
         "x": -1113.3333740234375,
-        "y": 80.66668701171875
+        "y": 80.66661834716797
     }
 }
 
@@ -2568,8 +2568,8 @@
     "m_ObjectId": "af9a6d66b8274a5c838fdf4398f1d6eb",
     "m_Title": "composition",
     "m_Position": {
-        "x": -227.33331298828126,
-        "y": 204.66668701171876
+        "x": -227.3333740234375,
+        "y": 204.66664123535157
     }
 }
 
@@ -2804,8 +2804,8 @@
     "m_ShaderOutputName": "OutMinMax",
     "m_StageCapability": 3,
     "m_Value": {
-        "x": 0.009999999776482582,
-        "y": 0.9990000128746033
+        "x": 0.019999999552965165,
+        "y": 0.9800000190734863
     },
     "m_DefaultValue": {
         "x": 0.0,
