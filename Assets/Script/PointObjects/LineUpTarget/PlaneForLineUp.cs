@@ -31,7 +31,7 @@ public abstract class PlaneForLineUp : MonoBehaviour
     //##残りの的の個数を示す文字をセットする処理
     public void SetNeedShotCountText(string text)
     {
-        _needShotCountTMPro.text = text;
+        _needShotCountTMPro.SetText(text);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

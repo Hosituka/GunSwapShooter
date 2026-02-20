@@ -14,7 +14,7 @@ public class ButtonMashingTarget : PointObject
     public override InitializeResult Initialize()
     {
         Hp = Random.Range(MinHp, MaxHp);
-        NeedShotCountText.text = Hp.ToString();
+        NeedShotCountText.SetText(Hp.ToString());
         ActivateMain();
         switch (GameManager.Current.CurrentDifficult)
         {
