@@ -1,8 +1,7 @@
-using System;
 using TMPro;
 using UnityEngine;
 using Audio;
-using System.Text;
+using UnityEngine.Pool;
 public class StageUI_manager : MonoBehaviour
 {
     public static StageUI_manager Current;
@@ -43,6 +42,17 @@ public class StageUI_manager : MonoBehaviour
 
     void Start()
     {
+        //ExplosionEffectPoolの設定
+        _explosionEffectPool = new ObjectPool<ExplosionEffect>(
+            createFunc: ()=>Instantiate(_explosionEffectObj).GetComponent<ExplosionEffect>(),       // 足りない時に新しく作る処理
+            actionOnGet: (explosionEffect)=>explosionEffect.gameObject.SetActive(true),         // プールから借りる時の処理
+            actionOnRelease: (explosionEffect)=>explosionEffect.gameObject.SetActive(false), // プールに返す時の処理
+            actionOnDestroy: (explosionEffect)=>Destroy(explosionEffect.gameObject), // プールが溢れた時に破棄する処理
+            defaultCapacity: 3,              // 最初に用意する目安
+            maxSize: 10                       // 最大貯蓄数
+        );       
+        
+        //その他
         _aR_BackGround.StartShowWebCam();
         GameManager.Current.StartFadeIn();
         _gameClearUI.Hide();
@@ -84,6 +94,7 @@ public class StageUI_manager : MonoBehaviour
         GameObject gameObject = Instantiate(_addScoreTextObj, _standardUI_Tr);
         gameObject.GetComponent<AddScoreText>().AddScore = addScore;
     }
+    ObjectPool<ExplosionEffect> _explosionEffectPool;
     public ExplosionEffect GenerateExplosionEffect(Vector3 pos,Color color,float size)
     {
         GameObject gameObject = Instantiate(_explosionEffectObj,pos,Quaternion.LookRotation(pos));

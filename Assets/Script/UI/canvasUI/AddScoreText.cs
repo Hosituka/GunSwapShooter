@@ -15,7 +15,7 @@ public class AddScoreText : MonoBehaviour
     {
         _textMeshProUGUI = GetComponent<TextMeshProUGUI>();
         _rectTransform = GetComponent<RectTransform>();
-        _textMeshProUGUI.text = AddScore.ToString() + "＋";
+        _textMeshProUGUI.SetText("{0:1}＋",AddScore);
         StartCoroutine("FadeOut");
     }
     IEnumerator  FadeOut()

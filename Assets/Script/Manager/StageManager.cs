@@ -58,7 +58,7 @@ public class StageManager : MonoBehaviour
                     UnityroomApiClient.Instance.SendScore(ScoreBoardNumber, _score - _accidentalShoot, ScoreboardWriteMode.HighScoreDesc);
                     PointObjectGenerater2.CurrentPointObjectGenerater2.enabled = false;
                 }
-                //StageUI_manager.Current.UpdateTimeText(Time);
+                StageUI_manager.Current.UpdateTimeText(Time);
                 break;
             case GameState.end:
                 break;

@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using Audio;
-using System.Diagnostics;
-
+using UnityEngine.Pool;
 public class PlayerGun : MonoBehaviour
 {
     public Light SingleMuzzleFlashLight;
@@ -11,7 +9,7 @@ public class PlayerGun : MonoBehaviour
     [SerializeField]Material _shellMaterialForAddIntensity;
     [SerializeField]Material[] _gunMaterialsForAddIntensity;
     [SerializeField]Transform _muzzleTr;
-    [SerializeField]GameObject _bullet;
+    [SerializeField]Bullet _bullet;
     [SerializeField]Animator _animator;
     [SerializeField]ParticleSystem _coreFlamePs;
     [SerializeField]ParticleSystem _burstFlamePs;
@@ -19,10 +17,21 @@ public class PlayerGun : MonoBehaviour
     [SerializeField]ParticleSystem _shellEjectPs;
     [SerializeField]Light _dualMuzzleFlashLight;
     [SerializeField]PlayerGun _partnerGun;
+    ObjectPool<Bullet> _bulletPool;
     RaycastHit _raycastHit;
     bool _isShot;
     void Start()
     {
+        // プールの設定
+        _bulletPool = new ObjectPool<Bullet>(
+            createFunc: ()=>Instantiate(_bullet),       // 足りない時に新しく作る処理
+            actionOnGet: (Bullet bullet)=>bullet.gameObject.SetActive(true),         // プールから借りる時の処理
+            actionOnRelease: (Bullet bullet)=>bullet.gameObject.SetActive(false), // プールに返す時の処理
+            actionOnDestroy: (Bullet bullet)=>Destroy(bullet.gameObject), // プールが溢れた時に破棄する処理
+            defaultCapacity: 10,              // 最初に用意する目安
+            maxSize: 45                       // 最大貯蓄数
+        );       
+        //疑似ライトがシーン移動時につけっぱなしになることを防ぐ処理
         switch(_playingShotAnim)
         {
         　　//前のシーンで銃の反動モーションが終わっているor再生されてすらないとき
@@ -55,8 +64,8 @@ public class PlayerGun : MonoBehaviour
         if(_isShot == true)return;
         _isShot = true;
         SoundManager.Current.PlayOneShot2D_SE(OneShot.shot,0.133f);
+        SetBullet(_muzzleTr.position,_muzzleTr.rotation);
         _animator.SetTrigger("Fire");
-        Instantiate(_bullet, _muzzleTr.position, _muzzleTr.rotation);
         StartCoroutine(CoolDownShot(0));
 
         IEnumerator CoolDownShot(float delay)
@@ -64,7 +73,13 @@ public class PlayerGun : MonoBehaviour
             yield return new WaitForSeconds(delay);
             _isShot = false;
         }
-
+        void SetBullet(Vector3 pos,Quaternion rotation)
+        {
+            Bullet bullet = _bulletPool.Get();
+            bullet.transform.position = pos;
+            bullet.transform.rotation = rotation;
+            bullet.SetOnRelease((Bullet b)=>_bulletPool.Release(b));
+        }
     }
     //これはFireと言う名のをAnimationClipにより呼ばれる関数です。
     int _baseRotationOfBurstFlame;

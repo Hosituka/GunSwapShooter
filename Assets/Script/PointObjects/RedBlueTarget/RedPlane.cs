@@ -32,7 +32,6 @@ public class RedPlane : MonoBehaviour
         }
         if(collision.gameObject.CompareTag("RedBullet"))
         {
-            RedBreaking();
             StageManager.Current.AddCombo();
             switch (_redBlueTarget.TargetTimeKeeper.CurrentTaimingState)
             {
@@ -46,7 +45,7 @@ public class RedPlane : MonoBehaviour
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-
+            RedBreaking();
         }
     }
     void OnCollisionExit(Collision collision)

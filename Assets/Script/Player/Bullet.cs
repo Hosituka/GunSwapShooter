@@ -1,29 +1,40 @@
+using System;
 using System.Collections;
 using UnityEngine;
-
+using Random = UnityEngine.Random;
+//PlayerGunが生成する銃弾です。　オブジェクトプールにより管理されています。
 public class Bullet : MonoBehaviour
 {
     [SerializeField] MeshRenderer _meshRenderer;
     [SerializeField] BoxCollider _boxCollider;
     [SerializeField] TrailRenderer _trailRenderer;
-
+    [SerializeField] Rigidbody _rb;
+    [SerializeField] ParticleSystem _explosion;
     [SerializeField] float _speed = 5000;
-    [SerializeField] float _lifeTime = 1;
     [SerializeField] float _maxWidth = 0.5f;
     [SerializeField] float _minWidth = 0.3f;
     [SerializeField] float _maxAlpha = 0.5f;
     [SerializeField] float _minAlpha = 0.3f;
 
-    Rigidbody _rb;
-    ParticleSystem _particle;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    Action<Bullet> _onRelease;
+    public void SetOnRelease(Action<Bullet> onRelease)
     {
-        _rb = GetComponent<Rigidbody>();
-        _particle = GetComponent<ParticleSystem>();
-        _trailRenderer.widthMultiplier = Random.Range(_minWidth,_maxWidth);
-        _trailRenderer.colorGradient.alphaKeys[0].alpha = Random.Range(_minAlpha,_maxAlpha);
+        _onRelease = onRelease;
+    }
+    void OnEnable()
+    {
+        _rb.linearVelocity = Vector3.zero;
+        _meshRenderer.enabled = true;
+        _rb.isKinematic = false;
+        SetTrail();
+        void SetTrail()
+        {
+            _trailRenderer.enabled = false;
+            _trailRenderer.Clear();
+            _trailRenderer.enabled = true;
+            _trailRenderer.widthMultiplier = Random.Range(_minWidth,_maxWidth);
+            _trailRenderer.colorGradient.alphaKeys[0].alpha = Random.Range(_minAlpha,_maxAlpha);
+        }
     }
     void FixedUpdate()
     {
@@ -31,12 +42,12 @@ public class Bullet : MonoBehaviour
     }
     void Update()
     {
-        _lifeTime -= Time.deltaTime;
-        if(_lifeTime <= 0)
+        if(transform.position.magnitude >= 500)
         {
-            Destroy(this.gameObject); 
+            _onRelease?.Invoke(this);
         }
     }
+    
     void OnCollisionEnter(Collision collision)
     {
         Explosion();
@@ -46,12 +57,11 @@ public class Bullet : MonoBehaviour
         StartCoroutine(OneShot());
         IEnumerator OneShot()
         {
-            _particle.Play();
+            _explosion.Play();
             _meshRenderer.enabled = false;
             _rb.isKinematic = true;
-            yield return new WaitWhile(() => _particle.isPlaying == true);
-            yield return new WaitWhile(() => _lifeTime <= 0);
-            Destroy(this.gameObject);
+            yield return new WaitWhile(() => _explosion.isPlaying == true);
+            _onRelease?.Invoke(this);
         }
 
     }

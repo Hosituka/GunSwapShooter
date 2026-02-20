@@ -30,7 +30,6 @@ public class BluePlane : MonoBehaviour
         }
         if(collision.gameObject.CompareTag("BlueBullet"))
         {
-            BlueBreaking();
             StageManager.Current.AddCombo();
             switch (_redBlueTarget.TargetTimeKeeper.CurrentTaimingState)
             {
@@ -44,7 +43,7 @@ public class BluePlane : MonoBehaviour
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-
+            BlueBreaking();
         }
     }
     void OnCollisionExit(Collision collision)
