@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: PlayerGun
+    second: {fileID: 2100000, guid: ab3876bf1a4663d4dad760e5e0d0a1a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: metalickBlack
     second: {fileID: 2100000, guid: 074728f7d95a67b4a9ff039cb0386227, type: 2}
   - first:

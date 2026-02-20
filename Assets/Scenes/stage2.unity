@@ -1881,6 +1881,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 1104869948682612425, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1325169620497805264, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: _shellEjectPs
       value: 
@@ -1913,6 +1917,10 @@ PrefabInstance:
       propertyPath: _blueGunAnim
       value: 
       objectReference: {fileID: 761017384}
+    - target: {fileID: 3091845584835712289, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3221678509023341805, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2013,6 +2021,10 @@ PrefabInstance:
       propertyPath: m_Intensity
       value: 1000
       objectReference: {fileID: 0}
+    - target: {fileID: 3988621235576756576, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4613625652119506517, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2029,13 +2041,37 @@ PrefabInstance:
       propertyPath: 'm_Cameras.Array.data[0]'
       value: 
       objectReference: {fileID: 1042582456}
+    - target: {fileID: 5567837648263373435, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5631291604007430850, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5685051262182817600, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: edaf56b07ecfcc4408acabbbdef372a4, type: 2}
+    - target: {fileID: 6470430249299164594, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7071350513841777034, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: m_Name
       value: shellEjectPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119961284144148637, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185610688758407701, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7588276799012834103, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8366587974966569960, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
       propertyPath: m_Name
