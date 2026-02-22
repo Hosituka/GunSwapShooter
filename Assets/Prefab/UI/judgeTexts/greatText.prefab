@@ -151,3 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6567e3c775d8b44973f50597506c03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _textMeshProUGUI: {fileID: 4197333991525518681}
+  _rectTransform: {fileID: 6129549879955957511}
+  _addScaleTime: 0.5
+  _moveUpDistance: 20

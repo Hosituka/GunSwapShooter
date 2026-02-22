@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
+using System.IO.Compression;
 using UnityEngine;
-
+//StageUI_managerクラスによりプールされている∧的の破壊を表すエフェクトの振る舞いが書かれているクラス
 public class ExplosionEffect : MonoBehaviour
 {
     public enum AnimPhase
@@ -18,43 +20,54 @@ public class ExplosionEffect : MonoBehaviour
 
     public MeshRenderer MeshRenderer;
     MaterialPropertyBlock _propBlock;
-    float _playFadeInTime;
-    float _playClippingTime;
+    Action<ExplosionEffect> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Play(Vector3 pos,Color color,float size)
     {
-        _propBlock = new MaterialPropertyBlock();
-        StartCoroutine(OneShot());
-        IEnumerator OneShot()
+        Initialize(pos, color,size);
+        StartCoroutine(AnimCoroutine());
+        IEnumerator AnimCoroutine()
         {
+            float playFadeInTime = 0;
+            float playClippingTime = 0;
             CurrentAnimPhase = AnimPhase.PlayingExplosion;
             _propBlock.SetColor("_BaseColor",BaseColor * Intensity);
             _propBlock.SetFloat("_clipping",0);
-            while(_playFadeInTime < FadeInTime)
+            while(playFadeInTime < FadeInTime)
             {
-                _propBlock.SetFloat("_fadeIn",_playFadeInTime / FadeInTime);
+                _propBlock.SetFloat("_fadeIn",playFadeInTime / FadeInTime);
                 MeshRenderer.SetPropertyBlock(_propBlock);
-                _playFadeInTime += Time.deltaTime;
+                playFadeInTime += Time.deltaTime;
                 yield return null;
             }
             _propBlock.SetFloat("_fadeIn",1);
             MeshRenderer.SetPropertyBlock(_propBlock);
             yield return null;
-            while(_playClippingTime < ClippingTime)
+            while(playClippingTime < ClippingTime)
             {
-                _propBlock.SetFloat("_clipping",_playClippingTime / ClippingTime);
+                _propBlock.SetFloat("_clipping",playClippingTime / ClippingTime);
                 MeshRenderer.SetPropertyBlock(_propBlock);
-                _playClippingTime += Time.deltaTime;
+                playClippingTime += Time.deltaTime;
                 yield return null;
             }
             CurrentAnimPhase = AnimPhase.Completed;
-            Destroy(gameObject);
+            _onRelease?.Invoke(this);
+        }
+        void Initialize(Vector3 pos,Color color,float size)
+        {
+            _propBlock = new MaterialPropertyBlock();
+            CurrentAnimPhase = AnimPhase.NotPlayed;
+
+            transform.position = pos;
+            transform.rotation = Quaternion.LookRotation(pos);
+            transform.localScale = new Vector3(size,size,1);
+            BaseColor = color;
+
         }
     }
-
-    // Update is called once per frame
-    void Update()
+    public void SetOnRelease(Action<ExplosionEffect> onRelease)
     {
-        
+        _onRelease = onRelease;
     }
+    // Update is called once per frame
 }

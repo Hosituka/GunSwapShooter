@@ -23,7 +23,7 @@ public abstract class PointObject : MonoBehaviour
     public Vector2 PointObjectPosAsCenter;
     public Vector2 NormalizePointObjectPosAsCenter;
     public TimeKeeper TargetTimeKeeper;
-    public Indicator2 TargetIndicator2;
+    public Indicator TargetIndicator2;
 
     //　インスペクターから見れん奴ら
     /// 音符

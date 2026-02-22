@@ -86,13 +86,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 144f28222302cd2439fcb74114686948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetNameText: {fileID: 6149543028410654491}
-  TargetTr: {fileID: 0}
+  _indicatorsUI_Tr: {fileID: 0}
   _camera: {fileID: 0}
   _mainObj: {fileID: 8473993842513005767}
   _arrowRectTr: {fileID: 306959706603626921}
   _innerArrowImage: {fileID: 8512254284062677291}
   _ArrowOutlineImage: {fileID: 1209134488281049042}
+  _rectTr: {fileID: 8944777317959712104}
 --- !u!1 &2744348769014322685
 GameObject:
   m_ObjectHideFlags: 0

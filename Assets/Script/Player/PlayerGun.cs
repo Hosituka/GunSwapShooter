@@ -24,13 +24,19 @@ public class PlayerGun : MonoBehaviour
     {
         // プールの設定
         _bulletPool = new ObjectPool<Bullet>(
-            createFunc: ()=>Instantiate(_bullet),       // 足りない時に新しく作る処理
-            actionOnGet: (Bullet bullet)=>bullet.gameObject.SetActive(true),         // プールから借りる時の処理
+            createFunc: ()=>{ // 足りない時に新しく作る処理
+                Bullet poolTarget = Instantiate(_bullet);
+                poolTarget.SetOnRelease((Bullet b)=>_bulletPool.Release(b));
+                return poolTarget;
+            },      
+            actionOnGet: (Bullet bullet)=>{bullet.gameObject.SetActive(true);},         // プールから借りる時の処理
             actionOnRelease: (Bullet bullet)=>bullet.gameObject.SetActive(false), // プールに返す時の処理
             actionOnDestroy: (Bullet bullet)=>Destroy(bullet.gameObject), // プールが溢れた時に破棄する処理
-            defaultCapacity: 10,              // 最初に用意する目安
+            defaultCapacity: 45,              // 最初に用意する目安
             maxSize: 45                       // 最大貯蓄数
         );       
+        //プールを事前に満たす処理
+        ObjectPoolManager.Current.PrewarmPool<Bullet>(_bulletPool,30);
         //疑似ライトがシーン移動時につけっぱなしになることを防ぐ処理
         switch(_playingShotAnim)
         {
@@ -78,7 +84,7 @@ public class PlayerGun : MonoBehaviour
             Bullet bullet = _bulletPool.Get();
             bullet.transform.position = pos;
             bullet.transform.rotation = rotation;
-            bullet.SetOnRelease((Bullet b)=>_bulletPool.Release(b));
+            bullet.Initialize();
         }
     }
     //これはFireと言う名のをAnimationClipにより呼ばれる関数です。

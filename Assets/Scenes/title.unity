@@ -7087,6 +7087,10 @@ PrefabInstance:
       propertyPath: TargetTr
       value: 
       objectReference: {fileID: 267730284}
+    - target: {fileID: 8473993842513005767, guid: 739377a5d71bbac4799ef8a4a8de7102, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8944777317959712104, guid: 739377a5d71bbac4799ef8a4a8de7102, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

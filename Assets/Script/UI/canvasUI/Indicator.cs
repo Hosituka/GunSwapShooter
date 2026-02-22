@@ -1,19 +1,16 @@
-using System.Collections;
-using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class Indicator2 : MonoBehaviour
+//PointObjectの具象クラスの位置を表示する責務を持つ∧StageUI_managerによりオブジェクトプールされています。
+public class Indicator : MonoBehaviour
 {
-    public  TextMeshProUGUI TargetNameText;
-    public Transform TargetTr;
+    [SerializeField]Transform _indicatorsUI_Tr;
     [SerializeField]Camera _camera;
     [SerializeField]GameObject _mainObj;
     [SerializeField]RectTransform _arrowRectTr;
     [SerializeField]Image _innerArrowImage;
     [SerializeField]Image _ArrowOutlineImage;
-
-    RectTransform _rectTr;
+    [SerializeField]RectTransform _rectTr;
 
     Vector3 _targetViewportPos;
     Vector3 _targetScreenPos;
@@ -22,21 +19,29 @@ public class Indicator2 : MonoBehaviour
 
 
     Vector2 _clampedTargetScreenPos;
+    Transform _targetTr;
 
     bool _isInCamera;
+    Action<Indicator> _onRelease;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Initialize(Transform targetTr)
     {
-        _rectTr = GetComponent<RectTransform>();
+        _targetTr = targetTr;
+        transform.SetParent(_indicatorsUI_Tr);
+        transform.SetSiblingIndex(0);
+    }
+    public void SetOnRelease(Action<Indicator> onRelease)
+    {
+        _onRelease = onRelease;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(TargetTr == null) return;
-        _targetViewportPos = _camera.WorldToViewportPoint(TargetTr.position);
-        _targetScreenPos = _camera.WorldToScreenPoint(TargetTr.position);
+        if(_targetTr == null) return;
+        _targetViewportPos = _camera.WorldToViewportPoint(_targetTr.position);
+        _targetScreenPos = _camera.WorldToScreenPoint(_targetTr.position);
         _clampedTargetScreenPos = new Vector2(Mathf.Clamp(_targetScreenPos.x, 0, Screen.width), Mathf.Clamp(_targetScreenPos.y, 0, Screen.height));
         _targetViewportPosAsCenter = new Vector2(Mathf.Clamp01(_targetViewportPos.x), Mathf.Clamp01(_targetViewportPos.y));
         _targetViewportPosAsCenter = ((_targetViewportPosAsCenter - new Vector3(0.5f, 0.5f)) * 2).normalized;
@@ -92,7 +97,7 @@ public class Indicator2 : MonoBehaviour
     }
     public void Destroy()
     {
-        Destroy(gameObject);
+        _onRelease.Invoke(this);
     }
 
 

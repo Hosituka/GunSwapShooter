@@ -15503,19 +15503,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _aR_BackGround: {fileID: 6911074245675983948}
-  _indicatorToTarget: {fileID: 7162041652663342731}
+  _indicatorToTarget: {fileID: 6383799198859413786}
   _indicatorsUIObj: {fileID: 5885526588230782050}
   _timeTextTM: {fileID: 4021180547454116141}
   _scoreValueText: {fileID: 7605864204975760236}
   _accidentalShootTextTM: {fileID: 3114659889920994959}
-  _addScoreTextObj: {fileID: 7643892701253779505, guid: 98d16a6b7cd1b994f9fa5ec6e6230430, type: 3}
+  _addScoreText: {fileID: 4119858022233062839, guid: 98d16a6b7cd1b994f9fa5ec6e6230430, type: 3}
   _comboTextTM: {fileID: 3315370806716634115}
-  _scoreMultiplierTextObj: {fileID: 7036945638641364174, guid: 16e02ef117bf89a4093eb481aa2d599d, type: 3}
-  _explosionEffectObj: {fileID: 139444006710436406, guid: 49bcc24bb40f87f4c8961b7828618f32, type: 3}
+  _scoreMultiplierText: {fileID: 2952983226472662740, guid: 16e02ef117bf89a4093eb481aa2d599d, type: 3}
+  _explosionEffect: {fileID: 5940690955268809518, guid: 49bcc24bb40f87f4c8961b7828618f32, type: 3}
   _standardUI_Tr: {fileID: 7711146315313669374}
-  _goodTextPrefab: {fileID: 595008337617204255, guid: e330281b6d9a047489f131671cb38c0f, type: 3}
-  _greatTextPrefab: {fileID: 595008337617204255, guid: 7ba125a458bd2da448833ee4000b064d, type: 3}
-  _perfectTextPrefab: {fileID: 595008337617204255, guid: a361ae36ad12cb04a966f53d124d4e69, type: 3}
+  _goodOfJudgeText: {fileID: 4456068409168420547, guid: e330281b6d9a047489f131671cb38c0f, type: 3}
+  _greatOfJudgeText: {fileID: 4318512912721193797, guid: 7ba125a458bd2da448833ee4000b064d, type: 3}
+  _perfectOfJudgeText: {fileID: 7934023607929296512, guid: a361ae36ad12cb04a966f53d124d4e69, type: 3}
   _gameClearUI: {fileID: 2108528734225898052}
 --- !u!1 &5164313540334177715
 GameObject:
@@ -20612,10 +20612,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4461196064631671310, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6445357058330996058, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
+      propertyPath: _rectTr
+      value: 
+      objectReference: {fileID: 3565499681285365654}
     - target: {fileID: 6445357058330996058, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
       propertyPath: _LifeTimeArrow
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6445357058330996058, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
+      propertyPath: _indicatorsUI_Tr
+      value: 
+      objectReference: {fileID: 5384540552835412589}
     - target: {fileID: 6506557983787896067, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -20650,11 +20662,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3503376672669318102, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
   m_PrefabInstance: {fileID: 136600662108562496}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7162041652663342731 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7098204608498807499, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
+--- !u!114 &6383799198859413786 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6445357058330996058, guid: 8a33de433ba50194b81dfa641bade2ef, type: 3}
   m_PrefabInstance: {fileID: 136600662108562496}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 144f28222302cd2439fcb74114686948, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &530996677720215339
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20672,9 +20690,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6087847536684440880, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
+      propertyPath: _rectTr
+      value: 
+      objectReference: {fileID: 8898058698448482883}
+    - target: {fileID: 6087847536684440880, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
       propertyPath: TargetTr
       value: 
       objectReference: {fileID: 3945659227823930275}
+    - target: {fileID: 6087847536684440880, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
+      propertyPath: _indicatorsUI_Tr
+      value: 
+      objectReference: {fileID: 5384540552835412589}
     - target: {fileID: 8944777317959712104, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

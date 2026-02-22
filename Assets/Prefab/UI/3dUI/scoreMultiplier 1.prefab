@@ -202,7 +202,7 @@ Transform:
   m_GameObject: {fileID: 7036945638641364174}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 33.6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 40, y: 40, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -223,5 +223,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowAnimDuration: 0.25
   HideAnimDuration: 0.5
+  _distance: 30
   _textMeshPro: {fileID: 484092710656688439}
   _TMP_meshRenderer: {fileID: 712113951802571415}

@@ -21,7 +21,7 @@ public class Bullet : MonoBehaviour
     {
         _onRelease = onRelease;
     }
-    void OnEnable()
+    public void Initialize()
     {
         _rb.linearVelocity = Vector3.zero;
         _meshRenderer.enabled = true;

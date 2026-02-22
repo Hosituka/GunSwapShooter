@@ -150,3 +150,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimTime: 0.5
+  _textMeshProUGUI: {fileID: 6506813048438840871}
+  _rectTransform: {fileID: 3717225356145795746}
+  _addScore: 0
