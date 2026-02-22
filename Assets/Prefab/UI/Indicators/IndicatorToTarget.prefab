@@ -259,13 +259,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 144f28222302cd2439fcb74114686948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetNameText: {fileID: 2156740810910636563}
-  TargetTr: {fileID: 0}
+  _indicatorsUI_Tr: {fileID: 0}
   _camera: {fileID: 0}
   _mainObj: {fileID: 4461196064631671310}
   _arrowRectTr: {fileID: 5445978355905343757}
   _innerArrowImage: {fileID: 969911275919952965}
   _ArrowOutlineImage: {fileID: 5490294847718607527}
+  _rectTr: {fileID: 3503376672669318102}
 --- !u!1 &7842540011872408205
 GameObject:
   m_ObjectHideFlags: 0

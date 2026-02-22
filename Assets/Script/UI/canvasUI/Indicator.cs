@@ -11,6 +11,7 @@ public class Indicator : MonoBehaviour
     [SerializeField]Image _innerArrowImage;
     [SerializeField]Image _ArrowOutlineImage;
     [SerializeField]RectTransform _rectTr;
+    [SerializeField]Transform _targetTr;
 
     Vector3 _targetViewportPos;
     Vector3 _targetScreenPos;
@@ -19,7 +20,6 @@ public class Indicator : MonoBehaviour
 
 
     Vector2 _clampedTargetScreenPos;
-    Transform _targetTr;
 
     bool _isInCamera;
     Action<Indicator> _onRelease;

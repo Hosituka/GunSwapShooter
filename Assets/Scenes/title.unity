@@ -7087,9 +7087,17 @@ PrefabInstance:
       propertyPath: TargetTr
       value: 
       objectReference: {fileID: 267730284}
+    - target: {fileID: 5001650904417642664, guid: 739377a5d71bbac4799ef8a4a8de7102, type: 3}
+      propertyPath: _targetTr
+      value: 
+      objectReference: {fileID: 267730284}
+    - target: {fileID: 5001650904417642664, guid: 739377a5d71bbac4799ef8a4a8de7102, type: 3}
+      propertyPath: _indicatorsUI_Tr
+      value: 
+      objectReference: {fileID: 1535419830}
     - target: {fileID: 8473993842513005767, guid: 739377a5d71bbac4799ef8a4a8de7102, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8944777317959712104, guid: 739377a5d71bbac4799ef8a4a8de7102, type: 3}
       propertyPath: m_Pivot.x

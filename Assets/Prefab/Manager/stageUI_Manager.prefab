@@ -6780,7 +6780,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8817859887721958228}
   - component: {fileID: 2108528734225898052}
-  - component: {fileID: 3007458026213385856}
   m_Layer: 0
   m_Name: GameClearUI
   m_TagString: Untagged
@@ -6797,7 +6796,7 @@ Transform:
   m_GameObject: {fileID: 2102414020603936071}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20, z: 60}
+  m_LocalPosition: {x: 0, y: 0, z: 60}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6824,29 +6823,7 @@ MonoBehaviour:
   _overlookCountTM: {fileID: 7421104519228474080}
   _totalScoreTM: {fileID: 7113706897609307002}
   _accidentalShoot: {fileID: 747929807411395244}
-  _animator: {fileID: 3007458026213385856}
---- !u!95 &3007458026213385856
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2102414020603936071}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: acf377a80d7f5f04c86000092d24064f, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  _animator: {fileID: 3044967512017633347}
 --- !u!1 &2198044483392531623
 GameObject:
   m_ObjectHideFlags: 0
@@ -7120,6 +7097,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 402617711024820580}
+  - component: {fileID: 3044967512017633347}
   m_Layer: 0
   m_Name: AnimationRoot
   m_TagString: Untagged
@@ -7136,7 +7114,7 @@ Transform:
   m_GameObject: {fileID: 2645286524608931744}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 20, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7145,6 +7123,28 @@ Transform:
   - {fileID: 703950344814646550}
   m_Father: {fileID: 8817859887721958228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &3044967512017633347
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645286524608931744}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: acf377a80d7f5f04c86000092d24064f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2727619886013643020
 GameObject:
   m_ObjectHideFlags: 0
@@ -17596,7 +17596,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7017680343611359771}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17604,7 +17604,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -0.9799366, y: 2.3999996}
+  m_AnchoredPosition: {x: -0.6, y: 2.3999996}
   m_SizeDelta: {x: 1, y: 4}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!23 &4787364854801142327
@@ -20689,6 +20689,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2131758341482742151, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6087847536684440880, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
       propertyPath: _rectTr
       value: 
@@ -20697,6 +20701,10 @@ PrefabInstance:
       propertyPath: TargetTr
       value: 
       objectReference: {fileID: 3945659227823930275}
+    - target: {fileID: 6087847536684440880, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
+      propertyPath: _targetTr
+      value: 
+      objectReference: {fileID: 8817859887721958228}
     - target: {fileID: 6087847536684440880, guid: 10eba76377611bf4cb8a963de47edcdd, type: 3}
       propertyPath: _indicatorsUI_Tr
       value: 
