@@ -15504,7 +15504,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _aR_BackGround: {fileID: 6911074245675983948}
   _indicatorToTarget: {fileID: 6383799198859413786}
-  _indicatorsUIObj: {fileID: 5885526588230782050}
+  _indicatorsUI_Tr: {fileID: 5384540552835412589}
   _timeTextTM: {fileID: 4021180547454116141}
   _scoreValueText: {fileID: 7605864204975760236}
   _accidentalShootTextTM: {fileID: 3114659889920994959}

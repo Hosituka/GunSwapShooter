@@ -1,4 +1,4 @@
-# ARShooting
+# GunSwapShooter
 
 ## 概要
 
@@ -31,6 +31,7 @@
 -   **Manager (`Assets/Script/Manager`):**
     -   `AR_SetUpUI_Manager.cs`: アプリ起動時にWebカメラのパーミッション要求、デバイスの縦向き確認、背面カメラの取得、姿勢センサーの有効化を行い、AR体験に必要な初期セットアップを管理します。
     -   `GameManager.cs`: ゲーム全体の状態（難易度設定、`WebCamTexture`、`AttitudeSensor`の管理）とシーン遷移を担うシングルトン。
+    -   `ObjectPoolManager.cs`: ジェネリック関数とインターフェース制約を用いた、汎用的なオブジェクトプール生成システム。
     -   `StageManager.cs`: ステージの進行、スコア、制限時間などを管理。
     -   `SoundManager.cs`: 効果音やBGMの再生を管理。
     -   `StageUI_manager.cs`, `TitleUI_Manager.cs`など: 各シーンのUIイベントや表示更新を管理。
@@ -56,6 +57,9 @@
     -   `com.unity.inputsystem`: `1.14.2` - プレイヤーの入力およびデバイスのセンサー情報取得に使用。
     -   `com.unity.render-pipelines.universal`: `17.0.4` - レンダリングパイプラインとしてURPを使用。
     -   `com.unityroom.client`: [unityroom](https://unityroom.com/) のランキング機能との連携に使用。
+
+## 更新履歴
+- **2026-02-23**: `ObjectPoolManager.cs` の実装とジェネリックオブジェクトプールシステムの強化。インターフェース `IPoolable<T>` による型制約の導入。
 
 ## セットアップと実行
 

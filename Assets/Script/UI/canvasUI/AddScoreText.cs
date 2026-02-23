@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 using System;
 //スコアの増加量を表すテキストのアニメーションを表す責務を持つ∧StageUI_managerによりオブジェクトプールされている。
-public class AddScoreText : MonoBehaviour
+public class AddScoreText : MonoBehaviour,IPoolable<AddScoreText>
 {
     [SerializeField]
     float _animDuration = 0.5f;

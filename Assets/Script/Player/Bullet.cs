@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 //PlayerGunが生成する銃弾です。　オブジェクトプールにより管理されています。
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour,IPoolable<Bullet>
 {
     [SerializeField] MeshRenderer _meshRenderer;
     [SerializeField] BoxCollider _boxCollider;

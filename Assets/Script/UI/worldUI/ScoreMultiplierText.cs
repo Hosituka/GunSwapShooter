@@ -6,7 +6,7 @@ using System.ComponentModel.Design.Serialization;
 using System;
 /*10コンボ感覚で発生する、スコア増加率増加を表すテキストのアニメーションを責務として持つ∧
 StageUI_managerによりオブジェクトプールされています。*/
-public class ScoreMultiplierText : MonoBehaviour
+public class ScoreMultiplierText : MonoBehaviour,IPoolable<ScoreMultiplierText>
 {
     [SerializeField]float ShowAnimDuration = 0.3f; 
     [SerializeField]float HideAnimDuration = 0.2f;

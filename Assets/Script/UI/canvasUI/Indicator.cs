@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 //PointObjectの具象クラスの位置を表示する責務を持つ∧StageUI_managerによりオブジェクトプールされています。
-public class Indicator : MonoBehaviour
+public class Indicator : MonoBehaviour,IPoolable<Indicator>
 {
     [SerializeField]Transform _indicatorsUI_Tr;
     [SerializeField]Camera _camera;

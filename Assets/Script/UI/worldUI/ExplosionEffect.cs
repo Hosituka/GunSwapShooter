@@ -3,7 +3,7 @@ using System.Collections;
 using System.IO.Compression;
 using UnityEngine;
 //StageUI_managerクラスによりプールされている∧的の破壊を表すエフェクトの振る舞いが書かれているクラス
-public class ExplosionEffect : MonoBehaviour
+public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
 {
     public enum AnimPhase
     {

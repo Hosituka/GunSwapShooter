@@ -22,19 +22,8 @@ public class PlayerGun : MonoBehaviour
     bool _isShot;
     void Start()
     {
-        // プールの設定
-        _bulletPool = new ObjectPool<Bullet>(
-            createFunc: ()=>{ // 足りない時に新しく作る処理
-                Bullet poolTarget = Instantiate(_bullet);
-                poolTarget.SetOnRelease((Bullet b)=>_bulletPool.Release(b));
-                return poolTarget;
-            },      
-            actionOnGet: (Bullet bullet)=>{bullet.gameObject.SetActive(true);},         // プールから借りる時の処理
-            actionOnRelease: (Bullet bullet)=>bullet.gameObject.SetActive(false), // プールに返す時の処理
-            actionOnDestroy: (Bullet bullet)=>Destroy(bullet.gameObject), // プールが溢れた時に破棄する処理
-            defaultCapacity: 45,              // 最初に用意する目安
-            maxSize: 45                       // 最大貯蓄数
-        );       
+        //_bulletPoolの作成と設定
+        _bulletPool = ObjectPoolManager.Current.GenerateObjectPool<Bullet>(_bullet,30,45);
         //プールを事前に満たす処理
         ObjectPoolManager.Current.PrewarmPool<Bullet>(_bulletPool,30);
         //疑似ライトがシーン移動時につけっぱなしになることを防ぐ処理

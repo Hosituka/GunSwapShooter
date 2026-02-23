@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using Audio;
 using UnityEngine.Pool;
-using System.Collections.Generic;
+using System;
 public class StageUI_manager : MonoBehaviour
 {
     public static StageUI_manager Current;
@@ -21,7 +21,7 @@ public class StageUI_manager : MonoBehaviour
     [Header("#通常のUIに関するメンバ")]
     [SerializeField]AR_BackGround _aR_BackGround;
     [SerializeField] Indicator _indicatorToTarget;
-    [SerializeField] GameObject _indicatorsUIObj;
+    [SerializeField] Transform _indicatorsUI_Tr;
     [SerializeField] TextMeshProUGUI _timeTextTM;
     [SerializeField] ScoreValueText _scoreValueText;
     [SerializeField] TextMeshProUGUI _accidentalShootTextTM;
@@ -38,109 +38,24 @@ public class StageUI_manager : MonoBehaviour
 
     [SerializeField,Header("#その他")]
     GameClearUI _gameClearUI;
+    
 
 
 
     void Start()
     {
-        //_explosionEffectPoolの設定
-        _explosionEffectPool = new ObjectPool<ExplosionEffect>(
-            createFunc: ()=>
-            {  // 足りない時に新しく作る処理
-                ExplosionEffect poolTarget =  Instantiate(_explosionEffect);
-                poolTarget.SetOnRelease((e)=>_explosionEffectPool.Release(e));
-                return poolTarget;
-            },     
-            actionOnGet: (explosionEffect)=>explosionEffect.gameObject.SetActive(true),         // プールから借りる時の処理
-            actionOnRelease: (explosionEffect)=>explosionEffect.gameObject.SetActive(false), // プールに返す時の処理
-            actionOnDestroy: (explosionEffect)=>Destroy(explosionEffect.gameObject), // プールが溢れた時に破棄する処理
-            defaultCapacity: 10,              // 最初に用意する目安
-            maxSize: 10                       // 最大貯蓄数
-        );       
-        //_addScoreTextPoolの設定
-        _addScoreTextPool = new ObjectPool<AddScoreText>(
-            createFunc: () =>
-            {
-                AddScoreText poolTarget = Instantiate(_addScoreText,_standardUI_Tr);
-                poolTarget.SetOnRelease((a)=>_addScoreTextPool.Release(a));
-                return poolTarget;
-            },
-            actionOnGet:(addScoreText)=>addScoreText.gameObject.SetActive(true),
-            actionOnRelease:(addScoreText)=>addScoreText.gameObject.SetActive(false),
-            actionOnDestroy:(addScoreText)=>Destroy(addScoreText.gameObject),
-            defaultCapacity: 10,
-            maxSize:10
-        );
-        //_indicatorToTargetPoolの設定
-        _indicatorToTargetPool = new ObjectPool<Indicator>(
-            createFunc: () =>
-            {
-                Indicator poolTarget = Instantiate(_indicatorToTarget,_indicatorsUIObj.transform);
-                poolTarget.SetOnRelease((i)=>_indicatorToTargetPool.Release(i));
-                return poolTarget;
-            },
-            actionOnGet:(i)=>i.gameObject.SetActive(true),
-            actionOnRelease:(i)=>i.gameObject.SetActive(false),
-            actionOnDestroy:(i)=>Destroy(i.gameObject),
-            defaultCapacity: 3,
-            maxSize:10
-        );
-        //_scoreMultiplierTextPoolの設定
-        _scoreMultiplierTextPool = new ObjectPool<ScoreMultiplierText>(
-            createFunc: () =>
-            {
-                ScoreMultiplierText poolTarget = Instantiate(_scoreMultiplierText);
-                poolTarget.SetOnRelease((i)=>_scoreMultiplierTextPool.Release(i));
-                return poolTarget;
-            },
-            actionOnGet:(i)=>i.gameObject.SetActive(true),
-            actionOnRelease:(i)=>i.gameObject.SetActive(false),
-            actionOnDestroy:(i)=>Destroy(i.gameObject),
-            defaultCapacity: 3,
-            maxSize:3
-        );
-        _goodTextPool = new ObjectPool<JudgeText>(
-            createFunc: () =>
-            {
-                JudgeText poolTarget = Instantiate(_goodOfJudgeText,_standardUI_Tr);
-                poolTarget.SetOnRelease((i)=>_goodTextPool.Release(i));
-                return poolTarget;
-            },
-            actionOnGet:(j)=>j.gameObject.SetActive(true),
-            actionOnRelease:(j)=>j.gameObject.SetActive(false),
-            actionOnDestroy:(j)=>Destroy(j.gameObject),
-            defaultCapacity: 10,
-            maxSize:10
-
-        );
-        _greatTextPool = new ObjectPool<JudgeText>(
-            createFunc: () =>
-            {
-                JudgeText poolTarget = Instantiate(_greatOfJudgeText,_standardUI_Tr);
-                poolTarget.SetOnRelease((i)=>_greatTextPool.Release(i));
-                return poolTarget;
-            },
-            actionOnGet:(j)=>j.gameObject.SetActive(true),
-            actionOnRelease:(j)=>j.gameObject.SetActive(false),
-            actionOnDestroy:(j)=>Destroy(j.gameObject),
-            defaultCapacity: 10,
-            maxSize:10
-
-        );
-        _perfectTextPool = new ObjectPool<JudgeText>(
-            createFunc: () =>
-            {
-                JudgeText poolTarget = Instantiate(_perfectOfJudgeText,_standardUI_Tr);
-                poolTarget.SetOnRelease((i)=>_perfectTextPool.Release(i));
-                return poolTarget;
-            },
-            actionOnGet:(j)=>j.gameObject.SetActive(true),
-            actionOnRelease:(j)=>j.gameObject.SetActive(false),
-            actionOnDestroy:(j)=>Destroy(j.gameObject),
-            defaultCapacity: 10,
-            maxSize:10
-
-        );
+        //_explosionEffectPoolの作成と設定
+        _explosionEffectPool = ObjectPoolManager.Current.GenerateObjectPool<ExplosionEffect>(_explosionEffect,10,10);
+        //_addScoreTextPoolの作成と設定
+        _addScoreTextPool = ObjectPoolManager.Current.GeneratePool<AddScoreText>(_addScoreText,_standardUI_Tr,10,10);
+        //_indicatorToTargetPoolの作成と設定
+        _indicatorToTargetPool = ObjectPoolManager.Current.GeneratePool<Indicator>(_indicatorToTarget,_indicatorsUI_Tr,10,10);
+        //_scoreMultiplierTextPoolの作成と設定
+        _scoreMultiplierTextPool = ObjectPoolManager.Current.GenerateObjectPool<ScoreMultiplierText>(_scoreMultiplierText,3,3);
+        //各種JudgeTextPoolの作成と設定
+        _goodTextPool = ObjectPoolManager.Current.GeneratePool<JudgeText>(_goodOfJudgeText,_standardUI_Tr,10,10);
+        _greatTextPool = ObjectPoolManager.Current.GeneratePool<JudgeText>(_greatOfJudgeText,_standardUI_Tr,10,10);
+        _perfectTextPool = ObjectPoolManager.Current.GeneratePool<JudgeText>(_perfectOfJudgeText,_standardUI_Tr,10,10);
         //事前にプールを満たす処理；
         ObjectPoolManager.Current.PrewarmPool<ExplosionEffect>(_explosionEffectPool,5);
         ObjectPoolManager.Current.PrewarmPool<AddScoreText>(_addScoreTextPool,10);

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-public class JudgeText : MonoBehaviour
+public class JudgeText : MonoBehaviour,IPoolable<JudgeText>
 {
     [SerializeField]TextMeshProUGUI _textMeshProUGUI;
     [SerializeField]RectTransform _rectTransform;
