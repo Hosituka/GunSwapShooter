@@ -1,68 +1,76 @@
 # GunSwapShooter
 
 ## 概要
-
-このプロジェクトは、Unityで制作されたAR（拡張現実）シューティングゲームです。
-デバイスのカメラ映像を現実空間の背景として利用し、ジャイロセンサーで視点操作を行う**3DoF (Three Degrees of Freedom)** のAR体験を提供します。プレイヤーは物理的にデバイスを傾けて照準を合わせ、画面に出現するターゲットを破壊してハイスコアを目指します。
+※geminicliがunitymcpを介して、プロジェクトを調査しまとめたのがこのReadme.mdです。誤情報があったらすまん。
+このプロジェクトは、Unity 6 (6000.0.60f1) で制作された、ブラウザ（WebGL/unityroom）向けの3DoF ARシューティングゲームです。
+AR Foundationなどの外部フレームワークに頼らず、WebCamTextureとデバイスの姿勢センサー（AttitudeSensor）を直接制御することで、デバイスの回転に同期したAR体験を実現しています。
 
 ### デモプレイ
+[unityroom - GunSwapShooter](https://unityroom.com/games/gun_swap_shooter)
 
-このプロジェクトによるゲームは [unityroom](https://unityroom.com/games/gun_swap_shooter) でプレイできます。
+## ゲームシステムの特徴
 
-## ゲームプレイ
+- **3DoF ARアクション**: デバイスを物理的に回転させ、現実の風景の中に現れるターゲットを撃ち抜きます。
+- **2丁の銃の使い分け**: プレイヤーは赤と青の2丁の銃を使い分け、ターゲットの色に合わせた射撃が求められます。
+- **コンボ・スコアリング**: 連続ヒットによる倍率上昇（ScoreMultiplier）や、破壊時の判定（Great, Goodなど）により、戦略的なハイスコア狙いが可能です。
+- **多様なターゲットギミック**:
+    - **基本**: `RedTarget`, `BlueTarget`
+    - **移動**: `MoveRedTarget`, `MoveBlueTarget`
+    - **特殊**: 
+        - `GunSwapTarget`: 銃を入れ替えることで反応するターゲット
+        - `LineUpTarget`: 複数のターゲットが回転扉のように連なる
+        - `ButtonMashingTarget`: 連打が必要なターゲット
+        - `RedBlueTarget`: 左が赤、右が青と言った感じで色が異なり、それに合わせて同時撃ちするターゲットです。
 
-1.  **タイトルと難易度選択:** ゲームを開始すると、タイトル画面が表示され、プレイヤーは難易度を選択します。
-2.  **ターゲット出現:** ゲームが始まると、静止しているターゲット、移動するターゲット、赤と青の撃ち分けが必要なターゲットなど、様々な種類のターゲットが空間に動的に生成されます。
-3.  **照準と射撃:** プレイヤーはデバイス本体を動かして2丁の銃の照準をターゲットに合わせ、画面をタップして弾を発射します。
-4.  **スコアリング:** ターゲットを破壊するとスコアが加算されます。連続してターゲットを破壊することでスコア倍率が上昇するコンボシステムが特徴です。
+## 画面・シーン構成
 
-## AR機能の実装方式
+プロジェクトは以下のシーン遷移で構成されています。
 
-このプロジェクトは、AR Foundationのような高度なARフレームワークを使用せず、Unityの標準機能を用いてAR体験を実現しています。
+1.  **AR_Setup (`Assets/Scenes/AR_Setup.unity`)**: 
+    - AR体験の土台となる初期化シーン。
+    - Webカメラの使用許可、デバイスの向き確認、背面カメラの特定、姿勢センサーの有効化を順次行います。
+2.  **title (`Assets/Scenes/title.unity`)**: 
+    - 難易度（Easy, Normal, Hard）の選択。
+3.  **stage1 / stage2 (`Assets/Scenes/stage1.unity`, `stage2.unity`)**: 
+    - メインのゲームプレイシーン。
+    - `PointObjectGenerator2` による動的なターゲット配置。
+## 技術的実装の詳細
 
--   **初期セットアップ:** `AR_SetUpUI_Manager`によってWebカメラの使用許可、デバイスの縦向き確認、背面カメラの取得、および姿勢センサーの有効化が行われます。これにより、AR体験に必要なデバイスの状態が整えられます。
--   **パススルーAR:** `GameManager`がシングルトンとして`WebCamTexture`を管理し、デバイスのカメラ映像を取得します。この映像がUIの背景として常時表示されることで、パススルーARを実現しています。
--   **3DoFコントロール:** `GameManager`がUnityの`Input System`に含まれる`AttitudeSensor`からデバイスの回転情報（Quaternion）を継続的に取得します。プレイヤーオブジェクトにアタッチされた`AttitudeTransformController`が、`GameManager`からその回転情報を受け取り、カメラの向きに反映させることで、プレイヤーの視点操作を実現しています。
+### AR制御ロジック
+- **`GameManager.cs`**: 
+    - シングルトンとして存在し、`WebCamTexture` を通じた背面カメラ映像の取得と、`AttitudeSensor` のライフサイクル管理を行います。
+- **`AttitudeTransformController.cs`**: 
+    - ジャイロセンサーから得られる `attitude`（Quaternion）を、スマートフォンの持ち方（ScreenOrientation）に合わせて補正し、ゲーム内のメインカメラの回転に反映させます。
 
-## プロジェクトのアーキテクチャ
+### ターゲット生成アルゴリズム (`PointObjectGenerator2.cs`)
+- **グリッド管理**: プレイヤーの周囲を仮想的なグリッドで分割し、ターゲットの重複配置を回避。
+- **Perlinノイズ配置**: ターゲットの出現位置を単純なランダムではなく、Perlinノイズを用いることで、ゲーム性に適した「散らばり」と「まとまり」を制御。
+- **コストシステム**: 出現させるターゲットの種類ごとに「コスト」を設定し、一度に画面に現れる負荷を調整。
 
-コンポーネントベースのアーキテクチャで構築されており、役割ごとにスクリプトが明確に分離されています。
+### オブジェクト管理と最適化
+- **`ObjectPoolManager.cs`**: 
+    - `IPoolable<T>` インターフェースを用いたジェネリックなオブジェクトプールを実装。
+    - 大量の弾（Bullet）やUI演出（JudgeText, ExplosionEffect）の生成・破棄によるオーバーヘッドを最小化しています。
 
--   **Manager (`Assets/Script/Manager`):**
-    -   `AR_SetUpUI_Manager.cs`: アプリ起動時にWebカメラのパーミッション要求、デバイスの縦向き確認、背面カメラの取得、姿勢センサーの有効化を行い、AR体験に必要な初期セットアップを管理します。
-    -   `GameManager.cs`: ゲーム全体の状態（難易度設定、`WebCamTexture`、`AttitudeSensor`の管理）とシーン遷移を担うシングルトン。
-    -   `ObjectPoolManager.cs`: ジェネリック関数とインターフェース制約を用いた、汎用的なオブジェクトプール生成システム。
-    -   `StageManager.cs`: ステージの進行、スコア、制限時間などを管理。
-    -   `SoundManager.cs`: 効果音やBGMの再生を管理。
-    -   `StageUI_manager.cs`, `TitleUI_Manager.cs`など: 各シーンのUIイベントや表示更新を管理。
+### UI演出
+- **2D/3Dの融合**: 
+    - Canvas上の `Indicator`（画面外の敵を指し示す矢印）と、ワールド空間に浮かぶ `JudgeText` や `ExplosionEffect` が連動。
 
--   **Player (`Assets/Script/Player`):**
-    -   `Player.cs`: 弾の発射、赤と青の銃の切り替え、照準合わせのロジックを管理。
-    -   `AttitudeTransformController.cs`: `GameManager`から受け取ったデバイスの姿勢情報をもとに、アタッチされたオブジェクト（カメラ）の回転を制御します。
-    -   `Bullet.cs`: 弾の振る舞いを定義。
+## 制作・開発環境
 
--   **PointObjects (`Assets/Script/PointObjects`):**
-    -   `PointObjectGenerator2.cs`: ゲームプレイの中核をなす、ターゲットの動的生成システム。以下の特徴を持つ。
-        -   **グリッドベースの配置:** プレイヤーの視界を仮想的なグリッドマップで管理し、ターゲットの重複を防ぎます。
-        -   **Perlinノイズ:** 次にターゲットが出現するグリッド座標をPerlinノイズを用いて探索することで、ランダムながらも自然なまとまりのある配置を実現します。
-        -   **コスト管理:** 各ターゲットプレハブに設定されたコストに基づき、シーン内の総コストが上限を超えないように生成を制御します。
-        -   **BPM連携:** 設定されたBPMに応じてターゲットの出現タイミングやアニメーションが調整される可能性を示唆するロジックが含まれています。
-    -   `PointObject.cs`: 全てのターゲットの振る舞いを定義する抽象基底クラス。被弾処理、スコア加算、時間経過による消滅、破棄時のアニメーションなどを一元管理します。
-    -   `RedTarget.cs`, `MoveBlueTarget.cs`, `RedBlueTarget.cs`など: `PointObject`を継承し、色や動き、破壊条件などが異なる多様なターゲットを実装した具象クラス群。
-
-## 制作環境
-
--   **Unity:** `6000.0.60f1`
--   **主要なパッケージ:**
-    -   `com.unity.inputsystem`: `1.14.2` - プレイヤーの入力およびデバイスのセンサー情報取得に使用。
-    -   `com.unity.render-pipelines.universal`: `17.0.4` - レンダリングパイプラインとしてURPを使用。
-    -   `com.unityroom.client`: [unityroom](https://unityroom.com/) のランキング機能との連携に使用。
+- **Unity Version**: `6000.0.60f1`
+- **Render Pipeline**: Universal Render Pipeline (URP)
+- **Input System**: `com.unity.inputsystem` (1.14.2)
+- **API連携**: `com.unityroom.client` (ランキング・スコア送信)
 
 ## 更新履歴
-- **2026-02-23**: `ObjectPoolManager.cs` の実装とジェネリックオブジェクトプールシステムの強化。インターフェース `IPoolable<T>` による型制約の導入。
+- **2026-02-23**: 
+    - 汎用オブジェクトプールシステム（`ObjectPoolManager.cs`）を導入し、メモリ効率を改善。
+    - 全シーンおよび全スクリプトの徹底調査に基づき、README.mdを詳細版へ刷新。
 
-## セットアップと実行
+## ライセンス・外部アセットについて
+- **`UnityroomApiClient`**: unityroom公式パッケージ。
+- **その他**: スクリプト、シェーダー、演出ロジックの多くは、このプロジェクト特有のAR体験のために独自に設計・実装されています。
 
-1.  Unity Editor `6000.0.60f1`以降でこのプロジェクトを開きます。
-2.  `Assets/Scenes/AR_Setup.unity` シーンを開きます。このシーンは、AR体験に必要なWebカメラのパーミッション要求、デバイスの向きの確認、および姿勢センサーの有効化を行います。
-3.  再生ボタンを押してゲームを開始します。`AR_Setup`シーンでの初期設定が完了すると、自動的に`title`シーンへ遷移します。
+---
+最終更新日: 2026年2月23日
