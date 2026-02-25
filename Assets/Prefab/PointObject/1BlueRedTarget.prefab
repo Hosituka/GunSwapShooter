@@ -291,14 +291,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df8f76da3729244abc73f8d92ec0df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TMPorMeshRenderersList:
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 6164349155230178958}
   _redBlueTarget: {fileID: 135600430073882349}
   _redColliderList:
   - {fileID: 8742981121634139703}
-  _targetBreakAnimator: {fileID: 8854801092642254151}
+  _pointObjectAnimator: {fileID: 8854801092642254151}
 --- !u!114 &8854801092642254151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +307,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList:
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 6164349155230178958}
 --- !u!1 &5852891998243174820
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,14 +386,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9dac2db6c181940ababae0f1241911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TMPorMeshRenderersList:
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 3041870695707672018}
   _redBlueTarget: {fileID: 135600430073882349}
   _blueColliderList:
   - {fileID: 523411580943365986}
-  _targetBreakAnimator: {fileID: 3929262159873636881}
+  _pointObjectAnimator: {fileID: 3929262159873636881}
 --- !u!114 &3929262159873636881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,6 +402,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList:
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 3041870695707672018}
 --- !u!1 &7145205717339310319
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,16 +559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959cedd61607c40479dc3f91103e2ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeTargetList:
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 1368291441208975363}
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 3041870695707672018}
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 6164349155230178958}
   ColliderList:
   - {fileID: 523411580943365986}
   - {fileID: 8742981121634139703}
@@ -576,7 +566,7 @@ MonoBehaviour:
   PointObjectCost: 1.5
   NextGeneratableCount: 1
   LifeTimeGUI_MR: {fileID: 6998368351275040588}
-  _targetBreakAnimator: {fileID: 5817185851206092890}
+  _targetPointObjectAnimator: {fileID: 5817185851206092890}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
@@ -597,6 +587,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList:
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 1368291441208975363}
+    - {fileID: 6998368351275040588}
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 3041870695707672018}
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 6164349155230178958}
 --- !u!1001 &377370468788042887
 PrefabInstance:
   m_ObjectHideFlags: 0

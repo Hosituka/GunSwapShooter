@@ -5,9 +5,9 @@ using System.Collections.Generic;
 //LineUpTargetが持つ複数の板の抽象クラスです。
 public abstract class PlaneForLineUp : MonoBehaviour
 {
-    public List<TMPandMeshRenderer> FadeTargets;
     public Collider[] Colliders;
-    [SerializeField]protected BreakAnimator _targetBreakAnimator;
+    public PointObjectAnimator PointObjectAnimator;
+    [SerializeField]protected List<TMPandMeshRenderer> _showAndHideTarget;
     [SerializeField]TextMeshPro _needShotCountTMPro;
     protected bool _isShow = true;
     protected float _dot;

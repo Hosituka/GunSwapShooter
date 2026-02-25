@@ -6,13 +6,12 @@ using UnityEngine.Events;
 
 public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
 {
-    [SerializeField] List<TMPandMeshRenderer> TMPorMeshRendererList;
     [SerializeField] Collider[] _colliderArray;
     [SerializeField] MeshRenderer _shootableButtonMR;
     [SerializeField,Range(0,1)] float _aimBrightness = 0.8f;
     [SerializeField] TextMeshPro _explain3dTMP;
     [SerializeField] TextMeshPro _needShotCount3dTMP;
-    [SerializeField] BreakAnimator _breakAnimator; 
+    [SerializeField] PointObjectAnimator _breakAnimator; 
     [SerializeField]UnityEvent _onShoot;
     [SerializeField] int _needShotCount;
     [SerializeField] float _regenDelay;
@@ -102,10 +101,10 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
     }
     IEnumerator InvokeCoroutine()
     {
-        _breakAnimator.PlaySpinThenExplode(transform.position,Color.magenta,14,TMPorMeshRendererList);
-        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Explosion);
+        _breakAnimator.PlaySpinThenExplode(transform.position,Color.magenta,14);
+        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
         Utility.ChangeEnabledColliders(_colliderArray,false);
-        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Completed);
+        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onShoot.Invoke();
         Destroy(gameObject);
     }

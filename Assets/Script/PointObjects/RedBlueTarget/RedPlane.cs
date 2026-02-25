@@ -4,11 +4,10 @@ using System.Collections.Generic;
 
 public class RedPlane : MonoBehaviour
 {
-    public List<TMPandMeshRenderer> TMPorMeshRenderersList;
     [SerializeField]RedBlueTarget _redBlueTarget;
 
     [SerializeField]Collider[] _redColliderList;
-    [SerializeField]BreakAnimator _targetBreakAnimator;
+    [SerializeField]PointObjectAnimator _pointObjectAnimator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -60,8 +59,8 @@ public class RedPlane : MonoBehaviour
             Utility.ChangeEnabledColliders(_redColliderList,false);
             _redBlueTarget.DecrementCurrentPlaneCount();
 
-            _targetBreakAnimator.PlayExplosion(transform.position,Color.red,14,TMPorMeshRenderersList);
-            yield return new WaitWhile(()=> _targetBreakAnimator.CurtExplosionPhase != BreakAnimator.ExplosionPhase.Completed);
+            _pointObjectAnimator.PlayExplosion(transform.position,Color.red,14);
+            yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
             Destroy(gameObject);
         }
     }

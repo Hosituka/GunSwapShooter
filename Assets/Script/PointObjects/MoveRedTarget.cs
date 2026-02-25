@@ -4,7 +4,7 @@ public class MoveRedTarget : PointObject
 {
     [Header("MoveRedTargetの設定用プロパティ")]
 
-    public float IntervalForMove = 1;
+    [SerializeField]float _intervalForMove = 1;
 
     Transform _playerTr;
     bool _isVerticalToRotate;
@@ -21,20 +21,19 @@ public class MoveRedTarget : PointObject
     {
         _playerTr = Player.Current.GetComponent<Transform>();
         _isVerticalToRotate = Random.Range(0, 2) == 1;
-        _distanceForGenerate = PointObjectGenerater2.CurrentPointObjectGenerater2.DistanceForGenerate;
-        _generateYawStep = PointObjectGenerater2.CurrentPointObjectGenerater2.GenerateYawStep;
-        _generatePitchStep = PointObjectGenerater2.CurrentPointObjectGenerater2.GeneratePitchStep;
-        _startGenerateYaw = PointObjectGenerater2.CurrentPointObjectGenerater2.GetYawPitch(transform.position).yaw;
-        _startGeneratePitch = PointObjectGenerater2.CurrentPointObjectGenerater2.GetYawPitch(transform.position).pitch;
+        _distanceForGenerate = PointObjectGenerater.Current.DistanceForGenerate;
+        _generateYawStep = PointObjectGenerater.Current.GenerateYawStep;
+        _generatePitchStep = PointObjectGenerater.Current.GeneratePitchStep;
+        _startGenerateYaw = PointObjectGenerater.Current.GetYawPitch(transform.position).yaw;
+        _startGeneratePitch = PointObjectGenerater.Current.GetYawPitch(transform.position).pitch;
         if (_isVerticalToRotate)
         {
-            _pingPongTime = 1 * IntervalForMove / 2; 
+            _pingPongTime = 1 * _intervalForMove / 2; 
         }
         else
         {
-            _pingPongTime = 1 * IntervalForMove / 2;
+            _pingPongTime = 1 * _intervalForMove / 2;
         }
-        ActivateMain();
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -62,9 +61,16 @@ public class MoveRedTarget : PointObject
         }
 
     }
-    public override void TimeOver()
+    public override void TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
+
+        Utility.ChangeEnabledColliders(ColliderList,false);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+        _targetIndicator.Destroy();
+        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
+
     }
 
     // Update is called once per frame
@@ -76,14 +82,14 @@ public class MoveRedTarget : PointObject
         _pingPongTime += Time.deltaTime;
         if (_isVerticalToRotate)//ローカル座標系のy軸方向にRotateAroundさせる
         {
-            _remapPingPong = Mathf.PingPong(_pingPongTime / IntervalForMove, 1) * 2 - 1; 
+            _remapPingPong = Mathf.PingPong(_pingPongTime / _intervalForMove, 1) * 2 - 1; 
             transform.position = Quaternion.AngleAxis(_startGenerateYaw + _remapPingPong * _generateYawStep, Vector3.up) * Vector3.forward;
             transform.position = Quaternion.AngleAxis(_startGeneratePitch,Vector3.Cross(Vector3.up,transform.position)) * transform.position;
 
         }
         else//ローカル座標系のx軸方向にRotateAroundさせる。
         {
-            _remapPingPong = Mathf.PingPong(_pingPongTime / IntervalForMove, 1) * 2 - 1; 
+            _remapPingPong = Mathf.PingPong(_pingPongTime / _intervalForMove, 1) * 2 - 1; 
             transform.position = Quaternion.AngleAxis(_startGenerateYaw, Vector3.up) * Vector3.forward;
             transform.position = Quaternion.AngleAxis(_startGeneratePitch + _remapPingPong * _generatePitchStep, Vector3.Cross(Vector3.up,new Vector3(transform.position.x,0,transform.position.z))) * transform.position;
         }
@@ -126,14 +132,14 @@ public class MoveRedTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater2.CurrentPointObjectGenerater2.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater2.CurrentPointObjectGenerater2.RemovePointObjectPos(PointObjectPos,2);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
         TargetTimeKeeper.NoticeDestruction(this);
+        _targetIndicator.Destroy();
         
         Utility.ChangeEnabledColliders(ColliderList,false);
-        FadeTargetList[0].MeshRendererList.Add(LifeTimeGUI_MR);
-        _targetBreakAnimator.PlaySpinAndFadeOut(FadeTargetList);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinAndFadeOutPhase != BreakAnimator.SpinAndFadeOutPhase.Completed);
+        _targetPointObjectAnimator.PlaySpinAndFadeOut();
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinAndFadeOutPhase != PointObjectAnimator.SpinAndFadeOutPhase.Completed);
         Destroy(gameObject);
     }
 

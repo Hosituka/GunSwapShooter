@@ -9,7 +9,6 @@ public class BlueTarget : PointObject
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
-        ActivateMain();
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -36,9 +35,16 @@ public class BlueTarget : PointObject
              
         }
     }
-    public override void TimeOver()
+    public override void TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
+
+        Utility.ChangeEnabledColliders(ColliderList,false);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+        _targetIndicator.Destroy();
+        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
+
     }
 
     // Update is called once per frame
@@ -82,16 +88,15 @@ public class BlueTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater2.CurrentPointObjectGenerater2.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater2.CurrentPointObjectGenerater2.RemovePointObjectPos(PointObjectPos,2);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
         TargetTimeKeeper.NoticeDestruction(this);
+        _targetIndicator.Destroy();
 
-        List<TMPandMeshRenderer> disableTMPandMeshRenderers = FadeTargetList;
-        disableTMPandMeshRenderers[0].MeshRendererList.Add(LifeTimeGUI_MR);
-        _targetBreakAnimator.PlaySpinThenExplode(transform.position,Color.blue,12,disableTMPandMeshRenderers);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Explosion);
+        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12);
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
         Utility.ChangeEnabledColliders(ColliderList,false); 
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Completed);
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         Destroy(gameObject);
     }
 

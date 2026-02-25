@@ -339,14 +339,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd3bfe2b06c9e0c4caaec88b6192fea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeTargets:
-  - TextMeshProList:
-    - {fileID: 9205707338534196862}
-    MeshRendererList:
-    - {fileID: 3718275049283639912}
   Colliders:
   - {fileID: 7533087763697957356}
-  _targetBreakAnimator: {fileID: 5344964512461725474}
+  PointObjectAnimator: {fileID: 5344964512461725474}
+  _showAndHideTarget: []
   _needShotCountTMPro: {fileID: 9205707338534196862}
 --- !u!114 &5344964512461725474
 MonoBehaviour:
@@ -360,6 +356,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList:
+  - TextMeshProList:
+    - {fileID: 9205707338534196862}
+    MeshRendererList:
+    - {fileID: 3718275049283639912}
 --- !u!1001 &2618951849530443500
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 public class BluePlaneForLineUp : PlaneForLineUp
 {
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,7 +17,7 @@ public class BluePlaneForLineUp : PlaneForLineUp
             if (_isShow == true) return;
             _isShow = true;
             Utility.ChangeEnabledColliders(Colliders,true);
-            Utility.ChangeEnabledTMPorMeshRenderers(FadeTargets,true);
+            Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,true);
 
         }
         else
@@ -24,7 +25,7 @@ public class BluePlaneForLineUp : PlaneForLineUp
             if (_isShow == false) return;
             _isShow = false;
             Utility.ChangeEnabledColliders(Colliders,false);
-            Utility.ChangeEnabledTMPorMeshRenderers(FadeTargets,false);
+            Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,false);
         }
     }
     int _collisionCount;
@@ -59,8 +60,8 @@ public class BluePlaneForLineUp : PlaneForLineUp
     {
         _lineUpTarget.NoticeDestruction(this);
         Utility.ChangeEnabledColliders(Colliders,false);
-        _targetBreakAnimator.PlayFadeOut(FadeTargets,0.05f);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtFadeOutPhase != BreakAnimator.FadeOutPhase.Completed);
+        PointObjectAnimator.PlayFadeOut(0.05f);
+        yield return new WaitWhile(()=> PointObjectAnimator.CurtFadeOutPhase != PointObjectAnimator.FadeOutPhase.Completed);
         Destroy(gameObject);
     }
 

@@ -12,7 +12,6 @@ public class RedBlueTarget : PointObject
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
-        ActivateMain();
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -39,9 +38,17 @@ public class RedBlueTarget : PointObject
              
         }
     }
-    public override void TimeOver()
+    public override void TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(_currentPlaneCount);
+
+        Utility.ChangeEnabledColliders(ColliderList,false);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+        _targetIndicator.Destroy();
+        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
+
+
     }
 
     // Update is called once per frame
@@ -54,13 +61,13 @@ public class RedBlueTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater2.CurrentPointObjectGenerater2.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater2.CurrentPointObjectGenerater2.RemovePointObjectPos(PointObjectPos,2);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
         TargetTimeKeeper.NoticeDestruction(this);
+        _targetIndicator.Destroy();
 
-        FadeTargetList[0].MeshRendererList.Add(LifeTimeGUI_MR);
-        _targetBreakAnimator.PlaySpinThenFadeOut(FadeTargetList);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinThenFadeOutPhase != BreakAnimator.SpinThenFadeOutPhase.Completed);
+        _targetPointObjectAnimator.PlaySpinThenFadeOut();
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
         Destroy(gameObject);
     }
 

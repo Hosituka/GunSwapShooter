@@ -133,16 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 959cedd61607c40479dc3f91103e2ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeTargetList:
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 2359716859909294343}
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 8131345419210143638}
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 4601253703111328821}
   ColliderList:
   - {fileID: 5825367264500510947}
   - {fileID: 2946954506954838350}
@@ -150,7 +140,7 @@ MonoBehaviour:
   PointObjectCost: 1.5
   NextGeneratableCount: 1
   LifeTimeGUI_MR: {fileID: 2719259789206329820}
-  _targetBreakAnimator: {fileID: 8218732604354461611}
+  _targetPointObjectAnimator: {fileID: 8218732604354461611}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
@@ -171,6 +161,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList:
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 2359716859909294343}
+    - {fileID: 2719259789206329820}
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 8131345419210143638}
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 4601253703111328821}
 --- !u!1 &1483549742352590173
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,14 +300,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df8f76da3729244abc73f8d92ec0df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TMPorMeshRenderersList:
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 4601253703111328821}
   _redBlueTarget: {fileID: 8155312420884199902}
   _redColliderList:
   - {fileID: 2946954506954838350}
-  _targetBreakAnimator: {fileID: 3099644563080161675}
+  _pointObjectAnimator: {fileID: 0}
 --- !u!114 &3099644563080161675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList: []
 --- !u!1 &3852248990402425920
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,14 +458,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9dac2db6c181940ababae0f1241911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TMPorMeshRenderersList:
-  - TextMeshProList: []
-    MeshRendererList:
-    - {fileID: 8131345419210143638}
   _redBlueTarget: {fileID: 8155312420884199902}
   _blueColliderList:
   - {fileID: 5825367264500510947}
-  _targetBreakAnimator: {fileID: 5055126280341528540}
+  _pointObjectAnimator: {fileID: 0}
 --- !u!114 &5055126280341528540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,6 +474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tmpAndMeshRendererList: []
 --- !u!1 &6744574198055737477
 GameObject:
   m_ObjectHideFlags: 0

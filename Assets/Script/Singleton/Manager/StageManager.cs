@@ -56,7 +56,7 @@ public class StageManager : MonoBehaviour
                     GamePhase = GameState.end;
                     StageUI_manager.Current.ShowGameClearUI(_score,_accidentalShoot,_perfectCount,_greatCount,_goodCount,_overlookCount);
                     UnityroomApiClient.Instance.SendScore(ScoreBoardNumber, _score - _accidentalShoot, ScoreboardWriteMode.HighScoreDesc);
-                    PointObjectGenerater2.CurrentPointObjectGenerater2.enabled = false;
+                    PointObjectGenerater.Current.enabled = false;
                 }
                 StageUI_manager.Current.UpdateTimeText(Time);
                 break;

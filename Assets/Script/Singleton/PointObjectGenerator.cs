@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
-public class PointObjectGenerater2 : MonoBehaviour
+using UnityEngine.Pool;
+public class PointObjectGenerater : MonoBehaviour
 {
     public GameManager.Difficult DifficultAsGenerater;
     [Header("生成に関するパラメータ")]
@@ -38,14 +38,20 @@ public class PointObjectGenerater2 : MonoBehaviour
 
         completed,
     }
-    public static PointObjectGenerater2 CurrentPointObjectGenerater2;
+    public static PointObjectGenerater Current;
     public (int x, int y) PointObjectMapLength;
 
     float _currentBaseActivationDelay;
     bool[,] _pointObjectMap;
 
 
-
+    ObjectPool<BlueTarget> _blueTargetPool;
+    ObjectPool<RedTarget> _redTargetPool;
+    ObjectPool<MoveBlueTarget> _moveBlueTargetPool;
+    ObjectPool<MoveRedTarget> _moveRedTargetPool;
+    ObjectPool<GunSwapTarget>_gunSwapTargetPool;
+    ObjectPool<LineUpTarget> _lineUpTargetPool;
+    ObjectPool<ButtonMashingTarget>_buttonMashingTargetPool;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -55,10 +61,10 @@ public class PointObjectGenerater2 : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-        if (CurrentPointObjectGenerater2 == null)
+        if (Current == null)
         {
             Debug.Log(GameManager.Current.CurrentDifficult);
-            CurrentPointObjectGenerater2 = this;
+            Current = this;
         }
         else
         {
@@ -130,10 +136,10 @@ public class PointObjectGenerater2 : MonoBehaviour
             currentPointObjectObj.transform.SetParent(currentTimeKeeperObj.transform);
             PointObject currentPointObject = currentPointObjectObj.GetComponent<PointObject>();
             currentPointObject.PointObjectPos = new Vector2(pointObjectPos.x, pointObjectPos.y);
-            currentPointObject.TargetIndicator2 = StageUI_manager.Current.GenerateIndicatorToTarget(currentPointObjectObj.transform);
+            currentPointObject.SetIndicator(StageUI_manager.Current.GenerateIndicatorToTarget(currentPointObjectObj.transform));
             currentPointObject.TargetTimeKeeper = currentTimeKeeper;
-            currentTimeKeeper.TargetPointObjectList.Add(currentPointObject);
-            
+
+            currentTimeKeeper.PointObjectList.Add(currentPointObject);
             currentTimeKeeper.BaseActivationDelay = _currentBaseActivationDelay;
 
             generatedCount++;
@@ -142,6 +148,7 @@ public class PointObjectGenerater2 : MonoBehaviour
         {
             _isGenerationComplete = true;
         }
+        
     }
 
     // Update is called once per frame

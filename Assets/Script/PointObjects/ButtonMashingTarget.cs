@@ -8,14 +8,13 @@ public class ButtonMashingTarget : PointObject
     public int Hp;
     public int MaxHp = 7;
     public int MinHp = 4;
-    public TextMeshPro NeedShotCountText;
+    [SerializeField] TextMeshPro _needShotCountText;
     [SerializeField]bool _isDestruction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
         Hp = Random.Range(MinHp, MaxHp);
-        NeedShotCountText.SetText(Hp.ToString());
-        ActivateMain();
+        _needShotCountText.SetText(Hp.ToString());
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -42,9 +41,16 @@ public class ButtonMashingTarget : PointObject
              
         }
     }
-    public override void TimeOver()
+    public override void TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(Hp);
+
+        Utility.ChangeEnabledColliders(ColliderList,false);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+        _targetIndicator.Destroy();
+        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
+
     }
 
     // Update is called once per frame
@@ -62,7 +68,7 @@ public class ButtonMashingTarget : PointObject
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
             Hp--;
-            NeedShotCountText.text = Hp.ToString();
+            _needShotCountText.text = Hp.ToString();
             StageManager.Current.AddCombo();
             switch (TargetTimeKeeper.CurrentTaimingState)
             {
@@ -90,16 +96,15 @@ public class ButtonMashingTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater2.CurrentPointObjectGenerater2.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater2.CurrentPointObjectGenerater2.RemovePointObjectPos(PointObjectPos,2);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
         TargetTimeKeeper.NoticeDestruction(this);
-
-        List<TMPandMeshRenderer> disableTMPandMeshRenderer = FadeTargetList;
-        disableTMPandMeshRenderer[0].MeshRendererList.Add(LifeTimeGUI_MR);
-        _targetBreakAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17,disableTMPandMeshRenderer);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Explosion);
+        _targetIndicator.Destroy();
+        
+        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17);
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
         Utility.ChangeEnabledColliders(ColliderList,false);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Completed);
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         Destroy(gameObject);
     }
 

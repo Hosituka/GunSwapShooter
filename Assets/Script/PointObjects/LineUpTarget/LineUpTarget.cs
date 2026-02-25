@@ -5,11 +5,12 @@ using System.Collections.Generic;
 
 public class LineUpTarget : PointObject
 {
-    [Header("LineUpTargetの設定用プロパティ")]
+    [Header("LineUpTargetの設定必須項目")]
     public GameObject[] PlaneForLineUpPrefab;
     public int MaxPlaneCount = 7;
     public int MinPlaneCount = 5;
     [SerializeField] Transform _axisTr;
+
     [Header("表示用")]
     //次の的が来るまでに必要な時間
     [SerializeField] float _nextShowPlaneInterval;
@@ -39,7 +40,7 @@ public class LineUpTarget : PointObject
             _planeForLineUpList.Add(instancePlaneForLineUp);
             //PlaneForLineUpのゲームオブジェクトのコライダーとTMPorMeshRendererを取得。
             ColliderList.AddRange(instancePlaneForLineUp.Colliders);
-            FadeTargetList.AddRange(instancePlaneForLineUp.FadeTargets);
+            _targetPointObjectAnimator.AddFadeTargetList(instancePlaneForLineUp.PointObjectAnimator.GetFadeTargetList());
             instancePlaneForLineUp.Initialize(this);
             instancePlaneForLineUp.SetTransform(_axisTr,generatedCount * _pitchRotationStep);
             instancePlaneForLineUp.SetNeedShotCountText(_planeCount.ToString());
@@ -90,9 +91,16 @@ public class LineUpTarget : PointObject
             return 2;
         }
     }
-    public override void TimeOver()
+    public override void TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(_planeCount);
+
+        Utility.ChangeEnabledColliders(ColliderList,false);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+        _targetIndicator.Destroy();
+        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
+
     }
 
     // Update is called once per frame
@@ -121,14 +129,13 @@ public class LineUpTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater2.CurrentPointObjectGenerater2.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater2.CurrentPointObjectGenerater2.RemovePointObjectPos(PointObjectPos,2);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
         TargetTimeKeeper.NoticeDestruction(this);
+        _targetIndicator.Destroy();
 
-        List<TMPandMeshRenderer> disableTMPandMeshRenderers = FadeTargetList;
-        disableTMPandMeshRenderers[0].MeshRendererList.Add(LifeTimeGUI_MR);
-        _targetBreakAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18,disableTMPandMeshRenderers);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtSpinThenExplodePhase != BreakAnimator.SpinThenExplodePhase.Completed);
+        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         Destroy(gameObject);
     }
 

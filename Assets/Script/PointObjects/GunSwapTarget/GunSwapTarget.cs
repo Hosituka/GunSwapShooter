@@ -5,11 +5,10 @@ using UnityEngine;
 public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
 {
     [Header("GunSwapTargetの設定用プロパティ")]
-    public int Test;
+    [SerializeField]int temp;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
-        ActivateMain();
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -36,9 +35,17 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
              
         }
     }
-    public override void TimeOver()
+    public override void TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
+
+        Utility.ChangeEnabledColliders(ColliderList,false);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+        _targetIndicator.Destroy();
+        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
+
+
     }
 
     // Update is called once per frame
@@ -81,15 +88,14 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater2.CurrentPointObjectGenerater2.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater2.CurrentPointObjectGenerater2.RemovePointObjectPos(PointObjectPos,2);
+        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
         TargetTimeKeeper.NoticeDestruction(this);
+        _targetIndicator.Destroy();
 
         Utility.ChangeEnabledColliders(ColliderList,false);
-        List<TMPandMeshRenderer> disableTMPandMeshRenderers = FadeTargetList;
-        disableTMPandMeshRenderers[0].MeshRendererList.Add(LifeTimeGUI_MR);
-        _targetBreakAnimator.PlayExplosion(transform.position,Color.gray,12,disableTMPandMeshRenderers);
-        yield return new WaitWhile(()=> _targetBreakAnimator.CurtExplosionPhase != BreakAnimator.ExplosionPhase.Completed);
+        _targetPointObjectAnimator.PlayExplosion(transform.position,Color.gray,12);
+        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
         Destroy(gameObject);
     }
 
