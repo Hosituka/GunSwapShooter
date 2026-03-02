@@ -145,8 +145,8 @@ MonoBehaviour:
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
-  _redPlaneObj: {fileID: 1958289544519771092}
-  _bluePlaneObj: {fileID: 6704645443777255938}
+  _redPlane: {fileID: 5148238331805068657}
+  _bluePlane: {fileID: 6068874981845945152}
   IsLeftBluePlane: 0
 --- !u!114 &8218732604354461611
 MonoBehaviour:
@@ -172,6 +172,7 @@ MonoBehaviour:
     MeshRendererList:
     - {fileID: 4601253703111328821}
   _lifeTimeGUI_MR: {fileID: 2719259789206329820}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &1483549742352590173
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,6 +322,7 @@ MonoBehaviour:
     MeshRendererList:
     - {fileID: 4601253703111328821}
   _lifeTimeGUI_MR: {fileID: 0}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &3852248990402425920
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,6 +485,7 @@ MonoBehaviour:
     MeshRendererList:
     - {fileID: 8131345419210143638}
   _lifeTimeGUI_MR: {fileID: 0}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &6744574198055737477
 GameObject:
   m_ObjectHideFlags: 0

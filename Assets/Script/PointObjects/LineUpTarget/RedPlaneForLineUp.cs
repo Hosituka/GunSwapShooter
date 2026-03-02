@@ -2,31 +2,9 @@ using UnityEngine;
 using System.Collections;
 
 public class RedPlaneForLineUp : PlaneForLineUp
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+{  
+    protected override void OnUpdate()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        _dot = Vector3.Dot(transform.right, _lineUpTargetTr.right);
-        if (_dot > 0 + 0.001)
-        {
-            if (_isShow == true) return;
-            _isShow = true;
-            Utility.ChangeEnabledColliders(Colliders,true);
-            Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,true);
-        }
-        else
-        {
-            if (_isShow == false) return;
-            _isShow = false;
-            Utility.ChangeEnabledColliders(Colliders,false);
-            Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,false);
-        }
 
     }
     int _collisionCount;
@@ -50,7 +28,7 @@ public class RedPlaneForLineUp : PlaneForLineUp
             else
             {StageManager.Current.AddScore(0.8f,TimingState.GoodTiming);}
 
-            StartCoroutine(BreakCoroutine());
+            StartBreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
@@ -59,12 +37,9 @@ public class RedPlaneForLineUp : PlaneForLineUp
     }
     protected override IEnumerator BreakCoroutine()
     {
-        _lineUpTarget.NoticeDestruction(this);
-        Utility.ChangeEnabledColliders(Colliders,false);
-
         PointObjectAnimator.PlayFadeOut(0.05f);
         yield return new WaitWhile(()=> PointObjectAnimator.CurtFadeOutPhase != PointObjectAnimator.FadeOutPhase.Completed);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
 }

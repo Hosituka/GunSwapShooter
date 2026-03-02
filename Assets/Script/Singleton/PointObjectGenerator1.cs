@@ -1,4 +1,3 @@
-using NUnit.Framework.Internal;
 using UnityEngine;
 using UnityEngine.Pool;
 //stage1に対応するPointObjectGeneraterのクラス
@@ -9,9 +8,9 @@ public class PointObjectGenerator1 : PointObjectGenerater
     [Header("###次の的の生成個数が1なインスタンスを入れる箱(prefab経由)")]
     [SerializeField]BlueTarget _blueTarget1;
     [SerializeField]RedTarget _redTarget1;
-    [SerializeField]RedBlueTarget _redBlueTarget;
-    [SerializeField]RedBlueTarget _blueRedTarget;
-    [SerializeField]ButtonMashingTarget _buttonMashingTarget;
+    [SerializeField]RedBlueTarget _redBlueTarget1;
+    [SerializeField]RedBlueTarget _blueRedTarget1;
+    [SerializeField]ButtonMashingTarget _buttonMashingTarget1;
     [Header("###次の的の生成個数が2なインスタンスを入れる箱(prefab経由)")]
     [SerializeField]BlueTarget _blueTarget2;
     [SerializeField]RedTarget _redTarget2;
@@ -19,9 +18,9 @@ public class PointObjectGenerator1 : PointObjectGenerater
     //#次の的の生成個数が1なPointObjectの具象クラスのプール
     ObjectPool<BlueTarget> _blueTargetPool1;
     ObjectPool<RedTarget> _redTargetPool1;
-    ObjectPool<RedBlueTarget> _redBlueTargetPool;
-    ObjectPool<RedBlueTarget> _blueRedTargetPool;
-    ObjectPool<ButtonMashingTarget>_buttonMashingTargetPool;
+    ObjectPool<RedBlueTarget> _redBlueTargetPool1;
+    ObjectPool<RedBlueTarget> _blueRedTargetPool1;
+    ObjectPool<ButtonMashingTarget>_buttonMashingTargetPool1;
     //#次の的の生成個数が2なPointObjectの具象クラスのプール
 
     ObjectPool<BlueTarget> _blueTargetPool2;
@@ -30,22 +29,33 @@ public class PointObjectGenerator1 : PointObjectGenerater
 
     protected override void SettingObjectPool()
     {
-        Debug.Log("Test");
         _timeKeeperPool = ObjectPoolManager.Current.GetObjectPool<TimeKeeper>(_timeKeeper,_objectPoolManagerTr,7,15);
         switch (_difficultAsGenerater)
         {
+            case GameManager.Difficult.easy:
+                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,_objectPoolManagerTr,10,15);
+                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,_objectPoolManagerTr,10,15);
+                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,_objectPoolManagerTr,5,10);
+                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,_objectPoolManagerTr,5,10);
+                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,_objectPoolManagerTr,5,10);
+            break;
             case GameManager.Difficult.normal:
                 _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,_objectPoolManagerTr,10,15);
-
                 _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,_objectPoolManagerTr,10,15);
+                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,_objectPoolManagerTr,5,10);
+                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,_objectPoolManagerTr,5,10);
+                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,_objectPoolManagerTr,5,10);
+            break;
+            case GameManager.Difficult.hard:
+                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,_objectPoolManagerTr,10,15);
+                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,_objectPoolManagerTr,10,15);
+                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,_objectPoolManagerTr,5,10);
+                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,_objectPoolManagerTr,5,10);
+                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,_objectPoolManagerTr,5,10);
 
-                _redBlueTargetPool = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget,_objectPoolManagerTr,5,10);
 
-                _blueRedTargetPool = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget,_objectPoolManagerTr,5,10);
-
-                _buttonMashingTargetPool = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget,_objectPoolManagerTr,5,10);
-
-
+                _redTargetPool2 =  ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget2,_objectPoolManagerTr,5,10);
+                _blueTargetPool2 =  ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget2,_objectPoolManagerTr,5,10);
             break;
         }
     }
@@ -67,12 +77,12 @@ public class PointObjectGenerator1 : PointObjectGenerater
                 break;
             case RedBlueTarget redBlueTarget:
                 if (redBlueTarget.IsLeftBluePlane)
-                {return _blueRedTargetPool.Get();}
+                {return _blueRedTargetPool1.Get();}
                 if (!redBlueTarget.IsLeftBluePlane)
-                {return _redBlueTargetPool.Get();}
+                {return _redBlueTargetPool1.Get();}
                 break;
             case ButtonMashingTarget:
-                return _buttonMashingTargetPool.Get();
+                return _buttonMashingTargetPool1.Get();
         }
         Debug.LogError("ステージ1では登場する事が想定されていない、PointObjectの具象クラスに属する物が渡されました。");
         return null;

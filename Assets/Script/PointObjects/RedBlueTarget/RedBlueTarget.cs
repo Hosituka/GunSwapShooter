@@ -5,8 +5,8 @@ using System.Collections;
 public class RedBlueTarget : PointObject,IPoolable<RedBlueTarget>
 {
     [Header("RedBlueTargetの設定用プロパティ")]
-    [SerializeField]GameObject _redPlaneObj;
-    [SerializeField]GameObject _bluePlaneObj;
+    [SerializeField]RedPlane _redPlane;
+    [SerializeField]BluePlane _bluePlane;
     //PointObjectGenerator1or2側が左右の順で赤青の的か否かの判断するための奴
     public bool IsLeftBluePlane;
     //レッドプレーン＋ブループレンの個数
@@ -72,8 +72,8 @@ public class RedBlueTarget : PointObject,IPoolable<RedBlueTarget>
     public void OnRelease()
     {
         BaseOnRelease();
-        _redPlaneObj.SetActive(true);
-        _bluePlaneObj.SetActive(true);
+        _redPlane.Reset();
+        _bluePlane.Reset();
         _currentPlaneCount = 2;
     }
 }

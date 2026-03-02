@@ -5,17 +5,6 @@ public class BluePlane : MonoBehaviour
     [SerializeField]RedBlueTarget _redBlueTarget;
     [SerializeField]Collider[] _blueColliderList;
     [SerializeField]PointObjectAnimator _pointObjectAnimator;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     int _collisionCount;
     void OnCollisionEnter(Collision collision)
     {
@@ -59,7 +48,12 @@ public class BluePlane : MonoBehaviour
             _pointObjectAnimator.PlayExplosion(transform.position,Color.blue,14);
             yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
             gameObject.SetActive(false);
-            _pointObjectAnimator.Reset();
         }
+    }
+    public void Reset()
+    {
+        Utility.ChangeEnabledColliders(_blueColliderList,true);
+        _pointObjectAnimator.Reset();
+        gameObject.SetActive(true);
     }
 }

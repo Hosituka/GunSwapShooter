@@ -69,6 +69,7 @@ public abstract class PointObject : MonoBehaviour
             Utility.ChangeEnabledColliders(ColliderList,false);
             PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
             PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+            TimeKeeper.NoticeUnLink(this);
             Indicator.Destroy();
             yield break;
         }

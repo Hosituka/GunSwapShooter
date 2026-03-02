@@ -13,7 +13,7 @@ public class PointObjectAnimator : MonoBehaviour
     [SerializeField] MeshRenderer _lifeTimeGUI_MR;
     [Header("#表示用")]
     public ExplosionPhase CurtExplosionPhase{private set;get;}
-    public SpinThenExplodePhase CurtSpinThenExplodePhase{private set;get;} 
+    [field:SerializeField]public SpinThenExplodePhase CurtSpinThenExplodePhase{private set;get;} 
     public SpinAndFadeOutPhase CurtSpinAndFadeOutPhase{private set;get;}
     public SpinThenFadeOutPhase CurtSpinThenFadeOutPhase{private set;get;}   
     public FadeOutPhase CurtFadeOutPhase{private set; get;}
@@ -29,7 +29,7 @@ public class PointObjectAnimator : MonoBehaviour
             ExplosionEffect explosionEffect = StageUI_manager.Current.GenerateExplosionEffect(explosionEffectPos,explosionEffectColor,explosionEffectSize);
             Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
             CurtExplosionPhase = ExplosionPhase.Explosion;
-            yield return new WaitWhile(() => explosionEffect.CurrentAnimPhase != ExplosionEffect.AnimPhase.PlayingExplosion);
+            yield return new WaitWhile(() => explosionEffect.CurrentAnimPhase != ExplosionEffect.AnimPhase.Exploding);
             CurtExplosionPhase = ExplosionPhase.Completed;
             yield return null;
         }
@@ -51,14 +51,14 @@ public class PointObjectAnimator : MonoBehaviour
             }
             ExplosionEffect explosionEffect = StageUI_manager.Current.GenerateExplosionEffect(explosionEffectPos,explosionEffectColor,explosionEffectSize);
             Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
-            CurtSpinThenExplodePhase = SpinThenExplodePhase.Explosion;
+            CurtSpinThenExplodePhase = SpinThenExplodePhase.Exploding;
             yield return new WaitWhile(() => explosionEffect.CurrentAnimPhase != ExplosionEffect.AnimPhase.Completed);
             CurtSpinThenExplodePhase = SpinThenExplodePhase.Completed;
         }
 
     }
     public enum SpinThenExplodePhase
-    {NotPlayed,Spin,Explosion,Completed,}
+    {NotPlayed,Spin,Exploding,Completed,}
 
     public void PlaySpinAndFadeOut()
     {
@@ -141,15 +141,13 @@ public class PointObjectAnimator : MonoBehaviour
     {
         StartCoroutine(ActivationTimer());
         IEnumerator ActivationTimer(){
-            MaterialPropertyBlock test = new MaterialPropertyBlock();
             for(float playback = 0;playback < duration; playback += Time.deltaTime)
             {
-                test.SetFloat("_outerFrameAnim",playback / duration);
-                _lifeTimeGUI_MR.SetPropertyBlock(test);
+                _propBlock.SetFloat("_outerFrameAnim",playback / duration);
+                _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
                 yield return null;
             }
-            _lifeTimeGUI_MR.GetPropertyBlock(test);
-            Debug.Log(test);
+            _lifeTimeGUI_MR.GetPropertyBlock(_propBlock);
         }
     }
 
@@ -222,14 +220,16 @@ public class PointObjectAnimator : MonoBehaviour
     {
         ResetPhase();
         ResetPropBlock();
+        ResetEnabled();
         //#各アニメーションの進捗を表すenumのリセット
         void ResetPhase()
         {
             CurtExplosionPhase = ExplosionPhase.NotPlayed;
-            CurtFadeOutPhase = FadeOutPhase.NotPlayed;
             CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.NotPlayed;
             CurtSpinThenExplodePhase = SpinThenExplodePhase.NotPlayed;
             CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.NotPlayed;
+            CurtFadeOutPhase = FadeOutPhase.NotPlayed;
+            CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.NotPlayed;
             CurtTimeOverAnimPhase = TimeOverAnimPhase.NotPlayed;
 
         }
@@ -239,6 +239,9 @@ public class PointObjectAnimator : MonoBehaviour
                 tMPorMeshRenderer.SetFadeOfMeshRenderers(0);
                 tMPorMeshRenderer.SetAlphaOfTextMeshPros(1);
             }
+        }
+        void ResetEnabled(){
+            Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,true);
         }
     }
     void Awake()

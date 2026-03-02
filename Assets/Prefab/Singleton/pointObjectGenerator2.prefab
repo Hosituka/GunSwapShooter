@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1245945917111376567}
-  - component: {fileID: 2944771574146421927}
+  - component: {fileID: -4872281284517521104}
   m_Layer: 0
   m_Name: pointObjectGenerator2
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2944771574146421927
+--- !u!114 &-4872281284517521104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,21 +41,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 2469371859242662038}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44a01f2ee3e13e647ab0d2e9ab3f046d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c8e2f423c7a4fe46baeed2c3f91a4ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _difficultAsGenerater: 0
+  _difficultAsGenerater: 1
   DistanceForGenerate: 40
-  GenerateHalfYawAngle: 40
-  GenerateYawStep: 15
-  GenerateHalfPitchAngle: 30
+  GenerateHalfYawAngle: 80
+  GenerateYawStep: 20
+  GenerateHalfPitchAngle: 20
   GeneratePitchStep: 20
-  PerlinNoiseScale: 0
-  PerlinNoiseMagni: 0
+  PerlinNoiseScale: 0.01
+  PerlinNoiseMagni: 1
   MaxPointObjectCost: 10
-  Bpm: 0
-  _pointObjects: []
-  _timeKeeper: {fileID: 0}
+  Bpm: 75
+  _pointObjects:
+  - {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
+  - {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
+  - {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
+  - {fileID: 3274268146980991022, guid: 02b7b49e8cf3f8a46a60db1f04b0c18f, type: 3}
+  - {fileID: 3274268146980991022, guid: 02b7b49e8cf3f8a46a60db1f04b0c18f, type: 3}
+  - {fileID: 3274268146980991022, guid: 02b7b49e8cf3f8a46a60db1f04b0c18f, type: 3}
+  - {fileID: 6957874079317351911, guid: ec590d9fe0f8e4a46a1b1bdb0db1f786, type: 3}
+  - {fileID: 6957874079317351911, guid: ec590d9fe0f8e4a46a1b1bdb0db1f786, type: 3}
+  - {fileID: 6957874079317351911, guid: ec590d9fe0f8e4a46a1b1bdb0db1f786, type: 3}
+  - {fileID: 2827848080310791178, guid: a9878bdb5d005cb498811fbba1f1bc9e, type: 3}
+  - {fileID: 8498679007747936448, guid: 2eb220bf8d4f9ae41bcdb4f06018e325, type: 3}
+  - {fileID: 8155312420884199902, guid: f8cd2643650d9d84c844fb926eb6358b, type: 3}
+  - {fileID: 1672523945855969856, guid: 06aee36c77744a8499c6ab0932325663, type: 3}
+  - {fileID: 6367512014505706332, guid: 0a4f0efe4a1ab834f8926f299be9b887, type: 3}
+  _timeKeeper: {fileID: 4873629222032560189, guid: 0c37aa5e18ce8304cbe7fe17e7faf759, type: 3}
   _isGenerationComplete: 0
   _fourthNote: 0
   _eighthNote: 0
@@ -63,10 +77,15 @@ MonoBehaviour:
   _perlinNoiseSeed: 0
   _generatableCount: 1
   _sumPointObjectCost: 0
-  _blueTarget1: {fileID: 0}
-  _redTarget1: {fileID: 0}
-  _redBlueTarget: {fileID: 0}
-  _blueRedTarget: {fileID: 0}
-  _buttonMashingTarget: {fileID: 0}
-  _blueTarget2: {fileID: 0}
-  _redTarget2: {fileID: 0}
+  _blueTarget1: {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
+  _redTarget1: {fileID: 3274268146980991022, guid: 02b7b49e8cf3f8a46a60db1f04b0c18f, type: 3}
+  _redBlueTarget1: {fileID: 8155312420884199902, guid: f8cd2643650d9d84c844fb926eb6358b, type: 3}
+  _blueRedTarget1: {fileID: 1672523945855969856, guid: 06aee36c77744a8499c6ab0932325663, type: 3}
+  _buttonMashingTarget1: {fileID: 6676412112430940289, guid: b1887ea6fd0499b49a7c11f6924f2d9b, type: 3}
+  _gunSwapTarget1: {fileID: 6957874079317351911, guid: ec590d9fe0f8e4a46a1b1bdb0db1f786, type: 3}
+  _moveBlueTarget1: {fileID: 2827848080310791178, guid: a9878bdb5d005cb498811fbba1f1bc9e, type: 3}
+  _moveRedTarget1: {fileID: 8498679007747936448, guid: 2eb220bf8d4f9ae41bcdb4f06018e325, type: 3}
+  _lineUpTarget1: {fileID: 6367512014505706332, guid: 0a4f0efe4a1ab834f8926f299be9b887, type: 3}
+  _blueTarget2: {fileID: 1869257154555620567, guid: ff29a03026ef81d4faf9eddea8720786, type: 3}
+  _redTarget2: {fileID: 3274268146980991022, guid: c8bc858c83fd49e40bcfa74ec44b1b11, type: 3}
+  _gunSwapTarget2: {fileID: 6957874079317351911, guid: 0996ff6d1cb62f34f90e8d97c12d0fcb, type: 3}

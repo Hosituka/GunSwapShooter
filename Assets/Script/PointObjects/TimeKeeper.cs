@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Drawing;
+using UnityEngine.Pool;
 
 //ある時刻におけるpointObject群のライフサイクルを管理するクラスである。pointObjectGeneraterとの連携も行っている。
 public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
@@ -103,7 +104,7 @@ public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
             }
         }
         void AllDeactivatePointObject(float deactivateAnimDuration){
-            foreach(PointObject pointObject in PointObjectList){
+            foreach(PointObject pointObject in PointObjectList.ToArray()){
                 if(pointObject == null) continue;
                 pointObject.PlayTimeOver(deactivateAnimDuration);
             }
@@ -130,12 +131,7 @@ public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
         _finalActivationDelay = 0;
         CurrentTargetState = TargetState.Preparing;
         CurrentTaimingState = TimingState.GoodTiming;
-        foreach(PointObject pointObject in PointObjectList){
-            if(pointObject == null) continue;
-            pointObject.transform.SetParent(ObjectPoolManager.Current.transform);
-            pointObject.TimeKeeper = null;
-        }
-        PointObjectList.Clear();
+        transform.SetParent(ObjectPoolManager.Current.transform);
     }
 
 }

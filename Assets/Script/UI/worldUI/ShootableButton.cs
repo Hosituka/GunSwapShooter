@@ -102,7 +102,7 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
     IEnumerator InvokeCoroutine()
     {
         _breakAnimator.PlaySpinThenExplode(transform.position,Color.magenta,14);
-        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(_colliderArray,false);
         yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onShoot.Invoke();

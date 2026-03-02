@@ -27,27 +27,7 @@ public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
-        _planeCount = Random.Range(MinPlaneCount, MaxPlaneCount + 1);
-        PlaneForLineUp instancePlaneForLineUp;
-        _setPlaneArray = new GameObject[_planeCount];
-        _planeForLineUpList = new List<PlaneForLineUp>();
-        _needShotCountTexts = new TextMeshPro[_planeCount];
 
-        _pitchRotationStep = 360f / _planeCount;
-        for (int generatedCount = 0; generatedCount < _planeCount; generatedCount++)
-        {
-            GameObject generatePlanePrefab = PlaneForLineUpPrefab[Random.Range(0, PlaneForLineUpPrefab.Length)];
-            GameObject generatedPlaneObj = Instantiate(generatePlanePrefab, generatePlanePrefab.transform.position, _axisTr.rotation);
-            instancePlaneForLineUp = generatedPlaneObj.GetComponent<PlaneForLineUp>();
-            _planeForLineUpList.Add(instancePlaneForLineUp);
-            //PlaneForLineUpのゲームオブジェクトのコライダーとTMPorMeshRendererを取得。
-            ColliderList.AddRange(instancePlaneForLineUp.Colliders);
-            _pointObjectAnimator.AddFadeTargetList(instancePlaneForLineUp.PointObjectAnimator.GetFadeTargetList());
-            instancePlaneForLineUp.Initialize(this);
-            instancePlaneForLineUp.SetTransform(_axisTr,generatedCount * _pitchRotationStep);
-            instancePlaneForLineUp.SetNeedShotCountText(_planeCount.ToString());
-            _setPlaneArray[generatedCount] = generatedPlaneObj;
-        }
 
         switch (GameManager.Current.CurrentDifficult)
         {
@@ -79,18 +59,6 @@ public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
                 Debug.LogError("未対応の難易度が選択されています。");
             return new InitializeResult();
              
-        }
-    }
-    public int hoge()
-    {
-        int y = Random.Range(0,2);
-        if(y == 1)
-        {
-            return 1;
-        }
-        else
-        {
-            return 2;
         }
     }
     protected override IEnumerator TimeOver(float animDuration)
@@ -135,6 +103,28 @@ public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
     {
         BaseOnCreate();
         _onRelease = onRelease;
+
+        _planeCount = Random.Range(MinPlaneCount, MaxPlaneCount + 1);
+        PlaneForLineUp instancePlaneForLineUp;
+        _setPlaneArray = new GameObject[_planeCount];
+        _planeForLineUpList = new List<PlaneForLineUp>();
+        _needShotCountTexts = new TextMeshPro[_planeCount];
+
+        _pitchRotationStep = 360f / _planeCount;
+        for (int generatedCount = 0; generatedCount < _planeCount; generatedCount++)
+        {
+            GameObject generatePlanePrefab = PlaneForLineUpPrefab[Random.Range(0, PlaneForLineUpPrefab.Length)];
+            GameObject generatedPlaneObj = Instantiate(generatePlanePrefab, generatePlanePrefab.transform.position, _axisTr.rotation);
+            instancePlaneForLineUp = generatedPlaneObj.GetComponent<PlaneForLineUp>();
+            _planeForLineUpList.Add(instancePlaneForLineUp);
+            //PlaneForLineUpのゲームオブジェクトのコライダーとTMPorMeshRendererを取得。
+            ColliderList.AddRange(instancePlaneForLineUp.Colliders);
+            _pointObjectAnimator.AddFadeTargetList(instancePlaneForLineUp.PointObjectAnimator.GetFadeTargetList());
+            instancePlaneForLineUp.Initialize(this);
+            instancePlaneForLineUp.SetTransform(_axisTr,generatedCount * _pitchRotationStep);
+            instancePlaneForLineUp.SetNeedShotCountText(_planeCount.ToString());
+            _setPlaneArray[generatedCount] = generatedPlaneObj;
+        }
     }
     public void OnRelease()
     {

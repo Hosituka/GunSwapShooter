@@ -8,17 +8,6 @@ public class RedPlane : MonoBehaviour
 
     [SerializeField]Collider[] _redColliderList;
     [SerializeField]PointObjectAnimator _pointObjectAnimator;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     int _collisionCount;
     void OnCollisionEnter(Collision collision)
     {
@@ -62,8 +51,13 @@ public class RedPlane : MonoBehaviour
             _pointObjectAnimator.PlayExplosion(transform.position,Color.red,14);
             yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
             gameObject.SetActive(false);
-            _pointObjectAnimator.Reset();
         }
+    }
+    public void Reset()
+    {
+        Utility.ChangeEnabledColliders(_redColliderList,true);
+        _pointObjectAnimator.Reset();
+        gameObject.SetActive(true);
     }
 
 }

@@ -80,7 +80,7 @@ public class RedTarget : PointObject,IPoolable<RedTarget>
     protected override IEnumerator BreakCoroutine()
     {
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.red,12);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(ColliderList,false); 
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onRelease.Invoke(this);

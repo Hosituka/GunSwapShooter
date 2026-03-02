@@ -10,6 +10,7 @@ public class BlueTarget : PointObject,IPoolable<BlueTarget>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
+        Debug.Log("プールから引っ張り出されました");
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -38,6 +39,7 @@ public class BlueTarget : PointObject,IPoolable<BlueTarget>
     }
     protected override IEnumerator TimeOver(float animDuration)
     {
+        Debug.Log("Timeoverが実行されました。");
         StageManager.Current.AddOverlookCount(1);
         _pointObjectAnimator.PlayTimeOverAnim(animDuration);
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
@@ -81,7 +83,7 @@ public class BlueTarget : PointObject,IPoolable<BlueTarget>
     protected override IEnumerator BreakCoroutine()
     {
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(ColliderList,false); 
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onRelease.Invoke(this);

@@ -298,7 +298,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_Name
-      value: pointObjectGeneraterAsEasy
+      value: pointObjectGenerater1AsEasy
       objectReference: {fileID: 0}
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_IsActive
@@ -575,12 +575,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_Name
-      value: pointObjectGeneraterAsHard
+      value: pointObjectGenerater1AsHard
       objectReference: {fileID: 0}
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: GenerateHalfYawAngle
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: _difficultAsGenerater
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: '_pointObjects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1869257154555620567, guid: ff29a03026ef81d4faf9eddea8720786, type: 3}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: '_pointObjects.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3274268146980991022, guid: c8bc858c83fd49e40bcfa74ec44b1b11, type: 3}
     - target: {fileID: 6034824532322469782, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: Bpm
       value: 90
@@ -873,10 +889,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_Name
-      value: pointObjectGeneraterAsNormal
+      value: pointObjectGenerater1AsNormal
       objectReference: {fileID: 0}
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: GenerateHalfYawAngle
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: _difficultAsGenerater
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6034824532322469782, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}

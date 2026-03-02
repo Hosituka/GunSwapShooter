@@ -58,15 +58,16 @@ public abstract class PointObjectGenerater : MonoBehaviour
         }
 
         Current = this;
-        //#各objectPoolの設定
-        SettingObjectPool();
-        //その他
+        //#その他
         _playerTr = Player.Current.transform;
         _objectPoolManagerTr = ObjectPoolManager.Current.transform;
         PointObjectMapLength.x = (GenerateHalfYawAngle / GenerateYawStep * 2) + 1;
         PointObjectMapLength.y = (GenerateHalfPitchAngle / GeneratePitchStep * 2) + 1;
         _pointObjectMap = new bool[PointObjectMapLength.x, PointObjectMapLength.y];
         SetNotes();
+        //#各objectPoolの設定
+        SettingObjectPool();
+        //#最初の生成の実行
         StartCoroutine(StayFadeIn());
         IEnumerator StayFadeIn()
         {
@@ -106,10 +107,10 @@ public abstract class PointObjectGenerater : MonoBehaviour
 
         while (generatedCount < _generatableCount)
         {
-            GameObject pointObjectObj = GetGeneratablePointObjectObj();
-            if(pointObjectObj == null){Debug.Log("生成予算オーバーです。");break;}
             Vector2Int pointObjectPos = SearchPointObjectPos();
             if(pointObjectPos == -Vector2Int.one){Debug.Log("生成可能な場所がありません");break;}
+            GameObject pointObjectObj = GetGeneratablePointObjectObj();
+            if(pointObjectObj == null){Debug.Log("生成予算オーバーです。");break;}
             
             if (timeKeeper == null)
             {

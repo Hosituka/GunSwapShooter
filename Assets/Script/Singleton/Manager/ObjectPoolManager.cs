@@ -12,14 +12,12 @@ public class ObjectPoolManager : MonoBehaviour
     bool _isPrewarming;
     void Awake()
     {
-        if (Current == null)
-        {
-            Current = this;
-        }
-        else
+        if (Current != null)
         {
             Destroy(this.gameObject);
+            return;
         }
+        Current = this;
     }
     public ObjectPool<T> GetObjectPool<T>(T prefab,Transform parentTr,int defaultCapacityOfPool,int maxSizeOfPool)where T:Component,IPoolable<T>
     {
@@ -67,9 +65,10 @@ public class ObjectPoolManager : MonoBehaviour
             // プールに返す時の処理
             actionOnRelease: (temp)=>
             {                
+                if(!_isPrewarming)
+                {temp.OnRelease();}
+
                 temp.gameObject.SetActive(false);
-                if(_isPrewarming) return;
-                temp.OnRelease();
 
             }, 
             actionOnDestroy: (temp)=>Destroy(temp.gameObject), // プールが溢れた時に破棄する処理
@@ -104,5 +103,8 @@ public interface IPoolable<T> where T : Component
     //ObjectPoolの在庫を追加するために走る処理
     void OnCreate(Action<T> onRelease);
     //IPoolableを実装している物が、ObjectPoolに返すときに走る処理
-    void OnRelease();
+    void OnRelease()
+    {
+        
+    }
 }

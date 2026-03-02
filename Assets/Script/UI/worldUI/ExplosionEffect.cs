@@ -1,16 +1,11 @@
 using System;
 using System.Collections;
-using System.IO.Compression;
 using UnityEngine;
 //StageUI_managerクラスによりプールされている∧的の破壊を表すエフェクトの振る舞いが書かれているクラス
 public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
 {
     public enum AnimPhase
-    {
-        NotPlayed,
-        PlayingExplosion,
-        Completed,
-    }
+    {NotPlayed,Exploding,Completed,}
 
     public float FadeInTime;
     public float ClippingTime;
@@ -29,7 +24,7 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
         {
             float playFadeInTime = 0;
             float playClippingTime = 0;
-            CurrentAnimPhase = AnimPhase.PlayingExplosion;
+            CurrentAnimPhase = AnimPhase.Exploding;
             _propBlock.SetColor("_BaseColor",BaseColor * Intensity);
             _propBlock.SetFloat("_clipping",0);
             while(playFadeInTime < FadeInTime)
@@ -54,6 +49,7 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
         }
         void Initialize(Vector3 pos,Color color,float size)
         {
+            CurrentAnimPhase = AnimPhase.NotPlayed; 
             transform.position = pos;
             transform.rotation = Quaternion.LookRotation(pos);
             transform.localScale = new Vector3(size,size,1);
@@ -66,9 +62,4 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
         _onRelease = onRelease;
         _propBlock = new MaterialPropertyBlock();
     }
-    public void OnRelease()
-    {
-        CurrentAnimPhase = AnimPhase.NotPlayed; 
-    }
-    // Update is called once per frame
 }

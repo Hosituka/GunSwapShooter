@@ -33,8 +33,41 @@ public abstract class PlaneForLineUp : MonoBehaviour
     {
         _needShotCountTMPro.SetText(text);
     }
+    void Update()
+    {
+        BaseUpdate();
+        OnUpdate();
+        void BaseUpdate()
+        {
+            _dot = Vector3.Dot(transform.right, _lineUpTargetTr.right);
+            if (_dot > 0 + 0.001)
+            {
+                if (_isShow == true) return;
+                _isShow = true;
+                Utility.ChangeEnabledColliders(Colliders,true);
+                Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,true);
+            }
+            else
+            {
+                if (_isShow == false) return;
+                _isShow = false;
+                Utility.ChangeEnabledColliders(Colliders,false);
+                Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,false);
+            }
+        }
+    }
+    protected abstract void OnUpdate();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    protected void StartBreakCoroutine()
+    {
+        BaseBreakProcess();
+        StartCoroutine(BreakCoroutine());
+        void BaseBreakProcess()
+        {
+            _lineUpTarget.NoticeDestruction(this);
+            Utility.ChangeEnabledColliders(Colliders,false);
+        }
+    }
     abstract protected IEnumerator BreakCoroutine();
 
 }

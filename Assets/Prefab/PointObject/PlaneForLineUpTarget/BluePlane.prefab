@@ -289,7 +289,11 @@ MonoBehaviour:
   Colliders:
   - {fileID: 8611313848719177146}
   PointObjectAnimator: {fileID: 4689146308663108968}
-  _showAndHideTarget: []
+  _showAndHideTarget:
+  - TextMeshProList:
+    - {fileID: 8348621853641556997}
+    MeshRendererList:
+    - {fileID: 4211591322628037400}
   _needShotCountTMPro: {fileID: 8348621853641556997}
 --- !u!114 &4689146308663108968
 MonoBehaviour:
@@ -308,6 +312,8 @@ MonoBehaviour:
     - {fileID: 8348621853641556997}
     MeshRendererList:
     - {fileID: 4211591322628037400}
+  _lifeTimeGUI_MR: {fileID: 0}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &5937145970179934580
 GameObject:
   m_ObjectHideFlags: 0

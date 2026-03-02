@@ -17,12 +17,15 @@ public class Bullet : MonoBehaviour,IPoolable<Bullet>
     [SerializeField] float _minAlpha = 0.3f;
 
     Action<Bullet> _onRelease;
+    bool _isExplosion;
     void FixedUpdate()
     {
+        if(_isExplosion) return;
         _rb.linearVelocity = transform.forward * _speed;
     }
     void Update()
     {
+        if(_isExplosion) return;
         if(transform.position.magnitude >= 500)
         {
             _onRelease.Invoke(this);
@@ -31,13 +34,12 @@ public class Bullet : MonoBehaviour,IPoolable<Bullet>
     
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("銃弾と衝突しました",collision.gameObject);
         StartCoroutine(Explosion());
         IEnumerator Explosion()
         {
+            _isExplosion = true;
             _explosion.Play();
             _meshRenderer.enabled = false;
-            _boxCollider.enabled = false;
             _rb.isKinematic = true;
             yield return new WaitWhile(() => _explosion.isPlaying == true);
             _onRelease.Invoke(this);
@@ -49,9 +51,8 @@ public class Bullet : MonoBehaviour,IPoolable<Bullet>
     }
     public void OnRelease()
     {
-        _rb.linearVelocity = Vector3.zero;
+        _isExplosion = false;
         _meshRenderer.enabled = true;
-        _boxCollider.enabled = true;
         _rb.isKinematic = false;
         SetTrail();
         void SetTrail()

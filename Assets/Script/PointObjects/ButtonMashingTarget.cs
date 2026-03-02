@@ -61,7 +61,7 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
             _hp--;
-            _needShotCountText.text = _hp.ToString();
+            _needShotCountText.SetText(_hp.ToString());
             StageManager.Current.AddCombo();
             switch (TimeKeeper.CurrentTaimingState)
             {
@@ -90,9 +90,10 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
     protected override IEnumerator BreakCoroutine()
     {        
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(ColliderList,false);
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        Debug.Log("test");
         _onRelease.Invoke(this);
     }
     public void OnCreate(Action<ButtonMashingTarget> onRelease)
