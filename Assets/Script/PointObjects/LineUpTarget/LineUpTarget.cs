@@ -2,8 +2,9 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
-public class LineUpTarget : PointObject
+using System;
+using Random = UnityEngine.Random;
+public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
 {
     [Header("LineUpTargetの設定必須項目")]
     public GameObject[] PlaneForLineUpPrefab;
@@ -20,6 +21,7 @@ public class LineUpTarget : PointObject
     float _pitchRotationStep;
     //一回転するまでに必要な時間
     float _rotationInterval;
+    Action<LineUpTarget> _onRelease;
     TextMeshPro[] _needShotCountTexts;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -40,7 +42,7 @@ public class LineUpTarget : PointObject
             _planeForLineUpList.Add(instancePlaneForLineUp);
             //PlaneForLineUpのゲームオブジェクトのコライダーとTMPorMeshRendererを取得。
             ColliderList.AddRange(instancePlaneForLineUp.Colliders);
-            _targetPointObjectAnimator.AddFadeTargetList(instancePlaneForLineUp.PointObjectAnimator.GetFadeTargetList());
+            _pointObjectAnimator.AddFadeTargetList(instancePlaneForLineUp.PointObjectAnimator.GetFadeTargetList());
             instancePlaneForLineUp.Initialize(this);
             instancePlaneForLineUp.SetTransform(_axisTr,generatedCount * _pitchRotationStep);
             instancePlaneForLineUp.SetNeedShotCountText(_planeCount.ToString());
@@ -91,23 +93,19 @@ public class LineUpTarget : PointObject
             return 2;
         }
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(_planeCount);
-
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
-
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(TargetTimeKeeper == null)return;
-        if(TargetTimeKeeper.CurrentTargetState == TimeKeeper.TargetState.Activating) return;
+        if(TimeKeeper == null)return;
+        if(TimeKeeper.CurrentTargetState == TimeKeeper.TargetState.Activating) return;
         _axisTr.rotation = Quaternion.AngleAxis(1 / _rotationInterval * Time.deltaTime * 360, transform.up) * _axisTr.rotation;
     }
     void SetRotationInterval()
@@ -125,18 +123,22 @@ public class LineUpTarget : PointObject
         }
         _planeForLineUpList.Remove(removePlaneForLineUp);
         if (_planeCount == 0)
-        {StartCoroutine(BreakCoroutine());}
+        {StartBreakCoroutine();}
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-
-        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
-        Destroy(gameObject);
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        _onRelease.Invoke(this);
+    }
+    public void OnCreate(Action<LineUpTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        BaseOnRelease();
     }
 
 }

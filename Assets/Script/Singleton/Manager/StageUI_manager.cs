@@ -45,26 +45,17 @@ public class StageUI_manager : MonoBehaviour
     void Start()
     {
         //_explosionEffectPoolの作成と設定
-        _explosionEffectPool = ObjectPoolManager.Current.GenerateObjectPool<ExplosionEffect>(_explosionEffect,10,10);
+        _explosionEffectPool = ObjectPoolManager.Current.GetObjectPool<ExplosionEffect>(_explosionEffect,10,10);
         //_addScoreTextPoolの作成と設定
-        _addScoreTextPool = ObjectPoolManager.Current.GeneratePool<AddScoreText>(_addScoreText,_standardUI_Tr,10,10);
+        _addScoreTextPool = ObjectPoolManager.Current.GetObjectPool<AddScoreText>(_addScoreText,_standardUI_Tr,10,10);
         //_indicatorToTargetPoolの作成と設定
-        _indicatorToTargetPool = ObjectPoolManager.Current.GeneratePool<Indicator>(_indicatorToTarget,_indicatorsUI_Tr,10,10);
+        _indicatorToTargetPool = ObjectPoolManager.Current.GetObjectPool<Indicator>(_indicatorToTarget,_indicatorsUI_Tr,10,10);
         //_scoreMultiplierTextPoolの作成と設定
-        _scoreMultiplierTextPool = ObjectPoolManager.Current.GenerateObjectPool<ScoreMultiplierText>(_scoreMultiplierText,3,3);
+        _scoreMultiplierTextPool = ObjectPoolManager.Current.GetObjectPool<ScoreMultiplierText>(_scoreMultiplierText,3,3);
         //各種JudgeTextPoolの作成と設定
-        _goodTextPool = ObjectPoolManager.Current.GeneratePool<JudgeText>(_goodOfJudgeText,_standardUI_Tr,10,10);
-        _greatTextPool = ObjectPoolManager.Current.GeneratePool<JudgeText>(_greatOfJudgeText,_standardUI_Tr,10,10);
-        _perfectTextPool = ObjectPoolManager.Current.GeneratePool<JudgeText>(_perfectOfJudgeText,_standardUI_Tr,10,10);
-        //事前にプールを満たす処理；
-        ObjectPoolManager.Current.PrewarmPool<ExplosionEffect>(_explosionEffectPool,5);
-        ObjectPoolManager.Current.PrewarmPool<AddScoreText>(_addScoreTextPool,10);
-        ObjectPoolManager.Current.PrewarmPool<Indicator>(_indicatorToTargetPool,10);
-        ObjectPoolManager.Current.PrewarmPool<ScoreMultiplierText>(_scoreMultiplierTextPool,3);
-        ObjectPoolManager.Current.PrewarmPool<JudgeText>(_goodTextPool,10);
-        ObjectPoolManager.Current.PrewarmPool<JudgeText>(_greatTextPool,10);
-        ObjectPoolManager.Current.PrewarmPool<JudgeText>(_perfectTextPool,10);
-
+        _goodTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_goodOfJudgeText,_standardUI_Tr,10,10);
+        _greatTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_greatOfJudgeText,_standardUI_Tr,10,10);
+        _perfectTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_perfectOfJudgeText,_standardUI_Tr,10,10);
         //その他
         _aR_BackGround.StartShowWebCam();
         GameManager.Current.StartFadeIn();

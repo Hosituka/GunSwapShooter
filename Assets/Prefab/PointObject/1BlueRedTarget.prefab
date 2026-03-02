@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df8f76da3729244abc73f8d92ec0df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _redBlueTarget: {fileID: 135600430073882349}
+  _redBlueTarget: {fileID: 1672523945855969856}
   _redColliderList:
   - {fileID: 8742981121634139703}
   _pointObjectAnimator: {fileID: 8854801092642254151}
@@ -311,6 +311,7 @@ MonoBehaviour:
   - TextMeshProList: []
     MeshRendererList:
     - {fileID: 6164349155230178958}
+  _lifeTimeGUI_MR: {fileID: 0}
 --- !u!1 &5852891998243174820
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9dac2db6c181940ababae0f1241911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _redBlueTarget: {fileID: 135600430073882349}
+  _redBlueTarget: {fileID: 1672523945855969856}
   _blueColliderList:
   - {fileID: 523411580943365986}
   _pointObjectAnimator: {fileID: 3929262159873636881}
@@ -406,6 +407,7 @@ MonoBehaviour:
   - TextMeshProList: []
     MeshRendererList:
     - {fileID: 3041870695707672018}
+  _lifeTimeGUI_MR: {fileID: 0}
 --- !u!1 &7145205717339310319
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,8 +523,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4674479049926649631}
-  - component: {fileID: 135600430073882349}
-  - component: {fileID: 5817185851206092890}
+  - component: {fileID: 1672523945855969856}
+  - component: {fileID: 3580169348458606855}
   m_Layer: 0
   m_Name: 1BlueRedTarget
   m_TagString: Untagged
@@ -539,7 +541,7 @@ Transform:
   m_GameObject: {fileID: 7841809461428029951}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 800}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -547,7 +549,7 @@ Transform:
   - {fileID: 5852479992016707698}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &135600430073882349
+--- !u!114 &1672523945855969856
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -562,20 +564,19 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 523411580943365986}
   - {fileID: 8742981121634139703}
-  MainObj: {fileID: 1689304514432707711}
   PointObjectCost: 1.5
+  _mainObj: {fileID: 1689304514432707711}
   NextGeneratableCount: 1
-  LifeTimeGUI_MR: {fileID: 6998368351275040588}
-  _targetPointObjectAnimator: {fileID: 5817185851206092890}
+  _pointObjectAnimator: {fileID: 3580169348458606855}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
-  TargetTimeKeeper: {fileID: 0}
-  TargetIndicator2: {fileID: 0}
-  _redPlane: {fileID: 4821778610973629984}
-  _bluePlane: {fileID: 5852891998243174820}
---- !u!114 &5817185851206092890
+  TimeKeeper: {fileID: 0}
+  _redPlaneObj: {fileID: 4821778610973629984}
+  _bluePlaneObj: {fileID: 5852891998243174820}
+  IsLeftBluePlane: 1
+--- !u!114 &3580169348458606855
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -598,6 +599,7 @@ MonoBehaviour:
   - TextMeshProList: []
     MeshRendererList:
     - {fileID: 6164349155230178958}
+  _lifeTimeGUI_MR: {fileID: 6998368351275040588}
 --- !u!1001 &377370468788042887
 PrefabInstance:
   m_ObjectHideFlags: 0

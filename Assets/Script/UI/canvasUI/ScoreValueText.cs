@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
-using System.Runtime.CompilerServices;
 public class ScoreValueText : MonoBehaviour
 {
     [SerializeField]RectTransform _scoreValueTextRectTr;

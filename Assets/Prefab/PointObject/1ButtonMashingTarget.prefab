@@ -374,20 +374,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ColliderList:
   - {fileID: 6305029509842960602}
-  MainObj: {fileID: 3049690985347681296}
   PointObjectCost: 2
+  _mainObj: {fileID: 3049690985347681296}
   NextGeneratableCount: 1
-  LifeTimeGUI_MR: {fileID: 1821311462357576092}
-  _targetPointObjectAnimator: {fileID: 2643954771908646709}
+  _pointObjectAnimator: {fileID: 2643954771908646709}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
-  TargetTimeKeeper: {fileID: 0}
-  TargetIndicator2: {fileID: 0}
-  Hp: 0
-  MaxHp: 7
-  MinHp: 4
+  TimeKeeper: {fileID: 0}
+  _maxHp: 7
+  _minHp: 4
+  _hp: 0
   _needShotCountText: {fileID: 5712849816565512632}
   _isDestruction: 0
 --- !u!114 &2643954771908646709
@@ -408,6 +406,7 @@ MonoBehaviour:
     MeshRendererList:
     - {fileID: 5881365467978184003}
     - {fileID: 1821311462357576092}
+  _lifeTimeGUI_MR: {fileID: 1821311462357576092}
 --- !u!1 &7625737939369312013
 GameObject:
   m_ObjectHideFlags: 0

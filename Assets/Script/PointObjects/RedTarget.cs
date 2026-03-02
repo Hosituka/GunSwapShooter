@@ -1,12 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class RedTarget : PointObject
+public class RedTarget : PointObject,IPoolable<RedTarget>
 {
     [Header("RedTargetの設定用プロパティ")]
     [SerializeField]bool _isDestruction;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    Action<RedTarget> _onRelease;
     public override InitializeResult Initialize()
     {
         switch (GameManager.Current.CurrentDifficult)
@@ -35,15 +35,13 @@ public class RedTarget : PointObject
              
         }
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
 
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
     }
     int _collisionCount;
     void OnCollisionEnter(Collision collision)
@@ -60,7 +58,7 @@ public class RedTarget : PointObject
         {
             _isDestruction = true;
             StageManager.Current.AddCombo();
-            switch (TargetTimeKeeper.CurrentTaimingState)
+            switch (TimeKeeper.CurrentTaimingState)
             {
                 case TimingState.GoodTiming:
                 StageManager.Current.AddScore(0.4f,TimingState.GoodTiming);
@@ -72,7 +70,7 @@ public class RedTarget : PointObject
                 StageManager.Current.AddScore(1f,TimingState.PerfectTiming);
                 break;
             }
-            StartCoroutine(BreakCoroutine());
+            StartBreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
@@ -81,15 +79,21 @@ public class RedTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-
-        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.red,12);
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.red,12);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
         Utility.ChangeEnabledColliders(ColliderList,false); 
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
-        Destroy(gameObject);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        _onRelease.Invoke(this);
     }
+    public void OnCreate(Action<RedTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        BaseOnRelease();
+        _isDestruction = false;
+    }
+
 }

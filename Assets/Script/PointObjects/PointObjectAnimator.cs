@@ -7,14 +7,19 @@ using UnityEngine;
 public class PointObjectAnimator : MonoBehaviour
 {
 
-    [Header("#設定必須項目")]
+    [Header("#全てにおいて設定必須項目")]
     [SerializeField]List<TMPandMeshRenderer> _tmpAndMeshRendererList;
+    [Header("#PointObjectにおいて設定必須項目")]
+    [SerializeField] MeshRenderer _lifeTimeGUI_MR;
     [Header("#表示用")]
     public ExplosionPhase CurtExplosionPhase{private set;get;}
     public SpinThenExplodePhase CurtSpinThenExplodePhase{private set;get;} 
     public SpinAndFadeOutPhase CurtSpinAndFadeOutPhase{private set;get;}
     public SpinThenFadeOutPhase CurtSpinThenFadeOutPhase{private set;get;}   
     public FadeOutPhase CurtFadeOutPhase{private set; get;}
+    public ShowAnimOfMainPhase CurtShowAnimOfMainPhase{private set; get;}
+    public TimeOverAnimPhase CurtTimeOverAnimPhase{private set; get;}
+    MaterialPropertyBlock _propBlock;
     //#PointObjectが銃撃された時のアニメーション群、PointObjectの具象クラスにより呼ばれる。
     public void PlayExplosion(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize)
     {
@@ -130,13 +135,30 @@ public class PointObjectAnimator : MonoBehaviour
     public enum FadeOutPhase
     {NotPlayed,Fade,Completed,}
 
-    //#PointObjectのライフサイクルによるアニメーションTimeKeeperにより呼ばれる。
+    //#PointObjectのライフサイクルによるアニメーション、TimeKeeperにより呼ばれる。
     //##PointObjectのメイン部分が有効化された時に呼ばれるアニメーション
+    public void PlayActivationTimer(float duration)
+    {
+        StartCoroutine(ActivationTimer());
+        IEnumerator ActivationTimer(){
+            MaterialPropertyBlock test = new MaterialPropertyBlock();
+            for(float playback = 0;playback < duration; playback += Time.deltaTime)
+            {
+                test.SetFloat("_outerFrameAnim",playback / duration);
+                _lifeTimeGUI_MR.SetPropertyBlock(test);
+                yield return null;
+            }
+            _lifeTimeGUI_MR.GetPropertyBlock(test);
+            Debug.Log(test);
+        }
+    }
+
     public void PlayShowAnimOfMain(Transform mainTr,float activateAnimDuration)
     {
         StartCoroutine(ExpandCoroutine());
         IEnumerator ExpandCoroutine()
         {
+            CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.Expanding;
             float playBackActiveAnimTime = 0;
             while(playBackActiveAnimTime < activateAnimDuration)
             {
@@ -145,15 +167,33 @@ public class PointObjectAnimator : MonoBehaviour
                 mainTr.localScale = Vector3.ClampMagnitude(mainTr.localScale,Vector3.one.magnitude);
                 yield return null;
             }
+                CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.Completed;
          }
     
     }
+    public enum ShowAnimOfMainPhase
+    {NotPlayed,Expanding,Completed,}
+
+    public void PlayDeactivationTimer(float duration)
+    {
+        StartCoroutine(DeactivationTimer());
+        IEnumerator DeactivationTimer(){
+            for(float playback = 0;playback < duration; playback += Time.deltaTime)
+            {
+                _propBlock.SetFloat("_outerFrameAnim",1 - playback / duration);
+                _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
+                yield return null;
+            }
+        }
+    }
+
     //##PointObjectの時間制限を超えて的が撃たれなかったときに呼ばれるアニメーション
     public void PlayTimeOverAnim(float animDuration)
     {
         StartCoroutine(FadeOutCoroutine());
         IEnumerator FadeOutCoroutine()
         {
+            CurtTimeOverAnimPhase = TimeOverAnimPhase.Fading;
             float playbackDeSpawnTime = 0;
 
             while(playbackDeSpawnTime < animDuration)
@@ -171,14 +211,39 @@ public class PointObjectAnimator : MonoBehaviour
                 tMPorMeshRenderer.SetFadeOfMeshRenderers(1);
                 tMPorMeshRenderer.SetAlphaOfTextMeshPros(0);
             }
-            Destroy(gameObject);
+            CurtTimeOverAnimPhase = TimeOverAnimPhase.Completed;
         }
-
     }
+    public enum TimeOverAnimPhase
+    {NotPlayed,Fading,Completed,}
     //#その他
-    //##このイベント関数は現状TMPandMeshrendererの初期化(materialPropertyblockのインスタンス生成)を行っている。
-    void Start()
+    //##各アニメーションをもう一度再生できるようにするためリセットする処理
+    public void Reset()
     {
+        ResetPhase();
+        ResetPropBlock();
+        //#各アニメーションの進捗を表すenumのリセット
+        void ResetPhase()
+        {
+            CurtExplosionPhase = ExplosionPhase.NotPlayed;
+            CurtFadeOutPhase = FadeOutPhase.NotPlayed;
+            CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.NotPlayed;
+            CurtSpinThenExplodePhase = SpinThenExplodePhase.NotPlayed;
+            CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.NotPlayed;
+            CurtTimeOverAnimPhase = TimeOverAnimPhase.NotPlayed;
+
+        }
+        void ResetPropBlock(){
+            foreach(TMPandMeshRenderer tMPorMeshRenderer in _tmpAndMeshRendererList)
+            {
+                tMPorMeshRenderer.SetFadeOfMeshRenderers(0);
+                tMPorMeshRenderer.SetAlphaOfTextMeshPros(1);
+            }
+        }
+    }
+    void Awake()
+    {
+        _propBlock = new MaterialPropertyBlock();
         foreach(TMPandMeshRenderer tMPorMeshRenderer in _tmpAndMeshRendererList)
         {
             tMPorMeshRenderer.Initialize();
@@ -231,15 +296,12 @@ public class TMPandMeshRenderer
     }
     public void SetFadeOfMeshRenderers(float fadeValue)
     {
-        _propBlock.Clear();
         foreach(MeshRenderer meshRenderer in MeshRendererList)
         {
             if(meshRenderer == null)continue;
+            meshRenderer.GetPropertyBlock(_propBlock);
             _propBlock.SetFloat("_Fade",fadeValue);
-            for(int propertyBlockIndex = 0; propertyBlockIndex < meshRenderer.sharedMaterials.Length; propertyBlockIndex++)
-            {
-                meshRenderer.SetPropertyBlock(_propBlock,propertyBlockIndex);
-            }
+            meshRenderer.SetPropertyBlock(_propBlock);
         }
     }
 

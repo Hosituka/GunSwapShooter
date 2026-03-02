@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BlueTarget : PointObject
+public class BlueTarget : PointObject,IPoolable<BlueTarget>
 {
     [Header("BlueTargetの設定用プロパティ")]
     [SerializeField]bool _isDestruction;
+    Action<BlueTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -35,23 +36,14 @@ public class BlueTarget : PointObject
              
         }
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
-
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
-
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     int _collisionCount;
     void OnCollisionEnter(Collision collision)
     {
@@ -67,7 +59,7 @@ public class BlueTarget : PointObject
         {
             _isDestruction = true;
             StageManager.Current.AddCombo();
-            switch (TargetTimeKeeper.CurrentTaimingState)
+            switch (TimeKeeper.CurrentTaimingState)
             {
                 case TimingState.GoodTiming:
                 StageManager.Current.AddScore(0.4f,TimingState.GoodTiming);
@@ -79,7 +71,7 @@ public class BlueTarget : PointObject
                 StageManager.Current.AddScore(1,TimingState.PerfectTiming);
                 break;
             }
-            StartCoroutine(BreakCoroutine());
+            StartBreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
@@ -88,16 +80,20 @@ public class BlueTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-
-        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12);
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
         Utility.ChangeEnabledColliders(ColliderList,false); 
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
-        Destroy(gameObject);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        _onRelease.Invoke(this);
     }
-
+    public void OnCreate(Action<BlueTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        BaseOnRelease();
+        _isDestruction = false;
+    }
 }

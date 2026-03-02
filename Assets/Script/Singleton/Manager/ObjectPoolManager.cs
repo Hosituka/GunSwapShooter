@@ -9,6 +9,7 @@ using UnityEngine.Pool;
 public class ObjectPoolManager : MonoBehaviour
 {
     public static ObjectPoolManager Current{get; private set;}
+    bool _isPrewarming;
     void Awake()
     {
         if (Current == null)
@@ -20,7 +21,7 @@ public class ObjectPoolManager : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-    public ObjectPool<T> GeneratePool<T>(T prefab,Transform parentTr,int defaultCapacityOfPool,int maxSizeOfPool)where T:Component,IPoolable<T>
+    public ObjectPool<T> GetObjectPool<T>(T prefab,Transform parentTr,int defaultCapacityOfPool,int maxSizeOfPool)where T:Component,IPoolable<T>
     {
         ObjectPool<T> objectPool = null;
         objectPool = new ObjectPool<T>
@@ -28,57 +29,80 @@ public class ObjectPoolManager : MonoBehaviour
             createFunc: () =>
             {
                 T poolTarget =  Instantiate(prefab,parentTr);
-                poolTarget.SetOnRelease((e)=>objectPool.Release(e));
+                poolTarget.OnCreate((e)=>objectPool.Release(e));
                 return poolTarget;
             },
-            actionOnGet: (temp)=>temp.gameObject.SetActive(true),         // プールから借りる時の処理
-            actionOnRelease: (temp)=>temp.gameObject.SetActive(false), // プールに返す時の処理
-            actionOnDestroy: (temp)=>Destroy(temp.gameObject), // プールが溢れた時に破棄する処理
-            defaultCapacity: defaultCapacityOfPool,              // 最初に用意する目安
-            maxSize: maxSizeOfPool                       // 最大貯蓄数
+            // プールから借りる時の処理
+            actionOnGet: (temp)=>temp.gameObject.SetActive(true),         
+            // プールに返す時の処理
+            actionOnRelease: (temp)=>
+            {
+                temp.gameObject.SetActive(false);
+                if(_isPrewarming) return;
+                temp.OnRelease();
+            }, 
+            // プールが溢れた時に破棄する処理
+            actionOnDestroy: (temp)=>Destroy(temp.gameObject), 
+             // 最初に用意する目安
+            defaultCapacity: defaultCapacityOfPool, 
+            // 最大貯蓄数            
+            maxSize: maxSizeOfPool                       
 
         );
-
+        PrewarmPool<T>(objectPool,defaultCapacityOfPool);
         return objectPool;
     }
-    public ObjectPool<T> GenerateObjectPool<T>(T prefab,int defaultCapacityOfPool,int maxSizeOfPool)where T:Component,IPoolable<T>
+    public ObjectPool<T> GetObjectPool<T>(T prefabComponent,int defaultCapacityOfPool,int maxSizeOfPool)where T:Component,IPoolable<T>
     {
         ObjectPool<T> objectPool = null;
         objectPool = new ObjectPool<T>
         (   //プールの在庫が足りないときに新しく作る処理
             createFunc: () =>
             {
-                T poolTarget =  Instantiate(prefab,transform);
-                poolTarget.SetOnRelease((e)=>objectPool.Release(e));
+                T poolTarget =  Instantiate(prefabComponent,transform);
+                poolTarget.OnCreate((e)=>objectPool.Release(e));
                 return poolTarget;
             },
             actionOnGet: (temp)=>temp.gameObject.SetActive(true),         // プールから借りる時の処理
-            actionOnRelease: (temp)=>temp.gameObject.SetActive(false), // プールに返す時の処理
+            // プールに返す時の処理
+            actionOnRelease: (temp)=>
+            {                
+                temp.gameObject.SetActive(false);
+                if(_isPrewarming) return;
+                temp.OnRelease();
+
+            }, 
             actionOnDestroy: (temp)=>Destroy(temp.gameObject), // プールが溢れた時に破棄する処理
             defaultCapacity: defaultCapacityOfPool,              // 最初に用意する目安
             maxSize: maxSizeOfPool                       // 最大貯蓄数
 
         );
-
+        PrewarmPool<T>(objectPool,defaultCapacityOfPool);
         return objectPool;
-    }
 
+    }
     //あるオブジェクトプールに対して、事前に在庫を確保させる処理
-    public void PrewarmPool<T>(ObjectPool<T> objectPool, int preInsntantiateAmount)where T: Component
+    void PrewarmPool<T2>(ObjectPool<T2> objectPool, int preInsntantiateAmount)where T2: Component,IPoolable<T2>
     {
-        T[] tempArray = new T[preInsntantiateAmount];
+        _isPrewarming = true;
+        T2[] tempArray = new T2[preInsntantiateAmount];
         for(int i = 0;i < preInsntantiateAmount; i++)
         {
             tempArray[i] = objectPool.Get();
         }
-        foreach(T temp in tempArray)
+        foreach(T2 temp in tempArray)
         {
             objectPool.Release(temp);
         }
+        _isPrewarming = false;
     }
 
 }
+
 public interface IPoolable<T> where T : Component
 {
-    void SetOnRelease(Action<T> onRelease);
+    //ObjectPoolの在庫を追加するために走る処理
+    void OnCreate(Action<T> onRelease);
+    //IPoolableを実装している物が、ObjectPoolに返すときに走る処理
+    void OnRelease();
 }

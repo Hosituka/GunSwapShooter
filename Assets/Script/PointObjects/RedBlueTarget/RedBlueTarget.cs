@@ -1,13 +1,17 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
-public class RedBlueTarget : PointObject
+public class RedBlueTarget : PointObject,IPoolable<RedBlueTarget>
 {
     [Header("RedBlueTargetの設定用プロパティ")]
-    [SerializeField]GameObject _redPlane;
-    [SerializeField]GameObject _bluePlane;
+    [SerializeField]GameObject _redPlaneObj;
+    [SerializeField]GameObject _bluePlaneObj;
+    //PointObjectGenerator1or2側が左右の順で赤青の的か否かの判断するための奴
+    public bool IsLeftBluePlane;
     //レッドプレーン＋ブループレンの個数
     int _currentPlaneCount = 2;
+    Action<RedBlueTarget> _onRelease;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
@@ -38,38 +42,38 @@ public class RedBlueTarget : PointObject
              
         }
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(_currentPlaneCount);
-
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
-
-
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
     }
 
-    // Update is called once per frame
     public void DecrementCurrentPlaneCount()
     {
         _currentPlaneCount--;
         if(_currentPlaneCount == 0)
-        {StartCoroutine(BreakCoroutine());}
+        {StartBreakCoroutine();}
 
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-
-        _targetPointObjectAnimator.PlaySpinThenFadeOut();
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
-        Destroy(gameObject);
+        _pointObjectAnimator.PlaySpinThenFadeOut();
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
+        _onRelease.Invoke(this);
     }
 
-
+    public void OnCreate(Action<RedBlueTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        BaseOnRelease();
+        _redPlaneObj.SetActive(true);
+        _bluePlaneObj.SetActive(true);
+        _currentPlaneCount = 2;
+    }
 }

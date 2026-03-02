@@ -253,17 +253,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ColliderList: []
-  MainObj: {fileID: 5608414479450518256}
   PointObjectCost: 4
+  _mainObj: {fileID: 5608414479450518256}
   NextGeneratableCount: 1
-  LifeTimeGUI_MR: {fileID: 1628520991079213297}
-  _targetPointObjectAnimator: {fileID: 4994112954404491780}
+  _pointObjectAnimator: {fileID: 4994112954404491780}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
-  TargetTimeKeeper: {fileID: 0}
-  TargetIndicator2: {fileID: 0}
+  TimeKeeper: {fileID: 0}
   PlaneForLineUpPrefab:
   - {fileID: 5788825529098855087, guid: 45fb035d1f6a9bd4dba07cf373d6df12, type: 3}
   - {fileID: 6985154207145087321, guid: aa8e8316f03f9ea46a3628a52c6bd466, type: 3}
@@ -293,6 +291,7 @@ MonoBehaviour:
     - {fileID: 8131074875177606735}
     - {fileID: 1045793919829431425}
     - {fileID: 1628520991079213297}
+  _lifeTimeGUI_MR: {fileID: 1628520991079213297}
 --- !u!1 &7986021214523887030
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 //PointObjectの具象クラスの位置を表示する責務を持つ∧StageUI_managerによりオブジェクトプールされています。
@@ -22,7 +23,7 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
     Vector2 _clampedTargetScreenPos;
 
     bool _isInCamera;
-    Action<Indicator> _onRelease;
+    Action<Indicator> _onRelease{get;set;}
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Initialize(Transform targetTr)
@@ -30,10 +31,6 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
         _targetTr = targetTr;
         transform.SetParent(_indicatorsUI_Tr);
         transform.SetSiblingIndex(0);
-    }
-    public void SetOnRelease(Action<Indicator> onRelease)
-    {
-        _onRelease = onRelease;
     }
 
     // Update is called once per frame
@@ -89,15 +86,53 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
             }
         }
     }
-    public void SetLifeTimeAnim(float playBack,Color innerArrowRgb,Color arrowOutlineRgb)
+    public void PlayActivationTimer(float duration)
     {
-        innerArrowRgb.a = playBack;
-        _innerArrowImage.color = innerArrowRgb;
-        _ArrowOutlineImage.color = arrowOutlineRgb;
+        StartCoroutine(ActivationTimer());
+        IEnumerator ActivationTimer(){
+            Color _innerArrowColor = Color.black + new Color(0.04f,0.04f,0.04f);
+            _ArrowOutlineImage.color = Color.white;
+            for(float playback = 0;playback < duration; playback += Time.deltaTime)
+            {
+                _innerArrowColor.a = playback / duration;
+                _innerArrowImage.color = _innerArrowColor;
+                yield return null;
+            }
+            _innerArrowColor.a = 1;
+            _innerArrowImage.color = _innerArrowColor;
+        }
+
     }
+
+    public void PlayDeActivationTimer(float duration)
+    {
+        StartCoroutine(DeActivationTimer());
+        IEnumerator DeActivationTimer(){
+            Color _innerArrowColor = Color.white;
+            _ArrowOutlineImage.color = Color.black;
+            for(float playback = 0;playback < duration; playback += Time.deltaTime)
+            {
+                _innerArrowColor.a = 1 - playback / duration;
+                _innerArrowImage.color = _innerArrowColor;
+                yield return null;
+            }
+            _innerArrowColor.a = 0;
+            _innerArrowImage.color = _innerArrowColor;
+        }
+
+    }
+    
     public void Destroy()
     {
         _onRelease.Invoke(this);
+    }
+    public void OnCreate(Action<Indicator> onRelease)
+    {
+        _onRelease = onRelease;
+    }
+
+    public void OnRelease()
+    {
     }
 
 

@@ -32,7 +32,7 @@ public class RedPlane : MonoBehaviour
         if(collision.gameObject.CompareTag("RedBullet"))
         {
             StageManager.Current.AddCombo();
-            switch (_redBlueTarget.TargetTimeKeeper.CurrentTaimingState)
+            switch (_redBlueTarget.TimeKeeper.CurrentTaimingState)
             {
                 case TimingState.GoodTiming:
                 StageManager.Current.AddScore(0.5f,TimingState.GoodTiming);
@@ -61,7 +61,8 @@ public class RedPlane : MonoBehaviour
 
             _pointObjectAnimator.PlayExplosion(transform.position,Color.red,14);
             yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            _pointObjectAnimator.Reset();
         }
     }
 

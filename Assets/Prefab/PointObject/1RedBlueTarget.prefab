@@ -136,19 +136,18 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 5825367264500510947}
   - {fileID: 2946954506954838350}
-  MainObj: {fileID: 4671331175687812596}
   PointObjectCost: 1.5
+  _mainObj: {fileID: 4671331175687812596}
   NextGeneratableCount: 1
-  LifeTimeGUI_MR: {fileID: 2719259789206329820}
-  _targetPointObjectAnimator: {fileID: 8218732604354461611}
+  _pointObjectAnimator: {fileID: 8218732604354461611}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
-  TargetTimeKeeper: {fileID: 0}
-  TargetIndicator2: {fileID: 0}
-  _redPlane: {fileID: 1958289544519771092}
-  _bluePlane: {fileID: 6704645443777255938}
+  TimeKeeper: {fileID: 0}
+  _redPlaneObj: {fileID: 1958289544519771092}
+  _bluePlaneObj: {fileID: 6704645443777255938}
+  IsLeftBluePlane: 0
 --- !u!114 &8218732604354461611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +171,7 @@ MonoBehaviour:
   - TextMeshProList: []
     MeshRendererList:
     - {fileID: 4601253703111328821}
+  _lifeTimeGUI_MR: {fileID: 2719259789206329820}
 --- !u!1 &1483549742352590173
 GameObject:
   m_ObjectHideFlags: 0
@@ -303,7 +303,7 @@ MonoBehaviour:
   _redBlueTarget: {fileID: 8155312420884199902}
   _redColliderList:
   - {fileID: 2946954506954838350}
-  _pointObjectAnimator: {fileID: 0}
+  _pointObjectAnimator: {fileID: 3099644563080161675}
 --- !u!114 &3099644563080161675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,7 +316,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tmpAndMeshRendererList: []
+  _tmpAndMeshRendererList:
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 4601253703111328821}
+  _lifeTimeGUI_MR: {fileID: 0}
 --- !u!1 &3852248990402425920
 GameObject:
   m_ObjectHideFlags: 0
@@ -461,7 +465,7 @@ MonoBehaviour:
   _redBlueTarget: {fileID: 8155312420884199902}
   _blueColliderList:
   - {fileID: 5825367264500510947}
-  _pointObjectAnimator: {fileID: 0}
+  _pointObjectAnimator: {fileID: 5055126280341528540}
 --- !u!114 &5055126280341528540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -474,7 +478,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab961d8446d12b343b260a47745434e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tmpAndMeshRendererList: []
+  _tmpAndMeshRendererList:
+  - TextMeshProList: []
+    MeshRendererList:
+    - {fileID: 8131345419210143638}
+  _lifeTimeGUI_MR: {fileID: 0}
 --- !u!1 &6744574198055737477
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,17 +25,16 @@ public class JudgeText : MonoBehaviour,IPoolable<JudgeText>
             }
             vertexColor.a = 0;
             _textMeshProUGUI.color = vertexColor;
-            Reset();
             _onRelease.Invoke(this);
         }
-        void Reset()
-        {
-            _rectTransform.position -= Vector3.up * _moveUpDistance;                
-        }
     }
-    public void SetOnRelease(Action<JudgeText> onRelease)
+    public void OnCreate(Action<JudgeText> onRelease)
     {
         _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        _rectTransform.position -= Vector3.up * _moveUpDistance;                
     }
     // Update is called once per frame
 }

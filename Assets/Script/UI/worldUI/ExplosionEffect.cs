@@ -21,7 +21,6 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
     public MeshRenderer MeshRenderer;
     MaterialPropertyBlock _propBlock;
     Action<ExplosionEffect> _onRelease;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Play(Vector3 pos,Color color,float size)
     {
         Initialize(pos, color,size);
@@ -51,13 +50,10 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
                 yield return null;
             }
             CurrentAnimPhase = AnimPhase.Completed;
-            _onRelease?.Invoke(this);
+            _onRelease.Invoke(this);
         }
         void Initialize(Vector3 pos,Color color,float size)
         {
-            _propBlock = new MaterialPropertyBlock();
-            CurrentAnimPhase = AnimPhase.NotPlayed;
-
             transform.position = pos;
             transform.rotation = Quaternion.LookRotation(pos);
             transform.localScale = new Vector3(size,size,1);
@@ -65,9 +61,14 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
 
         }
     }
-    public void SetOnRelease(Action<ExplosionEffect> onRelease)
+    public void OnCreate(Action<ExplosionEffect> onRelease)
     {
         _onRelease = onRelease;
+        _propBlock = new MaterialPropertyBlock();
+    }
+    public void OnRelease()
+    {
+        CurrentAnimPhase = AnimPhase.NotPlayed; 
     }
     // Update is called once per frame
 }

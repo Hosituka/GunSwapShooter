@@ -23,9 +23,8 @@ public class PlayerGun : MonoBehaviour
     void Start()
     {
         //_bulletPoolの作成と設定
-        _bulletPool = ObjectPoolManager.Current.GenerateObjectPool<Bullet>(_bullet,30,45);
+        _bulletPool = ObjectPoolManager.Current.GetObjectPool<Bullet>(_bullet,30,45);
         //プールを事前に満たす処理
-        ObjectPoolManager.Current.PrewarmPool<Bullet>(_bulletPool,30);
         //疑似ライトがシーン移動時につけっぱなしになることを防ぐ処理
         switch(_playingShotAnim)
         {
@@ -59,7 +58,7 @@ public class PlayerGun : MonoBehaviour
         if(_isShot == true)return;
         _isShot = true;
         SoundManager.Current.PlayOneShot2D_SE(OneShot.shot,0.133f);
-        SetBullet(_muzzleTr.position,_muzzleTr.rotation);
+        GetBullet();
         _animator.SetTrigger("Fire");
         StartCoroutine(CoolDownShot(0));
 
@@ -68,12 +67,11 @@ public class PlayerGun : MonoBehaviour
             yield return new WaitForSeconds(delay);
             _isShot = false;
         }
-        void SetBullet(Vector3 pos,Quaternion rotation)
+        void GetBullet()
         {
             Bullet bullet = _bulletPool.Get();
-            bullet.transform.position = pos;
-            bullet.transform.rotation = rotation;
-            bullet.Initialize();
+            bullet.transform.position = _muzzleTr.position;
+            bullet.transform.rotation = _muzzleTr.rotation;
         }
     }
     //これはFireと言う名のをAnimationClipにより呼ばれる関数です。

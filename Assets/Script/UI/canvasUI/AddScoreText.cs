@@ -31,20 +31,19 @@ public class AddScoreText : MonoBehaviour,IPoolable<AddScoreText>
             }
             vertexColor.a = 0;
             _textMeshProUGUI.color = vertexColor;
-            Reset();
             _onRelease.Invoke(this);
         }
         void Initialize(float addScore)
         {
             _addScore = addScore;  
         }
-        void Reset()
-        {
-            _rectTransform.position -= Vector3.up * _moveUpDistance;                
-        }
     }
-    public void SetOnRelease(Action<AddScoreText> onRelease)
+    public void OnCreate(Action<AddScoreText> onRelease)
     {
         _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        _rectTransform.position -= Vector3.up * _moveUpDistance;                
     }
 }

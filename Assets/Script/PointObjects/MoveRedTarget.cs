@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
-public class MoveRedTarget : PointObject
+using System;
+using Random = UnityEngine.Random;
+public class MoveRedTarget : PointObject,IPoolable<MoveRedTarget>
 {
     [Header("MoveRedTargetの設定用プロパティ")]
 
@@ -16,6 +18,7 @@ public class MoveRedTarget : PointObject
     float _startGenerateYaw;
     float _startGeneratePitch;
     float _pingPongTime;
+    Action<MoveRedTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -61,23 +64,19 @@ public class MoveRedTarget : PointObject
         }
 
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
-
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
-
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(TargetTimeKeeper == null)return;
-        if(TargetTimeKeeper.CurrentTargetState != TimeKeeper.TargetState.ActivationCompleted) return;
+        if(TimeKeeper == null)return;
+        if(TimeKeeper.CurrentTargetState != TimeKeeper.TargetState.ActivationCompleted) return;
 
         _pingPongTime += Time.deltaTime;
         if (_isVerticalToRotate)//ローカル座標系のy軸方向にRotateAroundさせる
@@ -111,7 +110,7 @@ public class MoveRedTarget : PointObject
         else if(collision.gameObject.CompareTag("RedBullet"))
         {
             StageManager.Current.AddCombo();
-            switch (TargetTimeKeeper.CurrentTaimingState)
+            switch (TimeKeeper.CurrentTaimingState)
             {
                 case TimingState.GoodTiming:
                 StageManager.Current.AddScore(0.5f,TimingState.GoodTiming);
@@ -123,7 +122,7 @@ public class MoveRedTarget : PointObject
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-            StartCoroutine(BreakCoroutine());
+            StartBreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
@@ -132,15 +131,19 @@ public class MoveRedTarget : PointObject
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-        
         Utility.ChangeEnabledColliders(ColliderList,false);
-        _targetPointObjectAnimator.PlaySpinAndFadeOut();
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinAndFadeOutPhase != PointObjectAnimator.SpinAndFadeOutPhase.Completed);
-        Destroy(gameObject);
+        _pointObjectAnimator.PlaySpinAndFadeOut();
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinAndFadeOutPhase != PointObjectAnimator.SpinAndFadeOutPhase.Completed);
+        _onRelease.Invoke(this);
+    }
+    public void OnCreate(Action<MoveRedTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+       BaseOnRelease(); 
     }
 
 }

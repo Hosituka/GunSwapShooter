@@ -1,38 +1,40 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
-using System.Collections.Generic;
-public class ButtonMashingTarget : PointObject
+using System;
+using Random = UnityEngine.Random;
+public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
 {
     [Header("ButtonMashingTargetの設定用プロパティ")]
-    public int Hp;
-    public int MaxHp = 7;
-    public int MinHp = 4;
+    [SerializeField] int _maxHp = 7;
+    [SerializeField] int _minHp = 4;
+    [SerializeField] int _hp;
     [SerializeField] TextMeshPro _needShotCountText;
     [SerializeField]bool _isDestruction;
+    Action<ButtonMashingTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
-        Hp = Random.Range(MinHp, MaxHp);
-        _needShotCountText.SetText(Hp.ToString());
+        _hp = Random.Range(_minHp, _maxHp);
+        _needShotCountText.SetText(_hp.ToString());
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
             return new InitializeResult(
-                        SixteenthNote * Hp + EighthNote,
-                        SixteenthNote * Hp * 4,
+                        SixteenthNote * _hp + EighthNote,
+                        SixteenthNote * _hp * 4,
                         0
                     );
             case GameManager.Difficult.normal:
             return new InitializeResult(
-                        SixteenthNote * Hp + EighthNote,
-                        SixteenthNote * Hp * 4,
+                        SixteenthNote * _hp + EighthNote,
+                        SixteenthNote * _hp * 4,
                         0
                     );
             case GameManager.Difficult.hard:
             return new InitializeResult(
-                        SixteenthNote * Hp + EighthNote,
-                        SixteenthNote * Hp * 4,
+                        SixteenthNote * _hp + EighthNote,
+                        SixteenthNote * _hp * 4,
                         0
                     );
             default:
@@ -41,36 +43,27 @@ public class ButtonMashingTarget : PointObject
              
         }
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
-        StageManager.Current.AddOverlookCount(Hp);
-
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
-
+        StageManager.Current.AddOverlookCount(_hp);
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-    int _collisionCount;
+    [SerializeField]int _collisionCount;
     void OnCollisionEnter(Collision collision)
     {
         _collisionCount++;
         if(_collisionCount != 1) return;
         if(_isDestruction == true) return;
-        if(Hp <= 0) return;
+        if(_hp <= 0) return;
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
-            Hp--;
-            _needShotCountText.text = Hp.ToString();
+            _hp--;
+            _needShotCountText.text = _hp.ToString();
             StageManager.Current.AddCombo();
-            switch (TargetTimeKeeper.CurrentTaimingState)
+            switch (TimeKeeper.CurrentTaimingState)
             {
                 case TimingState.GoodTiming:
                 StageManager.Current.AddScore(0.4f,TimingState.GoodTiming);
@@ -83,10 +76,10 @@ public class ButtonMashingTarget : PointObject
                 break;
             }
 
-            if(Hp == 0)
+            if(_hp == 0)
             {
                 _isDestruction = true;
-                StartCoroutine(BreakCoroutine());
+                StartBreakCoroutine();
             }
         }
     }
@@ -95,17 +88,23 @@ public class ButtonMashingTarget : PointObject
         _collisionCount--;
     }
     protected override IEnumerator BreakCoroutine()
-    {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-        
-        _targetPointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17);
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
+    {        
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Explosion);
         Utility.ChangeEnabledColliders(ColliderList,false);
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
-        Destroy(gameObject);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        _onRelease.Invoke(this);
+    }
+    public void OnCreate(Action<ButtonMashingTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        BaseOnRelease();
+        _hp = 0;
+        _isDestruction = false;
     }
 
 }

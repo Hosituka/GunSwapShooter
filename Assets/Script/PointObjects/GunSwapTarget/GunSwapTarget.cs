@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
+public class GunSwapTarget : PointObject,IHitGunSwapRayHandler,IPoolable<GunSwapTarget>
 {
     [Header("GunSwapTargetの設定用プロパティ")]
     [SerializeField]int temp;
+    Action<GunSwapTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -35,22 +36,12 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
              
         }
     }
-    public override void TimeOver(float animDuration)
+    protected override IEnumerator TimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(1);
-
-        Utility.ChangeEnabledColliders(ColliderList,false);
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        _targetIndicator.Destroy();
-        _targetPointObjectAnimator.PlayTimeOverAnim(animDuration);
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+        _onRelease.Invoke(this);
 
     }
     int _collisionCount;
@@ -72,7 +63,7 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
     public void OnHitGunSwapRay()
     {
         StageManager.Current.AddCombo();
-        switch (TargetTimeKeeper.CurrentTaimingState)
+        switch (TimeKeeper.CurrentTaimingState)
         {
             case TimingState.GoodTiming:
             StageManager.Current.AddScore(0.4f,TimingState.GoodTiming);
@@ -84,19 +75,23 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler
             StageManager.Current.AddScore(1f,TimingState.PerfectTiming);
             break;
         }
-        StartCoroutine(BreakCoroutine());
+        StartBreakCoroutine();
     }
     protected override IEnumerator BreakCoroutine()
     {
-        PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-        PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-        TargetTimeKeeper.NoticeDestruction(this);
-        _targetIndicator.Destroy();
-
         Utility.ChangeEnabledColliders(ColliderList,false);
-        _targetPointObjectAnimator.PlayExplosion(transform.position,Color.gray,12);
-        yield return new WaitWhile(()=> _targetPointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
-        Destroy(gameObject);
+        _pointObjectAnimator.PlayExplosion(transform.position,Color.gray,12);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
+        _onRelease.Invoke(this);
+    }
+    public void OnCreate(Action<GunSwapTarget> onRelease)
+    {
+        BaseOnCreate();
+        _onRelease = onRelease;
+    }
+    public void OnRelease()
+    {
+        BaseOnRelease();
     }
 
 }
