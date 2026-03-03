@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class RedBlueTarget : PointObject,IPoolable<RedBlueTarget>
+public class RedBlueTarget : PointObject<RedBlueTarget>
 {
     [Header("RedBlueTargetの設定用プロパティ")]
     [SerializeField]RedPlane _redPlane;
@@ -11,7 +11,6 @@ public class RedBlueTarget : PointObject,IPoolable<RedBlueTarget>
     public bool IsLeftBluePlane;
     //レッドプレーン＋ブループレンの個数
     int _currentPlaneCount = 2;
-    Action<RedBlueTarget> _onRelease;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
@@ -42,36 +41,31 @@ public class RedBlueTarget : PointObject,IPoolable<RedBlueTarget>
              
         }
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(_currentPlaneCount);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
+        yield break;
     }
 
     public void DecrementCurrentPlaneCount()
     {
         _currentPlaneCount--;
         if(_currentPlaneCount == 0)
-        {StartBreakCoroutine();}
+        {BreakCoroutine();}
 
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {
         _pointObjectAnimator.PlaySpinThenFadeOut();
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
         _onRelease.Invoke(this);
     }
 
-    public void OnCreate(Action<RedBlueTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
     }
-    public void OnRelease()
+    protected override void SubOnRelease()
     {
-        BaseOnRelease();
         _redPlane.Reset();
         _bluePlane.Reset();
         _currentPlaneCount = 2;

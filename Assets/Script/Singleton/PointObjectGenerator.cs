@@ -22,7 +22,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
 
 
     [Header("##生成候補となるパラメータ群")]
-    [SerializeField] PointObject[] _pointObjects;
+    [SerializeField] PointObjects[] _pointObjects;
 
     [Header("##設定必須項目")]
     [SerializeField]protected TimeKeeper _timeKeeper;
@@ -126,12 +126,12 @@ public abstract class PointObjectGenerater : MonoBehaviour
             pointObjectObj.transform.position = pointObjectPosition;
             pointObjectObj.transform.rotation = pointObjectRotation;
             pointObjectObj.transform.SetParent(timeKeeper.transform);
-            PointObject pointObject = pointObjectObj.GetComponent<PointObject>();
-            pointObject.PointObjectPos = pointObjectPos;
-            pointObject.Indicator = StageUI_manager.Current.GenerateIndicatorToTarget(pointObjectObj.transform);
-            pointObject.TimeKeeper = timeKeeper;
+            PointObjects pointObjects = pointObjectObj.GetComponent<PointObjects>();
+            pointObjects.PointObjectPos = pointObjectPos;
+            pointObjects.Indicator = StageUI_manager.Current.GenerateIndicatorToTarget(pointObjectObj.transform);
+            pointObjects.TimeKeeper = timeKeeper;
 
-            timeKeeper.PointObjectList.Add(pointObject);
+            timeKeeper.PointObjectsList.Add(pointObjects);
             timeKeeper.BaseActivationDelay = _currentBaseActivationDelay;
 
             generatedCount++;
@@ -147,7 +147,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
         {
             float pointObjectBudget = MaxPointObjectCost - _sumPointObjectCost;
             int basisPointObjectArrayIndex = Random.Range(0, _pointObjects.Length);
-            PointObject generatablePointObject = null;
+            PointObjects generatablePointObject = null;
             for (int offsetPointObjectsIndex = 0; offsetPointObjectsIndex < _pointObjects.Length; offsetPointObjectsIndex++)
             {
                 int generatablePointObjectArrayIndex = (int)Mathf.Repeat(offsetPointObjectsIndex + basisPointObjectArrayIndex, _pointObjects.Length);
@@ -221,7 +221,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
         }
     }
     //あるPointObjectのインスタンスが与えられて、それが、ある具象クラスに属していたら、それにダウンキャストして返す関数。PointObjectGeneratorにより呼ばれる。
-    protected abstract PointObject GetPointObjectWithDownCast(PointObject pointObject);
+    protected abstract PointObjects GetPointObjectWithDownCast(PointObjects pointObject);
 
     
     public void SetNotes()
@@ -229,9 +229,9 @@ public abstract class PointObjectGenerater : MonoBehaviour
         _fourthNote = 60 / Bpm;
         _eighthNote = _fourthNote / 2;
         _sixteenthNote = _eighthNote / 2;
-        PointObject.FourthNote = _fourthNote;
-        PointObject.EighthNote = _eighthNote;
-        PointObject.SixteenthNote = _sixteenthNote;        
+        PointObjects.FourthNote = _fourthNote;
+        PointObjects.EighthNote = _eighthNote;
+        PointObjects.SixteenthNote = _sixteenthNote;        
     }
 
     public void AddSumPointObjectCost(float pointObjectCost){

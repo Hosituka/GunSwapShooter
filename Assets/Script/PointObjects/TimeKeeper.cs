@@ -10,7 +10,7 @@ public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
 {
     //またPointObjectGeneratorのインスタンスとの連携も担っています。
     [Header("インスペクター設定用")]
-    public List<PointObject> PointObjectList;
+    public List<PointObjects> PointObjectsList;
     [SerializeField,Range(0,1)] float _activateAnimRate = 0.2f;
     [SerializeField]float _deactivateAnimDuration = 0.2f;
     
@@ -71,49 +71,49 @@ public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
             _onRelease.Invoke(this);
         }
         void AllInitializePointObject(){
-            _nextGeneratableCount =PointObjectList[0].NextGeneratableCount;
+            _nextGeneratableCount =PointObjectsList[0].NextGeneratableCount;
             _finalActivationDelay = BaseActivationDelay;
-            foreach(PointObject pointObject in PointObjectList){
-                pointObject.TimeKeeper = this;
-                PointObject.InitializeResult initializeResult = pointObject.Initialize();
+            foreach(PointObjects pointObjects in PointObjectsList){
+                pointObjects.TimeKeeper = this;
+                PointObjects.InitializeResult initializeResult = pointObjects.Initialize();
                 _sumNextActivationDelay += initializeResult.NextBaseActivationDelay;
                 _sumLifeTime += initializeResult.LifeTime;
                 _finalActivationDelay += initializeResult.OffsetActivationDelay;
-                _finalActivationDelay += pointObject.OffsetActivationDelay;
+                _finalActivationDelay += pointObjects.OffsetActivationDelay;
             }
 
         }
 
         void AllPlayActivationTimer(float activationDelay){
-            foreach(PointObject pointObject in PointObjectList){
-                pointObject.PlayActivationTimer(activationDelay);
+            foreach(PointObjects pointObjects in PointObjectsList){
+                pointObjects.PlayActivationTimer(activationDelay);
             }
         }
         void AllActivateMain(float activateAnimDuration)
         {
-            foreach(PointObject pointObject in PointObjectList){
-                pointObject.ActivateMain(activateAnimDuration);
+            foreach(PointObjects pointObjects in PointObjectsList){
+                pointObjects.ActivateMain(activateAnimDuration);
             }
 
         }
         
         void AllPlayDeactivationTimer(float sumLifeTime){
-            foreach(PointObject pointObject in PointObjectList){
-                if(pointObject == null) continue;
-                pointObject.PlayDeactivationTimer(sumLifeTime);
+            foreach(PointObjects pointObjects in PointObjectsList){
+                if(pointObjects == null) continue;
+                pointObjects.PlayDeactivationTimer(sumLifeTime);
             }
         }
         void AllDeactivatePointObject(float deactivateAnimDuration){
-            foreach(PointObject pointObject in PointObjectList.ToArray()){
-                if(pointObject == null) continue;
-                pointObject.PlayTimeOver(deactivateAnimDuration);
+            foreach(PointObjects pointObjects in PointObjectsList.ToArray()){
+                if(pointObjects == null) continue;
+                pointObjects.TimeOver(deactivateAnimDuration);
             }
         }
     }
     //PointObjectがTimeKeeperの管理から外れる為の関数メンバ
-    public void NoticeUnLink(PointObject pointObject)
+    public void NoticeUnLink(PointObjects pointObject)
     {
-        PointObjectList.Remove(pointObject);
+        PointObjectsList.Remove(pointObject);
         //管理外から外れる為　対象のポイントオブジェクトとのリンクを切る。
         pointObject.TimeKeeper = null;
         pointObject.transform.SetParent(ObjectPoolManager.Current.transform);

@@ -3,7 +3,7 @@ using System.Collections;
 using TMPro;
 using System;
 using Random = UnityEngine.Random;
-public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
+public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
 {
     [Header("ButtonMashingTargetの設定用プロパティ")]
     [SerializeField] int _maxHp = 7;
@@ -11,7 +11,6 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
     [SerializeField] int _hp;
     [SerializeField] TextMeshPro _needShotCountText;
     [SerializeField]bool _isDestruction;
-    Action<ButtonMashingTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -43,15 +42,13 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
              
         }
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(_hp);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
+        yield break;
     }
 
-    [SerializeField]int _collisionCount;
+    int _collisionCount;
     void OnCollisionEnter(Collision collision)
     {
         _collisionCount++;
@@ -79,7 +76,7 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
             if(_hp == 0)
             {
                 _isDestruction = true;
-                StartBreakCoroutine();
+                BreakCoroutine();
             }
         }
     }
@@ -87,7 +84,7 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
     {
         _collisionCount--;
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {        
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17);
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
@@ -96,14 +93,11 @@ public class ButtonMashingTarget : PointObject,IPoolable<ButtonMashingTarget>
         Debug.Log("test");
         _onRelease.Invoke(this);
     }
-    public void OnCreate(Action<ButtonMashingTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
     }
-    public void OnRelease()
-    {
-        BaseOnRelease();
+    protected override void SubOnRelease()
+    {  
         _hp = 0;
         _isDestruction = false;
     }

@@ -2,11 +2,10 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class GunSwapTarget : PointObject,IHitGunSwapRayHandler,IPoolable<GunSwapTarget>
+public class GunSwapTarget : PointObject<GunSwapTarget>,IHitGunSwapRayHandler
 {
     [Header("GunSwapTargetの設定用プロパティ")]
     [SerializeField]int temp;
-    Action<GunSwapTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -36,13 +35,10 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler,IPoolable<GunSwap
              
         }
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
-
+        yield break;
     }
     int _collisionCount;
     void OnCollisionEnter(Collision collision)
@@ -75,23 +71,20 @@ public class GunSwapTarget : PointObject,IHitGunSwapRayHandler,IPoolable<GunSwap
             StageManager.Current.AddScore(1f,TimingState.PerfectTiming);
             break;
         }
-        StartBreakCoroutine();
+        BreakCoroutine();
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {
         Utility.ChangeEnabledColliders(ColliderList,false);
         _pointObjectAnimator.PlayExplosion(transform.position,Color.gray,12);
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
         _onRelease.Invoke(this);
     }
-    public void OnCreate(Action<GunSwapTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
     }
-    public void OnRelease()
+    protected override void SubOnRelease()
     {
-        BaseOnRelease();
     }
 
 }

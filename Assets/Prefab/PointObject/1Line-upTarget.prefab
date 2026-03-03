@@ -196,7 +196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5608414479450518256}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -204,7 +204,7 @@ Transform:
   - {fileID: 3105128837219875812}
   - {fileID: 2343872467270430008}
   m_Father: {fileID: 7482960659963114308}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7244927519231706546
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,7 +231,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7244927519231706546}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -239,7 +239,7 @@ Transform:
   - {fileID: 2907716764794407904}
   - {fileID: 8090228127364426661}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6367512014505706332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,25 +254,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ColliderList: []
   PointObjectCost: 4
-  _mainObj: {fileID: 5608414479450518256}
   NextGeneratableCount: 1
-  _pointObjectAnimator: {fileID: 4994112954404491780}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
-  PlaneForLineUpPrefab:
-  - {fileID: 5788825529098855087, guid: 45fb035d1f6a9bd4dba07cf373d6df12, type: 3}
-  - {fileID: 6985154207145087321, guid: aa8e8316f03f9ea46a3628a52c6bd466, type: 3}
-  - {fileID: 9081853273508720716, guid: 186c6b11071666940b6edd995194aef4, type: 3}
-  MaxPlaneCount: 4
-  MinPlaneCount: 4
+  _pointObjectAnimator: {fileID: 4994112954404491780}
+  _mainObj: {fileID: 5608414479450518256}
+  _planesForLineUpForGeneration:
+  - {fileID: 9029450537164599494, guid: 45fb035d1f6a9bd4dba07cf373d6df12, type: 3}
+  - {fileID: 9029450537164599494, guid: 45fb035d1f6a9bd4dba07cf373d6df12, type: 3}
+  - {fileID: 4557796868376670342, guid: 186c6b11071666940b6edd995194aef4, type: 3}
+  - {fileID: 4557796868376670342, guid: 186c6b11071666940b6edd995194aef4, type: 3}
+  - {fileID: 2843618285924969929, guid: aa8e8316f03f9ea46a3628a52c6bd466, type: 3}
+  _maxPlaneCount: 4
+  _minPlaneCount: 4
   _axisTr: {fileID: 3105128837219875812}
+  _redPlaneForLineUp: {fileID: 4557796868376670342, guid: 186c6b11071666940b6edd995194aef4, type: 3}
+  _bluePlaneForLineUp: {fileID: 9029450537164599494, guid: 45fb035d1f6a9bd4dba07cf373d6df12, type: 3}
+  _gunSwapPlaneForLineUp: {fileID: 2843618285924969929, guid: aa8e8316f03f9ea46a3628a52c6bd466, type: 3}
   _nextShowPlaneInterval: 0
   _setPlaneArray: []
   _planeCount: 0
-  _planeForLineUpList: []
+  _planesForLineUpList: []
 --- !u!114 &4994112954404491780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,6 +297,7 @@ MonoBehaviour:
     - {fileID: 1045793919829431425}
     - {fileID: 1628520991079213297}
   _lifeTimeGUI_MR: {fileID: 1628520991079213297}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &7986021214523887030
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,14 +322,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7986021214523887030}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -5.25, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.25, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4234632051673821134}
   m_Father: {fileID: 2907716764794407904}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8889132686181875294
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,7 +354,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8889132686181875294}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

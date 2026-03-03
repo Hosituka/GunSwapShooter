@@ -75,8 +75,8 @@ MonoBehaviour:
   _sumPointObjectCost: 0
   _blueTarget1: {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
   _redTarget1: {fileID: 3274268146980991022, guid: 02b7b49e8cf3f8a46a60db1f04b0c18f, type: 3}
-  _redBlueTarget: {fileID: 8155312420884199902, guid: f8cd2643650d9d84c844fb926eb6358b, type: 3}
-  _blueRedTarget: {fileID: 1672523945855969856, guid: 06aee36c77744a8499c6ab0932325663, type: 3}
-  _buttonMashingTarget: {fileID: 6676412112430940289, guid: b1887ea6fd0499b49a7c11f6924f2d9b, type: 3}
+  _redBlueTarget1: {fileID: 8155312420884199902, guid: f8cd2643650d9d84c844fb926eb6358b, type: 3}
+  _blueRedTarget1: {fileID: 1672523945855969856, guid: 06aee36c77744a8499c6ab0932325663, type: 3}
+  _buttonMashingTarget1: {fileID: 6676412112430940289, guid: b1887ea6fd0499b49a7c11f6924f2d9b, type: 3}
   _blueTarget2: {fileID: 1869257154555620567, guid: ff29a03026ef81d4faf9eddea8720786, type: 3}
   _redTarget2: {fileID: 3274268146980991022, guid: c8bc858c83fd49e40bcfa74ec44b1b11, type: 3}

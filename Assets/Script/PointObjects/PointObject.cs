@@ -2,33 +2,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//ここは全ての的に共通する振る舞いや状態を書く抽象クラスです。
-public abstract class PointObject : MonoBehaviour
+
+//ジェネリックなクラスであるPointObjectの型変数を意識せずにフィールドとして持ちたいときに使うPointObjectの親クラスです。
+public abstract class PointObjects : MonoBehaviour
 {
     [Header("PointObjectの設定用プロパティ")]
     public List<Collider> ColliderList;
     public float PointObjectCost;
-    [SerializeField]protected GameObject _mainObj;
     //次のpointobjectを生成する時、同時に生成される個数
     public int NextGeneratableCount = 1;
     //このフィールドを持つインスタンスの有効化に必要な時間のoffset
     public float OffsetActivationDelay{get;protected set;}
-    [SerializeField]protected PointObjectAnimator _pointObjectAnimator;
     [Header("表示用")]
     public Vector2 PointObjectPos;
     public Vector2 DebugPointObjectPos;
     public Vector2 PointObjectPosAsCenter;
     public Vector2 NormalizePointObjectPosAsCenter;
     public TimeKeeper TimeKeeper;
-    public Indicator Indicator{private get; set;}
+    public Indicator Indicator{get; set;}
 
-    //　インスペクターから見れん奴ら
-    /// 音符
+    //#　インスペクターから見れん奴ら
+    //## 音符
     public static float FourthNote;
     public static float EighthNote;
     public static float SixteenthNote;
-
-    
     public struct InitializeResult
     {
         public float NextBaseActivationDelay;
@@ -43,7 +40,25 @@ public abstract class PointObject : MonoBehaviour
     }
     public abstract InitializeResult Initialize();
     //PointObjectのメインとなる部分を有効化する関数。
-    public void ActivateMain(float activateAnimDuration)
+    public abstract void ActivateMain(float activateAnimDuration);
+    public abstract void TimeOver(float animDuration);
+
+    public abstract void PlayDeactivationTimer(float duration);
+    public abstract void PlayActivationTimer(float duration);
+
+    protected abstract void BreakCoroutine();
+
+}
+/*ここは全ての的に共通する振る舞いや状態を書く抽象クラスです。ジェネリックなフィールドを扱うために、これはジェネリッククラスです。
+型変数が明示しない形で、これを保持したければ、PointObjectsでフィールドを定義してください*/
+public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointObject<T>
+{
+    [SerializeField]protected PointObjectAnimator _pointObjectAnimator;
+    [SerializeField]GameObject _mainObj;
+    //##オブジェクトプールに戻るためのアクション
+    protected Action<T> _onRelease;
+
+    public override void ActivateMain(float activateAnimDuration)
     {
         StartCoroutine(BaseActivateMain());
         IEnumerator BaseActivateMain()
@@ -57,30 +72,10 @@ public abstract class PointObject : MonoBehaviour
             PointObjectGenerater.Current.AddSumPointObjectCost(PointObjectCost);
         }
     }
-
-    //時間制限内に射撃されなかったとき、TimeKeeperにより呼ばれる
-    public void PlayTimeOver(float animDuration)
-    {
-        StartCoroutine(BaseTimeOver());
-        StartCoroutine(TimeOver(animDuration));
-
-        IEnumerator BaseTimeOver()
-        {
-            Utility.ChangeEnabledColliders(ColliderList,false);
-            PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-            PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
-            TimeKeeper.NoticeUnLink(this);
-            Indicator.Destroy();
-            yield break;
-        }
-        
-    }
-
-    protected abstract IEnumerator TimeOver(float animDuration);
-    protected void StartBreakCoroutine()
+    protected override void BreakCoroutine()
     {
         BaseBreakProcess();
-        StartCoroutine(BreakCoroutine());
+        StartCoroutine(SubBreakCoroutine());
 
         void BaseBreakProcess()
         {
@@ -90,31 +85,69 @@ public abstract class PointObject : MonoBehaviour
             Indicator.Destroy();
         }
     }
-    abstract protected IEnumerator BreakCoroutine();
-    //OnCreateはOnReleaseと同じく、ObjectPoolにより呼ばれる為、テンプレートメソッドパターンが出来ない、共通処理はここに書き、それをOnCreateから呼ぶ形とする。
-    protected void BaseOnCreate()
-    {
-        _mainObj.SetActive(false); 
-    }
-    public void BaseOnRelease()
-    {
-        this.enabled = false;
-        _mainObj.SetActive(false);
-        _pointObjectAnimator.Reset();
-        Utility.ChangeEnabledColliders(ColliderList, true);
-    }
+    protected abstract IEnumerator SubBreakCoroutine();
 
 
-    public void PlayDeactivationTimer(float duration)
+    //時間制限内に射撃されなかったとき、TimeKeeperにより呼ばれる
+    public override void TimeOver(float animDuration)
+    {
+        StartCoroutine(SubTimeOver(animDuration));
+        StartCoroutine(BaseTimeOver(animDuration));
+
+        IEnumerator BaseTimeOver(float animDuration)
+        {
+            Utility.ChangeEnabledColliders(ColliderList,false);
+            PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
+            PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+            TimeKeeper.NoticeUnLink(this);
+            Indicator.Destroy();
+            _pointObjectAnimator.PlayTimeOverAnim(animDuration);
+            yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+            _onRelease.Invoke((T)this);
+        }
+        
+    }
+
+    protected abstract IEnumerator SubTimeOver(float animDuration);
+    public void OnCreate(Action<T> onRelease)
+    {        
+        SubOnCreate();
+        BaseOnCreate();
+        void BaseOnCreate()
+        {
+            _onRelease = onRelease;
+            _mainObj.SetActive(false); 
+        }
+    }
+    public override void PlayDeactivationTimer(float duration)
     {
         _pointObjectAnimator.PlayDeactivationTimer(duration);
         Indicator.PlayDeActivationTimer(duration);
     }
-    public void PlayActivationTimer(float duration)
+    public override void PlayActivationTimer(float duration)
     {
         _pointObjectAnimator.PlayActivationTimer(duration);
         Indicator.PlayActivationTimer(duration);
     }
+
+    protected abstract void SubOnCreate();
+    public void OnRelease()
+    {
+        SubOnRelease();
+        BaseOnRelease();
+        void BaseOnRelease()
+        {
+            this.enabled = false;
+            _mainObj.SetActive(false);
+            _pointObjectAnimator.Reset();
+            Utility.ChangeEnabledColliders(ColliderList, true);
+        }
+
+    }
+    protected abstract void SubOnRelease();
+
+
+
 
 
 }

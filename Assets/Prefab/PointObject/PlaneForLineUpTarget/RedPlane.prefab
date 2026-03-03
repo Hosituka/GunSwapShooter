@@ -291,7 +291,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9081853273508720716}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -299,7 +299,7 @@ Transform:
   - {fileID: 4740217203803711411}
   - {fileID: 3253255763761466616}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &7343548904233659787
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -339,15 +339,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd3bfe2b06c9e0c4caaec88b6192fea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LineUpTarget: {fileID: 0}
   Colliders:
   - {fileID: 7533087763697957356}
-  PointObjectAnimator: {fileID: 5344964512461725474}
+  _isShow: 1
+  _lineUpTargetTr: {fileID: 0}
   _showAndHideTarget:
   - TextMeshProList:
     - {fileID: 9205707338534196862}
     MeshRendererList:
     - {fileID: 3718275049283639912}
   _needShotCountTMPro: {fileID: 9205707338534196862}
+  _pointObjectAnimator: {fileID: 5344964512461725474}
 --- !u!114 &5344964512461725474
 MonoBehaviour:
   m_ObjectHideFlags: 0

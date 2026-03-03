@@ -52,6 +52,7 @@ public class BluePlane : MonoBehaviour
     }
     public void Reset()
     {
+        _collisionCount = 0;
         Utility.ChangeEnabledColliders(_blueColliderList,true);
         _pointObjectAnimator.Reset();
         gameObject.SetActive(true);

@@ -582,6 +582,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: Bpm
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: GenerateHalfYawAngle
       value: 80
       objectReference: {fileID: 0}
@@ -894,6 +898,10 @@ PrefabInstance:
     - target: {fileID: 2469371859242662038, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
+      propertyPath: Bpm
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 4195088477982722865, guid: 0b12bc70e2f86494d933d895ec29467a, type: 3}
       propertyPath: GenerateHalfYawAngle

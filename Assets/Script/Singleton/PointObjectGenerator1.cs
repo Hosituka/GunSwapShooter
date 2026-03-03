@@ -29,37 +29,37 @@ public class PointObjectGenerator1 : PointObjectGenerater
 
     protected override void SettingObjectPool()
     {
-        _timeKeeperPool = ObjectPoolManager.Current.GetObjectPool<TimeKeeper>(_timeKeeper,_objectPoolManagerTr,7,15);
+        _timeKeeperPool = ObjectPoolManager.Current.GetObjectPool<TimeKeeper>(_timeKeeper,7,15);
         switch (_difficultAsGenerater)
         {
             case GameManager.Difficult.easy:
-                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,_objectPoolManagerTr,10,15);
-                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,_objectPoolManagerTr,10,15);
-                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,_objectPoolManagerTr,5,10);
-                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,_objectPoolManagerTr,5,10);
-                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,_objectPoolManagerTr,5,10);
+                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,10,15);
+                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,10,15);
+                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,5,10);
+                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,5,10);
+                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,5,10);
             break;
             case GameManager.Difficult.normal:
-                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,_objectPoolManagerTr,10,15);
-                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,_objectPoolManagerTr,10,15);
-                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,_objectPoolManagerTr,5,10);
-                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,_objectPoolManagerTr,5,10);
-                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,_objectPoolManagerTr,5,10);
+                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,10,15);
+                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,10,15);
+                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,5,10);
+                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,5,10);
+                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,5,10);
             break;
             case GameManager.Difficult.hard:
-                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,_objectPoolManagerTr,10,15);
-                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,_objectPoolManagerTr,10,15);
-                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,_objectPoolManagerTr,5,10);
-                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,_objectPoolManagerTr,5,10);
-                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,_objectPoolManagerTr,5,10);
+                _redTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget1,10,15);
+                _blueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget1,10,15);
+                _redBlueTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_redBlueTarget1,5,10);
+                _blueRedTargetPool1 = ObjectPoolManager.Current.GetObjectPool<RedBlueTarget>(_blueRedTarget1,5,10);
+                _buttonMashingTargetPool1 = ObjectPoolManager.Current.GetObjectPool<ButtonMashingTarget>(_buttonMashingTarget1,5,10);
 
 
-                _redTargetPool2 =  ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget2,_objectPoolManagerTr,5,10);
-                _blueTargetPool2 =  ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget2,_objectPoolManagerTr,5,10);
+                _redTargetPool2 =  ObjectPoolManager.Current.GetObjectPool<RedTarget>(_redTarget2,5,10);
+                _blueTargetPool2 =  ObjectPoolManager.Current.GetObjectPool<BlueTarget>(_blueTarget2,5,10);
             break;
         }
     }
-    protected override PointObject GetPointObjectWithDownCast(PointObject pointObject)
+    protected override PointObjects GetPointObjectWithDownCast(PointObjects pointObject)
     {
         switch (pointObject)
         {

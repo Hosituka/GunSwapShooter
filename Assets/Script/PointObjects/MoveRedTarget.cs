@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using Random = UnityEngine.Random;
-public class MoveRedTarget : PointObject,IPoolable<MoveRedTarget>
+public class MoveRedTarget : PointObject<MoveRedTarget>
 {
     [Header("MoveRedTargetの設定用プロパティ")]
 
@@ -18,7 +18,6 @@ public class MoveRedTarget : PointObject,IPoolable<MoveRedTarget>
     float _startGenerateYaw;
     float _startGeneratePitch;
     float _pingPongTime;
-    Action<MoveRedTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -64,12 +63,10 @@ public class MoveRedTarget : PointObject,IPoolable<MoveRedTarget>
         }
 
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
+        yield break;
     }
 
     // Update is called once per frame
@@ -122,28 +119,26 @@ public class MoveRedTarget : PointObject,IPoolable<MoveRedTarget>
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-            StartBreakCoroutine();
+            BreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
     {
         _collisionCount--;
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {
         Utility.ChangeEnabledColliders(ColliderList,false);
         _pointObjectAnimator.PlaySpinAndFadeOut();
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinAndFadeOutPhase != PointObjectAnimator.SpinAndFadeOutPhase.Completed);
         _onRelease.Invoke(this);
     }
-    public void OnCreate(Action<MoveRedTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
     }
-    public void OnRelease()
+    protected override void SubOnRelease()
     {
-       BaseOnRelease(); 
+        _collisionCount = 0;
     }
 
 }

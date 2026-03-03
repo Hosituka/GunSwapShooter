@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using Random = UnityEngine.Random;
-public class MoveBlueTarget : PointObject,IPoolable<MoveBlueTarget>
+public class MoveBlueTarget : PointObject<MoveBlueTarget>
 {
     [Header("MoveBlueTargetの設定用プロパティ")]
 
@@ -18,8 +18,6 @@ public class MoveBlueTarget : PointObject,IPoolable<MoveBlueTarget>
     float _startGenerateYaw;
     float _startGeneratePitch;
     float _pingPongTime;
-    Action<MoveBlueTarget> _onRelease;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
         _playerTr = Player.Current.GetComponent<Transform>();
@@ -64,12 +62,10 @@ public class MoveBlueTarget : PointObject,IPoolable<MoveBlueTarget>
         }
 
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
+        yield break;
     }
 
     // Update is called once per frame
@@ -122,27 +118,25 @@ public class MoveBlueTarget : PointObject,IPoolable<MoveBlueTarget>
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-            StartBreakCoroutine();
+            BreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
     {
         _collisionCount--;
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {
         Utility.ChangeEnabledColliders(ColliderList,false);
         _pointObjectAnimator.PlaySpinAndFadeOut();
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinAndFadeOutPhase != PointObjectAnimator.SpinAndFadeOutPhase.Completed);
         _onRelease.Invoke(this);
     }
-    public void OnCreate(Action<MoveBlueTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
     }
-    public void OnRelease()
+    protected override void SubOnRelease()
     {
-        BaseOnRelease();
+        _collisionCount = 0;
     }
 }

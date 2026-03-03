@@ -55,6 +55,7 @@ public class RedPlane : MonoBehaviour
     }
     public void Reset()
     {
+        _collisionCount = 0;
         Utility.ChangeEnabledColliders(_redColliderList,true);
         _pointObjectAnimator.Reset();
         gameObject.SetActive(true);

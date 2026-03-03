@@ -176,6 +176,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5544918139465247867, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
   m_PrefabInstance: {fileID: 1237107923160260062}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &182040137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 182040138}
+  m_Layer: 0
+  m_Name: Tests
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &182040138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182040137}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &232579236 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 4225667004338859756, guid: 6668cfc03ed6aff43acfd981ef358f4a, type: 3}
@@ -189,6 +220,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 29295303}
     m_Modifications:
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: _difficultAsGenerater
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1245945917111376567, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -233,6 +268,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pointObjectGenerator2AsNormal
       objectReference: {fileID: 0}
+    - target: {fileID: 2469371859242662038, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -251,6 +290,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 29295303}
     m_Modifications:
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: GenerateHalfYawAngle
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: _difficultAsGenerater
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: _pointObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: '_pointObjects.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8155312420884199902, guid: f8cd2643650d9d84c844fb926eb6358b, type: 3}
     - target: {fileID: 1245945917111376567, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -294,6 +349,10 @@ PrefabInstance:
     - target: {fileID: 2469371859242662038, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_Name
       value: pointObjectGenerator2AsNormalTest
+      objectReference: {fileID: 0}
+    - target: {fileID: 2469371859242662038, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -543,6 +602,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 29295303}
     m_Modifications:
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: Bpm
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: _difficultAsGenerater
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: '_pointObjects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1869257154555620567, guid: ff29a03026ef81d4faf9eddea8720786, type: 3}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: '_pointObjects.Array.data[5]'
+      value: 
+      objectReference: {fileID: 3274268146980991022, guid: c8bc858c83fd49e40bcfa74ec44b1b11, type: 3}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: '_pointObjects.Array.data[8]'
+      value: 
+      objectReference: {fileID: 6957874079317351911, guid: 0996ff6d1cb62f34f90e8d97c12d0fcb, type: 3}
     - target: {fileID: 1245945917111376567, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -587,6 +666,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: pointObjectGenerator2AsHard
       objectReference: {fileID: 0}
+    - target: {fileID: 2469371859242662038, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -621,6 +704,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 29295303}
     m_Modifications:
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: Bpm
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: GenerateHalfYawAngle
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: _difficultAsGenerater
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1245945917111376567, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -664,6 +759,10 @@ PrefabInstance:
     - target: {fileID: 2469371859242662038, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_Name
       value: pointObjectGenerator2AsEasy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2469371859242662038, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1525,7 +1624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7241598425053579896, guid: c70aa08e4571df74fa4af82fb9b731b0, type: 3}
       propertyPath: CurrentDifficult
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7241598425053579896, guid: c70aa08e4571df74fa4af82fb9b731b0, type: 3}
       propertyPath: IsRunningInEditor
@@ -1562,3 +1661,4 @@ SceneRoots:
   - {fileID: 2843704443244849581}
   - {fileID: 3320782419529157208}
   - {fileID: 1056172611}
+  - {fileID: 182040138}

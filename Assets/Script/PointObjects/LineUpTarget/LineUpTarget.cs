@@ -1,32 +1,49 @@
-using TMPro;
+using UnityEngine.Pool;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
 using Random = UnityEngine.Random;
-public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
+using System.Linq;
+public class LineUpTarget : PointObject<LineUpTarget>
 {
-    [Header("LineUpTargetの設定必須項目")]
-    public GameObject[] PlaneForLineUpPrefab;
-    public int MaxPlaneCount = 7;
-    public int MinPlaneCount = 5;
+    [Header("#LineUpTargetの設定必須項目")]
+    [SerializeField]PlanesForLineUp[] _planesForLineUpForGeneration;
+    [SerializeField]int _maxPlaneCount = 4;
+    [SerializeField]int _minPlaneCount = 4;
     [SerializeField] Transform _axisTr;
+    [Header("#LineUpTargetがPlaneForLineUpを生成する際のコピー元")]
+    [SerializeField]RedPlaneForLineUp _redPlaneForLineUp;
+    [SerializeField]BluePlaneForLineUp _bluePlaneForLineUp;
+    [SerializeField]GunSwapPlaneForLineUp _gunSwapPlaneForLineUp;
 
     [Header("表示用")]
     //次の的が来るまでに必要な時間
     [SerializeField] float _nextShowPlaneInterval;
     [SerializeField] GameObject[] _setPlaneArray;
     [SerializeField] int _planeCount;
-    [SerializeField] List<PlaneForLineUp> _planeForLineUpList; 
+    [SerializeField] List<PlanesForLineUp> _planesForLineUpList; 
     float _pitchRotationStep;
     //一回転するまでに必要な時間
     float _rotationInterval;
-    Action<LineUpTarget> _onRelease;
-    TextMeshPro[] _needShotCountTexts;
+    ObjectPool<RedPlaneForLineUp> _redPlaneForLineUpPool;
+    ObjectPool<BluePlaneForLineUp>_bluePlaneForLineUpPool;
+    ObjectPool<GunSwapPlaneForLineUp>_gunSwapPlaneForLineUpPool;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
+        _planeCount = Random.Range(_minPlaneCount, _maxPlaneCount + 1);
+        PlanesForLineUp planeForLineUp;
+        _planesForLineUpList = new List<PlanesForLineUp>();
+
+        _pitchRotationStep = 360f / _planeCount;
+        for (int generatedCount = 0; generatedCount < _planeCount; generatedCount++)
+        {
+            planeForLineUp = GetPlanesForLineUpWithDownCast(_planesForLineUpForGeneration[Random.Range(0, _planesForLineUpForGeneration.Length)]);
+            _planesForLineUpList.Add(planeForLineUp);
+            planeForLineUp.Initialize(this,_axisTr,generatedCount * _pitchRotationStep);
+            planeForLineUp.SetNeedShotCountText(_planeCount.ToString());
+        }
 
 
         switch (GameManager.Current.CurrentDifficult)
@@ -60,13 +77,36 @@ public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
             return new InitializeResult();
              
         }
+        PlanesForLineUp GetPlanesForLineUpWithDownCast(PlanesForLineUp planesForLineUp)
+        {
+            switch (planesForLineUp)
+            {
+                case BluePlaneForLineUp:
+                    return _bluePlaneForLineUpPool.Get();
+                case RedPlaneForLineUp:
+                    return _redPlaneForLineUpPool.Get();
+
+                case GunSwapPlaneForLineUp:
+                    return _gunSwapPlaneForLineUpPool.Get();
+
+            }
+            Debug.LogError("どの具象クラスにも属さないPlaneForLineUpのインスタンスが渡されました");
+            return null;
+        }
+        void SetRotationInterval()
+        {
+            _rotationInterval = _nextShowPlaneInterval * _planeCount;
+        }
+
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(_planeCount);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
+        foreach(PlanesForLineUp planesForLineUp in _planesForLineUpList)
+        {
+            planesForLineUp.TimeOver(animDuration);
+        }
+        yield break;
     }
 
     // Update is called once per frame
@@ -76,59 +116,44 @@ public class LineUpTarget : PointObject,IPoolable<LineUpTarget>
         if(TimeKeeper.CurrentTargetState == TimeKeeper.TargetState.Activating) return;
         _axisTr.rotation = Quaternion.AngleAxis(1 / _rotationInterval * Time.deltaTime * 360, transform.up) * _axisTr.rotation;
     }
-    void SetRotationInterval()
-    {
-        _rotationInterval = _nextShowPlaneInterval * _planeCount;
-    }
-
-    //PlaneForLineUpがLineUpTargetの管理から外れるための関数メンバ
-    public void NoticeDestruction(PlaneForLineUp removePlaneForLineUp)
+    //PLanesForLineUpが銃撃されたことをLineUpTargetに伝える処理
+    public void NoticeDestruction(PlanesForLineUp planesForLineUp)
     {
         _planeCount--;
-        foreach (PlaneForLineUp planeForLineUp in _planeForLineUpList)
+        foreach (PlanesForLineUp planeForLineUp in _planesForLineUpList)
         {
             planeForLineUp.SetNeedShotCountText(_planeCount.ToString());
         }
-        _planeForLineUpList.Remove(removePlaneForLineUp);
+        UnLinkPlanesForLineUp(planesForLineUp);
         if (_planeCount == 0)
-        {StartBreakCoroutine();}
+        {BreakCoroutine();}
     }
-    protected override IEnumerator BreakCoroutine()
+    //PlanesForLineUpがLineUpTargetの管理から外れるための関数メンバ  
+    void UnLinkPlanesForLineUp(PlanesForLineUp planesForLineUp)
+    {
+        _planesForLineUpList.Remove(planesForLineUp);
+        planesForLineUp.LineUpTarget = null;
+        planesForLineUp.transform.SetParent(ObjectPoolManager.Current.transform);
+    }
+    protected override IEnumerator SubBreakCoroutine()
     {
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onRelease.Invoke(this);
     }
-    public void OnCreate(Action<LineUpTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
-
-        _planeCount = Random.Range(MinPlaneCount, MaxPlaneCount + 1);
-        PlaneForLineUp instancePlaneForLineUp;
-        _setPlaneArray = new GameObject[_planeCount];
-        _planeForLineUpList = new List<PlaneForLineUp>();
-        _needShotCountTexts = new TextMeshPro[_planeCount];
-
-        _pitchRotationStep = 360f / _planeCount;
-        for (int generatedCount = 0; generatedCount < _planeCount; generatedCount++)
-        {
-            GameObject generatePlanePrefab = PlaneForLineUpPrefab[Random.Range(0, PlaneForLineUpPrefab.Length)];
-            GameObject generatedPlaneObj = Instantiate(generatePlanePrefab, generatePlanePrefab.transform.position, _axisTr.rotation);
-            instancePlaneForLineUp = generatedPlaneObj.GetComponent<PlaneForLineUp>();
-            _planeForLineUpList.Add(instancePlaneForLineUp);
-            //PlaneForLineUpのゲームオブジェクトのコライダーとTMPorMeshRendererを取得。
-            ColliderList.AddRange(instancePlaneForLineUp.Colliders);
-            _pointObjectAnimator.AddFadeTargetList(instancePlaneForLineUp.PointObjectAnimator.GetFadeTargetList());
-            instancePlaneForLineUp.Initialize(this);
-            instancePlaneForLineUp.SetTransform(_axisTr,generatedCount * _pitchRotationStep);
-            instancePlaneForLineUp.SetNeedShotCountText(_planeCount.ToString());
-            _setPlaneArray[generatedCount] = generatedPlaneObj;
-        }
+        _bluePlaneForLineUpPool = ObjectPoolManager.Current.GetObjectPool<BluePlaneForLineUp>(_bluePlaneForLineUp,_maxPlaneCount,_maxPlaneCount);
+        _redPlaneForLineUpPool = ObjectPoolManager.Current.GetObjectPool<RedPlaneForLineUp>(_redPlaneForLineUp,_maxPlaneCount,_maxPlaneCount);
+        _gunSwapPlaneForLineUpPool = ObjectPoolManager.Current.GetObjectPool<GunSwapPlaneForLineUp>(_gunSwapPlaneForLineUp,_maxPlaneCount,_maxPlaneCount);
     }
-    public void OnRelease()
+    protected override void SubOnRelease()
     {
-        BaseOnRelease();
+        _axisTr.localRotation = Quaternion.identity;
+        foreach(PlanesForLineUp planesForLineUp in _planesForLineUpList.ToList())
+        {
+            UnLinkPlanesForLineUp(planesForLineUp);
+        }
     }
 
 }

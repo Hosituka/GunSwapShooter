@@ -19,6 +19,7 @@ public class PointObjectAnimator : MonoBehaviour
     public FadeOutPhase CurtFadeOutPhase{private set; get;}
     public ShowAnimOfMainPhase CurtShowAnimOfMainPhase{private set; get;}
     public TimeOverAnimPhase CurtTimeOverAnimPhase{private set; get;}
+    bool _isPlayingBreakAnim;
     MaterialPropertyBlock _propBlock;
     //#PointObjectが銃撃された時のアニメーション群、PointObjectの具象クラスにより呼ばれる。
     public void PlayExplosion(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize)
@@ -26,6 +27,7 @@ public class PointObjectAnimator : MonoBehaviour
         StartCoroutine(ExplosionCoroutine());
         IEnumerator ExplosionCoroutine()
         {
+            _isPlayingBreakAnim = true;
             ExplosionEffect explosionEffect = StageUI_manager.Current.GenerateExplosionEffect(explosionEffectPos,explosionEffectColor,explosionEffectSize);
             Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
             CurtExplosionPhase = ExplosionPhase.Explosion;
@@ -42,6 +44,7 @@ public class PointObjectAnimator : MonoBehaviour
         StartCoroutine(RotateThenExplosionCoroutine());
         IEnumerator RotateThenExplosionCoroutine()
         {
+            _isPlayingBreakAnim = true;
             CurtSpinThenExplodePhase = SpinThenExplodePhase.Spin;
             Quaternion startRotation = transform.rotation;
             Vector3 angleAxis = transform.right;
@@ -65,6 +68,7 @@ public class PointObjectAnimator : MonoBehaviour
         StartCoroutine(PlayRotateAndFadeOutCoroutine());
         IEnumerator PlayRotateAndFadeOutCoroutine()
         {
+            _isPlayingBreakAnim = true;
             CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.SpinAndFadeout;
             Quaternion startRotation = transform.rotation;
             Vector3 angleAxis = transform.right;
@@ -87,18 +91,19 @@ public class PointObjectAnimator : MonoBehaviour
         StartCoroutine(PlayRotateAndFadeOutCoroutine());
         IEnumerator PlayRotateAndFadeOutCoroutine()
         {
+            _isPlayingBreakAnim = true;
             CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.Spin;
             //ただ回転するだけのアニメーション
             Quaternion startRotation = transform.rotation;
             Vector3 angleAxis = transform.right;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
+            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 2f)){
                 transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
                 yield return null;
             }
             CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.SpinAndFadeOutPhase;
             //回転とフェードアウトのアニメーション
             startRotation = transform.rotation;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
+            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 2f)){
                 transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
                 foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
                 {
@@ -118,6 +123,7 @@ public class PointObjectAnimator : MonoBehaviour
         StartCoroutine(FadeOutCoroutine());
         IEnumerator FadeOutCoroutine()
         {
+            _isPlayingBreakAnim = true;
             CurtFadeOutPhase = FadeOutPhase.Fade;
             //フェードアウトのアニメーション
             for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / duration)){
@@ -143,6 +149,7 @@ public class PointObjectAnimator : MonoBehaviour
         IEnumerator ActivationTimer(){
             for(float playback = 0;playback < duration; playback += Time.deltaTime)
             {
+                if(_isPlayingBreakAnim)yield break;
                 _propBlock.SetFloat("_outerFrameAnim",playback / duration);
                 _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
                 yield return null;
@@ -178,6 +185,7 @@ public class PointObjectAnimator : MonoBehaviour
         IEnumerator DeactivationTimer(){
             for(float playback = 0;playback < duration; playback += Time.deltaTime)
             {
+                if(_isPlayingBreakAnim)yield break;
                 _propBlock.SetFloat("_outerFrameAnim",1 - playback / duration);
                 _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
                 yield return null;
@@ -221,7 +229,7 @@ public class PointObjectAnimator : MonoBehaviour
         ResetPhase();
         ResetPropBlock();
         ResetEnabled();
-        //#各アニメーションの進捗を表すenumのリセット
+        //#各アニメーションの進捗を表す物のリセット
         void ResetPhase()
         {
             CurtExplosionPhase = ExplosionPhase.NotPlayed;
@@ -231,7 +239,7 @@ public class PointObjectAnimator : MonoBehaviour
             CurtFadeOutPhase = FadeOutPhase.NotPlayed;
             CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.NotPlayed;
             CurtTimeOverAnimPhase = TimeOverAnimPhase.NotPlayed;
-
+            _isPlayingBreakAnim = false;
         }
         void ResetPropBlock(){
             foreach(TMPandMeshRenderer tMPorMeshRenderer in _tmpAndMeshRendererList)

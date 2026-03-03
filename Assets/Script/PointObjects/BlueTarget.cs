@@ -2,15 +2,13 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class BlueTarget : PointObject,IPoolable<BlueTarget>
+public class BlueTarget : PointObject<BlueTarget>
 {
     [Header("BlueTargetの設定用プロパティ")]
     [SerializeField]bool _isDestruction;
-    Action<BlueTarget> _onRelease;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
-        Debug.Log("プールから引っ張り出されました");
         switch (GameManager.Current.CurrentDifficult)
         {
             case GameManager.Difficult.easy:
@@ -37,13 +35,10 @@ public class BlueTarget : PointObject,IPoolable<BlueTarget>
              
         }
     }
-    protected override IEnumerator TimeOver(float animDuration)
+    protected override IEnumerator SubTimeOver(float duration)
     {
-        Debug.Log("Timeoverが実行されました。");
         StageManager.Current.AddOverlookCount(1);
-        _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
-        _onRelease.Invoke(this);
+        yield break;
     }
 
     int _collisionCount;
@@ -73,14 +68,14 @@ public class BlueTarget : PointObject,IPoolable<BlueTarget>
                 StageManager.Current.AddScore(1,TimingState.PerfectTiming);
                 break;
             }
-            StartBreakCoroutine();
+            BreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
     {
         _collisionCount--;
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12);
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
@@ -88,14 +83,11 @@ public class BlueTarget : PointObject,IPoolable<BlueTarget>
         yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onRelease.Invoke(this);
     }
-    public void OnCreate(Action<BlueTarget> onRelease)
+    protected override void SubOnCreate()
     {
-        BaseOnCreate();
-        _onRelease = onRelease;
     }
-    public void OnRelease()
+    protected override void SubOnRelease()
     {
-        BaseOnRelease();
         _isDestruction = false;
     }
 }

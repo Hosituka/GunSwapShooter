@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-public class RedPlaneForLineUp : PlaneForLineUp
+public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
 {  
-    protected override void OnUpdate()
+    protected override void SubUpdate()
     {
 
     }
-    int _collisionCount;
+    [SerializeField]int _collisionCount;
     void OnCollisionEnter(Collision collision)
     {
         _collisionCount++;
@@ -28,18 +28,23 @@ public class RedPlaneForLineUp : PlaneForLineUp
             else
             {StageManager.Current.AddScore(0.8f,TimingState.GoodTiming);}
 
-            StartBreakCoroutine();
+            BreakCoroutine();
         }
     }
     void OnCollisionExit(Collision collision)
     {
         _collisionCount--;
     }
-    protected override IEnumerator BreakCoroutine()
+    protected override IEnumerator SubBreakCoroutine()
     {
-        PointObjectAnimator.PlayFadeOut(0.05f);
-        yield return new WaitWhile(()=> PointObjectAnimator.CurtFadeOutPhase != PointObjectAnimator.FadeOutPhase.Completed);
-        gameObject.SetActive(false);
+        yield break;
+    }
+    protected override void SubOnCreate()
+    {
+    }
+    protected override void SubOnRelease()
+    {
+        _collisionCount = 0;
     }
 
 }
