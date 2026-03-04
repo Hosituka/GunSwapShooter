@@ -41,11 +41,8 @@ public class BlueTarget : PointObject<BlueTarget>
         yield break;
     }
 
-    int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
         if(_isDestruction == true) return;
         if (collision.gameObject.CompareTag("RedBullet"))
         {
@@ -70,10 +67,6 @@ public class BlueTarget : PointObject<BlueTarget>
             }
             BreakCoroutine();
         }
-    }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
     }
     protected override IEnumerator SubBreakCoroutine()
     {

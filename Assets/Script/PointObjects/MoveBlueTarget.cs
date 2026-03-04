@@ -93,11 +93,8 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
         transform.rotation = Quaternion.LookRotation(_directionToPlayer);
 
     }
-    int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
         if (collision.gameObject.CompareTag("RedBullet"))
         {
             StageManager.Current.AddAccidentalShoot(1);
@@ -121,10 +118,6 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
             BreakCoroutine();
         }
     }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
-    }
     protected override IEnumerator SubBreakCoroutine()
     {
         Utility.ChangeEnabledColliders(ColliderList,false);
@@ -137,6 +130,5 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
     }
     protected override void SubOnRelease()
     {
-        _collisionCount = 0;
     }
 }

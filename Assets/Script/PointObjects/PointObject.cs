@@ -109,16 +109,6 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
     }
 
     protected abstract IEnumerator SubTimeOver(float animDuration);
-    public void OnCreate(Action<T> onRelease)
-    {        
-        SubOnCreate();
-        BaseOnCreate();
-        void BaseOnCreate()
-        {
-            _onRelease = onRelease;
-            _mainObj.SetActive(false); 
-        }
-    }
     public override void PlayDeactivationTimer(float duration)
     {
         _pointObjectAnimator.PlayDeactivationTimer(duration);
@@ -128,6 +118,30 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
     {
         _pointObjectAnimator.PlayActivationTimer(duration);
         Indicator.PlayActivationTimer(duration);
+    }
+    int _lastProcessedFrame = -1;
+    GameObject _currentCollisionGameObject;
+    GameObject _lastCollisionGameObject;
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("unnko");
+        _currentCollisionGameObject = Utility.GetCollisionGameObject(collision);
+        if(_lastProcessedFrame == Time.frameCount && _currentCollisionGameObject == _lastCollisionGameObject) return;
+        _lastProcessedFrame = Time.frameCount;
+        _lastCollisionGameObject = _currentCollisionGameObject;
+        OnValidCollisionEnter(collision);
+    }
+    //#複合コライダーによる複数のOnCollisionEnter発火を疑似的に一回だけ呼ばれてるように見せる奴、
+    protected abstract void OnValidCollisionEnter(Collision collision);
+    public void OnCreate(Action<T> onRelease)
+    {        
+        SubOnCreate();
+        BaseOnCreate();
+        void BaseOnCreate()
+        {
+            _onRelease = onRelease;
+            _mainObj.SetActive(false); 
+        }
     }
 
     protected abstract void SubOnCreate();
@@ -141,6 +155,8 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
             _mainObj.SetActive(false);
             _pointObjectAnimator.Reset();
             Utility.ChangeEnabledColliders(ColliderList, true);
+            _lastCollisionGameObject = null;
+            _lastProcessedFrame = -1;
         }
 
     }

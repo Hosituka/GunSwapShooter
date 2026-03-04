@@ -40,20 +40,13 @@ public class GunSwapTarget : PointObject<GunSwapTarget>,IHitGunSwapRayHandler
         StageManager.Current.AddOverlookCount(1);
         yield break;
     }
-    int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
             StageManager.Current.AddAccidentalShoot(1);
             StageManager.Current.ResetCombo();
         }
-    }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
     }
 
     public void OnHitGunSwapRay()

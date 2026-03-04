@@ -96,14 +96,14 @@ public class PointObjectAnimator : MonoBehaviour
             //ただ回転するだけのアニメーション
             Quaternion startRotation = transform.rotation;
             Vector3 angleAxis = transform.right;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 2f)){
+            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
                 transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
                 yield return null;
             }
             CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.SpinAndFadeOutPhase;
             //回転とフェードアウトのアニメーション
             startRotation = transform.rotation;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 2f)){
+            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
                 transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
                 foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
                 {

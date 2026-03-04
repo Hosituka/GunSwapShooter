@@ -10,7 +10,6 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
     [SerializeField] int _minHp = 4;
     [SerializeField] int _hp;
     [SerializeField] TextMeshPro _needShotCountText;
-    [SerializeField]bool _isDestruction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override InitializeResult Initialize()
     {
@@ -47,13 +46,9 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
         StageManager.Current.AddOverlookCount(_hp);
         yield break;
     }
-
-    int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
-        if(_isDestruction == true) return;
+        Debug.Log("test2");
         if(_hp <= 0) return;
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
@@ -75,14 +70,9 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
 
             if(_hp == 0)
             {
-                _isDestruction = true;
                 BreakCoroutine();
             }
         }
-    }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
     }
     protected override IEnumerator SubBreakCoroutine()
     {        
@@ -99,7 +89,6 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
     protected override void SubOnRelease()
     {  
         _hp = 0;
-        _isDestruction = false;
     }
 
 }

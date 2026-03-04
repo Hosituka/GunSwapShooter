@@ -7,20 +7,13 @@ public class GunSwapPlaneForLineUp : PlaneForLineUp<GunSwapPlaneForLineUp>,IHitG
     {
 
     }
-    [SerializeField]int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
             StageManager.Current.AddAccidentalShoot(1);
             StageManager.Current.ResetCombo();
         }
-    }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
     }
 
     public void OnHitGunSwapRay()
@@ -43,7 +36,6 @@ public class GunSwapPlaneForLineUp : PlaneForLineUp<GunSwapPlaneForLineUp>,IHitG
     }
     protected override void SubOnRelease()
     {
-        _collisionCount = 0;
     }
 
 

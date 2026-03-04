@@ -81,6 +81,20 @@ public abstract class PlaneForLineUp<T> : PlanesForLineUp,IPoolable<T>where T:Pl
     }
     protected abstract void SubUpdate();
 
+    int _lastProcessedFrame = -1;
+    GameObject _currentCollisionGameObject;
+    GameObject _lastCollisionGameObject;
+    void OnCollisionEnter(Collision collision)
+    {
+        _currentCollisionGameObject = Utility.GetCollisionGameObject(collision);
+        if(_lastProcessedFrame == Time.frameCount && _currentCollisionGameObject == _lastCollisionGameObject) return;
+        _lastProcessedFrame = Time.frameCount;
+        _lastCollisionGameObject = _currentCollisionGameObject;
+        OnValidCollisionEnter(collision);
+    }
+    //#複合コライダーによる複数のOnCollisionEnter発火を疑似的に一回だけ呼ばれてるように見せる奴、
+    protected abstract void OnValidCollisionEnter(Collision collision);
+
     protected override void BreakCoroutine()
     {
         StartCoroutine(BaseBreakCoroutine());

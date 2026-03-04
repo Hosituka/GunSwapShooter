@@ -163,14 +163,14 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 3153822431969660074}
   PointObjectCost: 1
-  _mainObj: {fileID: 7848461985884779351}
   NextGeneratableCount: 2
-  _pointObjectAnimator: {fileID: 8476748975805284806}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
+  _pointObjectAnimator: {fileID: 8476748975805284806}
+  _mainObj: {fileID: 7848461985884779351}
   _isDestruction: 0
 --- !u!114 &8476748975805284806
 MonoBehaviour:
@@ -190,6 +190,7 @@ MonoBehaviour:
     - {fileID: 400549286157837579}
     - {fileID: 8976815972985193884}
   _lifeTimeGUI_MR: {fileID: 8976815972985193884}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &7848461985884779351
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,13 +250,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7880126900656056980}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0.008726558, z: 0, w: 0.999962}
   m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7398167776399953328}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 1, z: 0}
 --- !u!23 &8976815972985193884
 MeshRenderer:
   m_ObjectHideFlags: 0

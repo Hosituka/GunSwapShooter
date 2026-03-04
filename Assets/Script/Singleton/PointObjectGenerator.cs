@@ -42,6 +42,11 @@ public abstract class PointObjectGenerater : MonoBehaviour
     protected Transform _objectPoolManagerTr;
     float _currentBaseActivationDelay;
     bool[,] _pointObjectMap;
+    //#SearchPointObjectPosでしか使われない奴
+    //##訪れた場所にチェック入れる奴
+    bool[,] _visited;
+    //##探索候補を入れるキュー
+    Queue<Vector2Int> _searchCandidates;
     Transform _playerTr;
     void Start()
     {
@@ -64,6 +69,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
         PointObjectMapLength.x = (GenerateHalfYawAngle / GenerateYawStep * 2) + 1;
         PointObjectMapLength.y = (GenerateHalfPitchAngle / GeneratePitchStep * 2) + 1;
         _pointObjectMap = new bool[PointObjectMapLength.x, PointObjectMapLength.y];
+        InitializeSertchPointObjectPos();
         SetNotes();
         //#各objectPoolの設定
         SettingObjectPool();
@@ -74,7 +80,12 @@ public abstract class PointObjectGenerater : MonoBehaviour
             yield return new WaitWhile(()=>GameManager.Current.FadeInComplete == false);
             NoticeGeneratable(2f,0.5f,1,1);
         }
-        
+        //#SertchPointObjectPosにだけでしか使われない奴のインスタンス生成
+        void InitializeSertchPointObjectPos()
+        {
+            _visited = new bool[PointObjectMapLength.x,PointObjectMapLength.y];
+            _searchCandidates = new Queue<Vector2Int>();
+        }
     }
     //#オブジェクトプールを設定する処理、親クラスにより呼ばれる。
     protected abstract void SettingObjectPool();
@@ -176,16 +187,13 @@ public abstract class PointObjectGenerater : MonoBehaviour
             startSearchPoint.x = Mathf.Clamp(startSearchPoint.x, 0, PointObjectMapLength.x - 1);
             startSearchPoint.y = Mathf.Clamp(startSearchPoint.y, 0, PointObjectMapLength.y - 1);
 
-            bool[,] visited = new bool[PointObjectMapLength.x,PointObjectMapLength.y];
-            //探索候補を入れるキュー
-            Queue<Vector2Int> searchCandidates = new Queue<Vector2Int>();
-            visited[startSearchPoint.x,startSearchPoint.y] = true;
-            searchCandidates.Enqueue(startSearchPoint);
+            _visited[startSearchPoint.x,startSearchPoint.y] = true;
+            _searchCandidates.Enqueue(startSearchPoint);
 
             Vector2Int[] offsets = {Vector2Int.right,Vector2Int.down,Vector2Int.left,Vector2Int.up};
-            while(searchCandidates.Count > 0)
+            while(_searchCandidates.Count > 0)
             {
-                Vector2Int searchPoint = searchCandidates.Dequeue();
+                Vector2Int searchPoint = _searchCandidates.Dequeue();
                 //探索の基点が空いているかの確認
                 if(_pointObjectMap[searchPoint.x,searchPoint.y] == false)
                 {
@@ -206,15 +214,15 @@ public abstract class PointObjectGenerater : MonoBehaviour
                         continue;
                     }
                     //訪問済みチェック
-                    if (visited[neighborPoint.x, neighborPoint.y])
+                    if (_visited[neighborPoint.x, neighborPoint.y])
                     {
                         //訪問済みなら、次の方向へ
                         continue;
                     }
                     
                     //訪問済みとしてマークし、キューに追加
-                    visited[neighborPoint.x, neighborPoint.y] = true;
-                    searchCandidates.Enqueue(neighborPoint);
+                    _visited[neighborPoint.x, neighborPoint.y] = true;
+                    _searchCandidates.Enqueue(neighborPoint);
                 }
             }
             return -Vector2Int.one;

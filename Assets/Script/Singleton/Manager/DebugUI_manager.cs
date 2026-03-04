@@ -32,6 +32,7 @@ public class DebugUI_manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(GameManager.Current.IsRunningInEditor) return;
         UpdateIsEnabledAttitudeSensor(AttitudeSensor.current?.enabled.ToString());
         UpdateIsDeviceVertical((Screen.height > Screen.width).ToString());
     }

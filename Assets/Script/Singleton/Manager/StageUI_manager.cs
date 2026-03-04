@@ -53,9 +53,9 @@ public class StageUI_manager : MonoBehaviour
         //_scoreMultiplierTextPoolの作成と設定
         _scoreMultiplierTextPool = ObjectPoolManager.Current.GetObjectPool<ScoreMultiplierText>(_scoreMultiplierText,3,3);
         //各種JudgeTextPoolの作成と設定
-        _goodTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_goodOfJudgeText,_standardUI_Tr,10,10);
-        _greatTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_greatOfJudgeText,_standardUI_Tr,10,10);
-        _perfectTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_perfectOfJudgeText,_standardUI_Tr,10,10);
+        _goodTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_goodOfJudgeText,_standardUI_Tr,15,15);
+        _greatTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_greatOfJudgeText,_standardUI_Tr,15,15);
+        _perfectTextPool = ObjectPoolManager.Current.GetObjectPool<JudgeText>(_perfectOfJudgeText,_standardUI_Tr,15,15);
         //その他
         _aR_BackGround.StartShowWebCam();
         GameManager.Current.StartFadeIn();

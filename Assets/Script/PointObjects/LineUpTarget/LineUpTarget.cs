@@ -108,6 +108,12 @@ public class LineUpTarget : PointObject<LineUpTarget>
         }
         yield break;
     }
+    protected override IEnumerator SubBreakCoroutine()
+    {
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        _onRelease.Invoke(this);
+    }
 
     // Update is called once per frame
     void Update()
@@ -135,11 +141,9 @@ public class LineUpTarget : PointObject<LineUpTarget>
         planesForLineUp.LineUpTarget = null;
         planesForLineUp.transform.SetParent(ObjectPoolManager.Current.transform);
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
-        _onRelease.Invoke(this);
+        
     }
     protected override void SubOnCreate()
     {

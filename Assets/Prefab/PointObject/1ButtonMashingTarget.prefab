@@ -375,19 +375,18 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 6305029509842960602}
   PointObjectCost: 2
-  _mainObj: {fileID: 3049690985347681296}
   NextGeneratableCount: 1
-  _pointObjectAnimator: {fileID: 2643954771908646709}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
+  _pointObjectAnimator: {fileID: 2643954771908646709}
+  _mainObj: {fileID: 3049690985347681296}
   _maxHp: 7
   _minHp: 4
   _hp: 0
   _needShotCountText: {fileID: 5712849816565512632}
-  _isDestruction: 0
 --- !u!114 &2643954771908646709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,6 +406,7 @@ MonoBehaviour:
     - {fileID: 5881365467978184003}
     - {fileID: 1821311462357576092}
   _lifeTimeGUI_MR: {fileID: 1821311462357576092}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &7625737939369312013
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,7 +432,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7625737939369312013}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 12, y: 12, z: 0.5}
   m_ConstrainProportionsScale: 0

@@ -21,7 +21,5 @@ public class AttitudeTransformController : MonoBehaviour
 
         transform.rotation =  _initialAttitudeValueOffset * _currentAttitudeValue ;
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
-        DebugUI_manager.DebugUI_Manager?.UpdateInitialAttitudeValueText(_initialAttitudeValueOffset.eulerAngles.ToString());
-        DebugUI_manager.DebugUI_Manager?.UpdateAttitudeValueText(_currentAttitudeValue.eulerAngles.ToString());
     }
 }

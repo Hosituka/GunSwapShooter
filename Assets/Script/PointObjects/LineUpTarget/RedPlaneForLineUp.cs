@@ -7,11 +7,8 @@ public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
     {
 
     }
-    [SerializeField]int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
         if (collision.gameObject.CompareTag("BlueBullet"))
         {
             StageManager.Current.AddAccidentalShoot(1);
@@ -31,10 +28,6 @@ public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
             BreakCoroutine();
         }
     }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
-    }
     protected override IEnumerator SubBreakCoroutine()
     {
         yield break;
@@ -44,7 +37,6 @@ public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
     }
     protected override void SubOnRelease()
     {
-        _collisionCount = 0;
     }
 
 }

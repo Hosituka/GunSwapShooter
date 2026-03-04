@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770251553227862591}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 11, y: 11, z: 1}
   m_ConstrainProportionsScale: 0
@@ -137,14 +137,14 @@ MonoBehaviour:
   - {fileID: 5825367264500510947}
   - {fileID: 2946954506954838350}
   PointObjectCost: 1.5
-  _mainObj: {fileID: 4671331175687812596}
   NextGeneratableCount: 1
-  _pointObjectAnimator: {fileID: 8218732604354461611}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
+  _pointObjectAnimator: {fileID: 8218732604354461611}
+  _mainObj: {fileID: 4671331175687812596}
   _redPlane: {fileID: 5148238331805068657}
   _bluePlane: {fileID: 6068874981845945152}
   IsLeftBluePlane: 0

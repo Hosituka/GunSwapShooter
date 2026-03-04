@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 817624077953358686}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
@@ -144,7 +144,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1878352966878647065}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 0.5}
   m_ConstrainProportionsScale: 0
@@ -250,14 +250,14 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 2673969860555457610}
   PointObjectCost: 1
-  _mainObj: {fileID: 1069287074530745938}
   NextGeneratableCount: 2
-  _pointObjectAnimator: {fileID: 2518057862145305836}
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
+  _pointObjectAnimator: {fileID: 2518057862145305836}
+  _mainObj: {fileID: 1069287074530745938}
   temp: 0
 --- !u!114 &2518057862145305836
 MonoBehaviour:
@@ -277,6 +277,7 @@ MonoBehaviour:
     - {fileID: 3009091697093268591}
     - {fileID: 2659307005590012872}
   _lifeTimeGUI_MR: {fileID: 2659307005590012872}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &2759014201681604370
 GameObject:
   m_ObjectHideFlags: 0

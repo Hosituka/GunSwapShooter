@@ -46,6 +46,18 @@ public class RedBlueTarget : PointObject<RedBlueTarget>
         StageManager.Current.AddOverlookCount(_currentPlaneCount);
         yield break;
     }
+    protected override IEnumerator SubBreakCoroutine()
+    {
+        _pointObjectAnimator.PlaySpinThenFadeOut();
+        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
+        _onRelease.Invoke(this);
+    }
+
+
+    protected override void OnValidCollisionEnter(Collision collision)
+    {
+        
+    }
 
     public void DecrementCurrentPlaneCount()
     {
@@ -54,13 +66,6 @@ public class RedBlueTarget : PointObject<RedBlueTarget>
         {BreakCoroutine();}
 
     }
-    protected override IEnumerator SubBreakCoroutine()
-    {
-        _pointObjectAnimator.PlaySpinThenFadeOut();
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
-        _onRelease.Invoke(this);
-    }
-
     protected override void SubOnCreate()
     {
     }

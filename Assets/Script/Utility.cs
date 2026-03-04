@@ -55,6 +55,17 @@ public static class Utility
         }
     }
 
+    public static GameObject GetCollisionGameObject(Collision collision)
+    {
+        if(collision.collider.attachedRigidbody == null)
+        {
+            return collision.collider.gameObject;
+        }
+        else
+        {
+            return collision.collider.attachedRigidbody.gameObject;
+        }
+    }
 
 
 }

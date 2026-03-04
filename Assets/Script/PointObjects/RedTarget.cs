@@ -39,11 +39,8 @@ public class RedTarget : PointObject<RedTarget>
         StageManager.Current.AddOverlookCount(1);
         yield break;
     }
-    int _collisionCount;
-    void OnCollisionEnter(Collision collision)
+    protected override void OnValidCollisionEnter(Collision collision)
     {
-        _collisionCount++;
-        if(_collisionCount != 1) return;
         if(_isDestruction == true) return;
         if (collision.gameObject.CompareTag("BlueBullet"))
         {
@@ -69,10 +66,6 @@ public class RedTarget : PointObject<RedTarget>
             BreakCoroutine();
         }
     }
-    void OnCollisionExit(Collision collision)
-    {
-        _collisionCount--;
-    }
     protected override IEnumerator SubBreakCoroutine()
     {
         _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.red,12);
@@ -87,6 +80,7 @@ public class RedTarget : PointObject<RedTarget>
     protected override void SubOnRelease()
     {
         _isDestruction = false;
+        
     }
 
 }
