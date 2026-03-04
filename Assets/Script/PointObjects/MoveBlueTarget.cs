@@ -22,7 +22,7 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
     {
         _playerTr = Player.Current.GetComponent<Transform>();
         _isVerticalToRotate = Random.Range(0, 2) == 1;
-        _distanceForGenerate = PointObjectGenerater.Current.DistanceForGenerate;
+        _distanceForGenerate = PointObjectGenerater.Current.DistanceOfGenerate;
         _generateYawStep = PointObjectGenerater.Current.GenerateYawStep;
         _generatePitchStep = PointObjectGenerater.Current.GeneratePitchStep;
         _startGenerateYaw = PointObjectGenerater.Current.GetYawPitch(transform.position).yaw;
@@ -88,7 +88,7 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
             transform.position = Quaternion.AngleAxis(_startGenerateYaw, Vector3.up) * Vector3.forward;
             transform.position = Quaternion.AngleAxis(_startGeneratePitch + _remapPingPong * _generatePitchStep, Vector3.Cross(Vector3.up,new Vector3(transform.position.x,0,transform.position.z))) * transform.position;
         }
-        transform.position *= _distanceForGenerate - 3;
+        transform.position *= _distanceForGenerate;
         _directionToPlayer = _playerTr.position - transform.position;
         transform.rotation = Quaternion.LookRotation(_directionToPlayer);
 

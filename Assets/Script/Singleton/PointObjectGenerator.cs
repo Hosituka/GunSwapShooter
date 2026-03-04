@@ -2,13 +2,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Pool;
+using System;
+
+using Random = UnityEngine.Random;
 //stageごとに存在するPointObjectGeneraterの親クラスです。
 public abstract class PointObjectGenerater : MonoBehaviour
 {
     [Header("#親クラスによるパラメータ群")]
     [SerializeField]protected GameManager.Difficult _difficultAsGenerater;
     [Header("##生成に関するパラメータ群")]
-    public float DistanceForGenerate = 40;
+    [SerializeField]float _defaultDistanceOfGenerate = 40;
     public int GenerateHalfYawAngle = 40;
     public int GenerateYawStep = 15;
 
@@ -108,6 +111,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
             }
         }
     }
+    public float DistanceOfGenerate{get;protected set;}
     void GeneratePointObject()
     {
         
@@ -115,7 +119,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
 
         int generatedCount = 0;
         TimeKeeper timeKeeper = null;
-
+        DistanceOfGenerate = _defaultDistanceOfGenerate;
         while (generatedCount < _generatableCount)
         {
             Vector2Int pointObjectPos = SearchPointObjectPos();
@@ -132,7 +136,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(Quaternion.AngleAxis((pointObjectPos.x - (GenerateHalfYawAngle / GenerateYawStep)) * GenerateYawStep, Vector3.up) * Vector3.forward);
             //上によって作られたベクトルにランダムなピッチ角を適用
             transform.rotation = Quaternion.LookRotation(Quaternion.AngleAxis(-(pointObjectPos.y - (GenerateHalfPitchAngle / GeneratePitchStep)) * GeneratePitchStep, transform.right) * transform.forward);
-            Vector3 pointObjectPosition = _playerTr.position + transform.forward * DistanceForGenerate;
+            Vector3 pointObjectPosition = _playerTr.position + transform.forward * DistanceOfGenerate;
             Quaternion pointObjectRotation = Quaternion.LookRotation((_playerTr.position - pointObjectPosition).normalized);
             pointObjectObj.transform.position = pointObjectPosition;
             pointObjectObj.transform.rotation = pointObjectRotation;
@@ -176,6 +180,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
         //#空いている生成可能な場所を探し、見つけたら、そこを返す関数。
         Vector2Int SearchPointObjectPos()
         {
+            Initialize();
             _perlinNoiseSeed += Random.Range(0f,1f) * PerlinNoiseScale * PerlinNoiseMagni;
 
             float perlinNoiseInputX = _perlinNoiseSeed  + PointObjectMapLength.x ;
@@ -226,6 +231,11 @@ public abstract class PointObjectGenerater : MonoBehaviour
                 }
             }
             return -Vector2Int.one;
+            //前回のSertchPointObjectPosの影響を無効化するため各変数の値をリセットする。処理
+            void Initialize()
+            {
+                Array.Clear(_visited,0,_visited.Length);
+            }
         }
     }
     //あるPointObjectのインスタンスが与えられて、それが、ある具象クラスに属していたら、それにダウンキャストして返す関数。PointObjectGeneratorにより呼ばれる。

@@ -118,8 +118,10 @@ public class PointObjectGenerator2 : PointObjectGenerater
                 {return _gunSwapTargetPool2.Get();}
                 break;
             case MoveBlueTarget:
+                DistanceOfGenerate -= 3;
                 return _moveBlueTargetPool1.Get();
             case MoveRedTarget:
+                DistanceOfGenerate -= 3;
                 return _moveRedTargetPool1.Get();
             case LineUpTarget:
                 return _lineUpTargetPool1.Get();
