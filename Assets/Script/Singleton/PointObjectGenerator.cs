@@ -53,6 +53,8 @@ public abstract class PointObjectGenerater : MonoBehaviour
     bool[,] _visited;
     //##探索候補を入れるキュー
     Queue<Vector2Int> _searchCandidates;
+    Vector2Int[] _offsets = {Vector2Int.right,Vector2Int.down,Vector2Int.left,Vector2Int.up};
+    //#その他
     Transform _playerTr;
     void Start()
     {
@@ -84,7 +86,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
         IEnumerator StayFadeIn()
         {
             yield return new WaitWhile(()=>GameManager.Current.FadeInComplete == false);
-            NoticeGeneratable(2f,0.5f,1,1);
+            RequestGeneration(2f,0.5f,1,1);
         }
         //#SertchPointObjectPosにだけでしか使われない奴のインスタンス生成
         void InitializeSertchPointObjectPos()
@@ -93,9 +95,9 @@ public abstract class PointObjectGenerater : MonoBehaviour
             _searchCandidates = new Queue<Vector2Int>();
         }
     }
-    //#オブジェクトプールを設定する処理、親クラスにより呼ばれる。
+    //#こいつの子クラスでオブジェクトプールを設定する処理、こいつにより呼ばれる。
     protected abstract void SettingObjectPool();
-    public void NoticeGeneratable(float nextActivationDelay,float delay,float perlinNoiseMagni,int maxGeneratableCount)
+    public void RequestGeneration(float nextActivationDelay,float delay,float perlinNoiseMagni,int maxGeneratableCount)
     {
         StartCoroutine(OneShot());
         IEnumerator OneShot()
@@ -105,7 +107,8 @@ public abstract class PointObjectGenerater : MonoBehaviour
             PerlinNoiseMagni = perlinNoiseMagni;
             _perlinNoiseSeed += Random.Range(0f,1f) * PerlinNoiseScale * PerlinNoiseMagni;
             _generateCount = maxGeneratableCount;
-            _isGeneratable = true;
+            
+            _isGeneratable = true;//ここでいったん生成可能とみなす。
             _isGenerationComplete = false;
             while(_isGenerationComplete == false)
             {
@@ -115,13 +118,13 @@ public abstract class PointObjectGenerater : MonoBehaviour
                     continue; 
                 }
                 if(enabled == false) yield break;
-                GeneratePointObject();
+                TryGeneratePointObject();
                 yield return null;
             }
         }
     }
     public float DistanceOfGenerate{get;protected set;}
-    void GeneratePointObject()
+    void TryGeneratePointObject()
     {
         
         if(_generateCount == 0){Debug.LogError("生成可能数が0になっています。"); return;}
@@ -204,7 +207,6 @@ public abstract class PointObjectGenerater : MonoBehaviour
             _visited[startSearchPoint.x,startSearchPoint.y] = true;
             _searchCandidates.Enqueue(startSearchPoint);
 
-            Vector2Int[] offsets = {Vector2Int.right,Vector2Int.down,Vector2Int.left,Vector2Int.up};
             while(_searchCandidates.Count > 0)
             {
                 Vector2Int searchPoint = _searchCandidates.Dequeue();
@@ -217,10 +219,10 @@ public abstract class PointObjectGenerater : MonoBehaviour
                 
                 //基点が埋まっている場合その四方の「未訪問の」マスを探索候補に追加
                 int startOffsetIndex = Random.Range(0,4);
-                for(int i = 0;i < offsets.Length; i++)
+                for(int i = 0;i < _offsets.Length; i++)
                 {
-                    int offsetIndex = (int)Mathf.Repeat(startOffsetIndex + i,offsets.Length);
-                    Vector2Int neighborPoint = searchPoint + offsets[offsetIndex];
+                    int offsetIndex = (int)Mathf.Repeat(startOffsetIndex + i,_offsets.Length);
+                    Vector2Int neighborPoint = searchPoint + _offsets[offsetIndex];
                     //境界外チェック
                     if(neighborPoint.x >= PointObjectMapLength.x || neighborPoint.y < 0 || neighborPoint.x < 0 || neighborPoint.y >= PointObjectMapLength.y)
                     {
@@ -244,6 +246,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
             void Initialize()
             {
                 Array.Clear(_visited,0,_visited.Length);
+                _searchCandidates.Clear();
             }
         }
     }

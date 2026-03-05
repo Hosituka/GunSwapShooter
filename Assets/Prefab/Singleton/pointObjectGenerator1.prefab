@@ -45,12 +45,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _difficultAsGenerater: 0
-  DistanceForGenerate: 40
+  _defaultDistanceOfGenerate: 40
   GenerateHalfYawAngle: 60
   GenerateYawStep: 20
   GenerateHalfPitchAngle: 20
   GeneratePitchStep: 20
-  PerlinNoiseScale: 0.01
+  PerlinNoiseScale: 0.001
   PerlinNoiseMagni: 1
   MaxPointObjectCost: 10
   Bpm: 80
@@ -67,11 +67,12 @@ MonoBehaviour:
   - {fileID: 6676412112430940289, guid: b1887ea6fd0499b49a7c11f6924f2d9b, type: 3}
   _timeKeeper: {fileID: 4873629222032560189, guid: 0c37aa5e18ce8304cbe7fe17e7faf759, type: 3}
   _isGenerationComplete: 0
+  _isGeneratable: 0
   _fourthNote: 0
   _eighthNote: 0
   _sixteenthNote: 0
   _perlinNoiseSeed: 0
-  _generatableCount: 1
+  _generateCount: 1
   _sumPointObjectCost: 0
   _blueTarget1: {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
   _redTarget1: {fileID: 3274268146980991022, guid: 02b7b49e8cf3f8a46a60db1f04b0c18f, type: 3}

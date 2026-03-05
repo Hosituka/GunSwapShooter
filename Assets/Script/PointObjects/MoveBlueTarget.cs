@@ -77,14 +77,14 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
         _pingPongTime += Time.deltaTime;
         if (_isVerticalToRotate)//ローカル座標系のy軸方向にRotateAroundさせる
         {
-            _remapPingPong = Mathf.PingPong(_pingPongTime / _intervalForMove, 1) * 2 - 1; 
+            _remapPingPong = Mathf.PingPong(_pingPongTime / _intervalForMove, 1) - 0.5f; 
             transform.position = Quaternion.AngleAxis(_startGenerateYaw + _remapPingPong * _generateYawStep, Vector3.up) * Vector3.forward;
             transform.position = Quaternion.AngleAxis(_startGeneratePitch,Vector3.Cross(Vector3.up,transform.position)) * transform.position;
 
         }
         else//ローカル座標系のx軸方向にRotateAroundさせる。
         {
-            _remapPingPong = Mathf.PingPong(_pingPongTime / _intervalForMove, 1) * 2 - 1; 
+            _remapPingPong = Mathf.PingPong(_pingPongTime / _intervalForMove, 1) - 0.5f; 
             transform.position = Quaternion.AngleAxis(_startGenerateYaw, Vector3.up) * Vector3.forward;
             transform.position = Quaternion.AngleAxis(_startGeneratePitch + _remapPingPong * _generatePitchStep, Vector3.Cross(Vector3.up,new Vector3(transform.position.x,0,transform.position.z))) * transform.position;
         }

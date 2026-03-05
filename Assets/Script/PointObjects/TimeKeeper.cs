@@ -57,7 +57,7 @@ public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
             yield return new WaitForSeconds(_activateAnimRate * _finalActivationDelay);
             CurrentTargetState = TargetState.ActivationCompleted;
             CurrentTaimingState = TimingState.PerfectTiming;
-            PointObjectGenerater.Current.NoticeGeneratable(_sumNextActivationDelay,0,_perlinNoiseMagni,_nextGeneratableCount);
+            PointObjectGenerater.Current.RequestGeneration(_sumNextActivationDelay,0,_perlinNoiseMagni,_nextGeneratableCount);
             AllPlayDeactivationTimer(_sumLifeTime);
             yield return new WaitForSeconds(_sumLifeTime * 0.5f);
             CurrentTaimingState = TimingState.GreatTiming;
