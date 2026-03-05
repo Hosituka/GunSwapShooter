@@ -59,7 +59,7 @@ public class PointObjectGenerator1 : PointObjectGenerater
             break;
         }
     }
-    protected override PointObjects GetPointObjectWithDownCast(PointObjects pointObject)
+    protected override PointObjects GetPointObjectsWithDownCast(PointObjects pointObject)
     {
         switch (pointObject)
         {

@@ -5,6 +5,7 @@ using AttitudeSensor = UnityEngine.InputSystem.AttitudeSensor;
 public class DebugUI_manager : MonoBehaviour
 {
     public static DebugUI_manager DebugUI_Manager;
+    public static bool IsDebug;
     void Awake()
     {
         if (DebugUI_Manager == null)
@@ -24,17 +25,17 @@ public class DebugUI_manager : MonoBehaviour
     public TextMeshProUGUI CameraDeviceLength;
     public TextMeshProUGUI IsDeviceVerticalText;
     public TextMeshProUGUI TestText;
+    
 
     void Start()
     {
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(GameManager.Current.IsRunningInEditor) return;
-        UpdateIsEnabledAttitudeSensor(AttitudeSensor.current?.enabled.ToString());
-        UpdateIsDeviceVertical((Screen.height > Screen.width).ToString());
+        if(!IsDebug)return;
+        //UpdateIsEnabledAttitudeSensor(AttitudeSensor.current?.enabled.ToString());
+        //UpdateIsDeviceVertical((Screen.height > Screen.width).ToString());
     }
     public void ChangeTestText(string text)
     {

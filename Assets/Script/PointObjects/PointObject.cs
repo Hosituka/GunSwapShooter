@@ -124,7 +124,6 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
     GameObject _lastCollisionGameObject;
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("unnko");
         _currentCollisionGameObject = Utility.GetCollisionGameObject(collision);
         if(_lastProcessedFrame == Time.frameCount && _currentCollisionGameObject == _lastCollisionGameObject) return;
         _lastProcessedFrame = Time.frameCount;
