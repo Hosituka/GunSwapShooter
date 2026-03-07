@@ -31,7 +31,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
     [SerializeField]protected TimeKeeper _timeKeeper;
     [Header("##表示専用")]
     //生成が完了したことを表すフラグ
-    [SerializeField]bool _isGenerationComplete;
+    [SerializeField]bool _isRequestComplete;
     //生成可能であることを伝えるフラグ、生成失敗時にはfalseとなり、PointObjectの数が減ったらtrueとなる。
     [SerializeField]bool _isGeneratable;
     [SerializeField]float _fourthNote;
@@ -97,7 +97,7 @@ public abstract class PointObjectGenerater : MonoBehaviour
     }
     //#こいつの子クラスでオブジェクトプールを設定する処理、こいつにより呼ばれる。
     protected abstract void SettingObjectPool();
-    public void RequestGeneration(float nextActivationDelay,float delay,float perlinNoiseMagni,int maxGeneratableCount)
+    public void RequestGeneration(float nextActivationDelay,float delay,float perlinNoiseMagni,int generataCount)
     {
         StartCoroutine(OneShot());
         IEnumerator OneShot()
@@ -106,89 +106,95 @@ public abstract class PointObjectGenerater : MonoBehaviour
             _currentBaseActivationDelay = nextActivationDelay;
             PerlinNoiseMagni = perlinNoiseMagni;
             _perlinNoiseSeed += Random.Range(0f,1f) * PerlinNoiseScale * PerlinNoiseMagni;
-            _generateCount = maxGeneratableCount;
-            
-            _isGeneratable = true;//ここでいったん生成可能とみなす。
-            _isGenerationComplete = false;
-            while(_isGenerationComplete == false)
+            _generateCount = generataCount;
+            _isRequestComplete = TryGeneratePointObjects();
+            //一発目の生成成功時
+            if(_isRequestComplete)
             {
-                if(!_isGeneratable)
+                yield break;
+            }//一発目の生成失敗時
+            else
+            {
+                _isGeneratable = false;
+                while(_isRequestComplete == false)
                 {
+                    if(!_isGeneratable)
+                    {
+                        yield return null;
+                        continue;
+                    }
+                    if(enabled == false) yield break;
+                    _isRequestComplete = TryGeneratePointObjects();
                     yield return null;
-                    continue; 
                 }
-                if(enabled == false) yield break;
-                TryGeneratePointObject();
-                yield return null;
             }
+
         }
     }
     public float DistanceOfGenerate{get;protected set;}
-    void TryGeneratePointObject()
+    //指定された回数のPointObjectsの生成に挑戦する関数。すべてのPointObjectを生成できなかった時はfalseを返し、全て生成できた成功時はtrueを返す。
+    bool TryGeneratePointObjects()
     {
-        
-        if(_generateCount == 0){Debug.LogError("生成可能数が0になっています。"); return;}
-
+        //#計画フェーズ
         int generatedCount = 0;
-        TimeKeeper timeKeeper = null;
         DistanceOfGenerate = _defaultDistanceOfGenerate;
+        List<PointObjects> generatablePointObjectsList = new List<PointObjects>();
         while (generatedCount < _generateCount)
         {
             Vector2Int pointObjectPos = SearchPointObjectPos();
-            if(pointObjectPos == -Vector2Int.one){/*Debug.Log("生成可能な場所がありません")*/;break;}
-            PointObjects pointObjects = GetGeneratablePointObjects();
-            if(pointObjects == null){/*Debug.Log("生成予算オーバーです。")*/;break;}
-            
-            if (timeKeeper == null)
-            {
-                timeKeeper = _timeKeeperPool.Get();
-                timeKeeper.transform.SetParent(transform.root);
+            if(pointObjectPos == -Vector2Int.one){Debug.Log(_generateCount + "目で生成可能な場所がありません");
+                break;
             }
-            //前方ベクトルにランダムなヨー角を適用
+            PointObjects pointObjects = GetGeneratablePointObjects();
+            if(pointObjects == null){Debug.Log(_generateCount + "目で生成予算オーバーです。");
+                break;
+            }
+            //予算と場所の観点から生成可能なpointObjectsとして登録する。
+            generatablePointObjectsList.Add(pointObjects);
+            //#pointObjectsの座標や回転を定める処理
+            //##前方ベクトルにランダムなヨー角を適用
             transform.rotation = Quaternion.LookRotation(Quaternion.AngleAxis((pointObjectPos.x - (GenerateHalfYawAngle / GenerateYawStep)) * GenerateYawStep, Vector3.up) * Vector3.forward);
-            //上によって作られたベクトルにランダムなピッチ角を適用
+            //##上によって作られたベクトルにランダムなピッチ角を適用
             transform.rotation = Quaternion.LookRotation(Quaternion.AngleAxis(-(pointObjectPos.y - (GenerateHalfPitchAngle / GeneratePitchStep)) * GeneratePitchStep, transform.right) * transform.forward);
             Vector3 pointObjectPosition = _playerTr.position + transform.forward * DistanceOfGenerate;
             Quaternion pointObjectRotation = Quaternion.LookRotation((_playerTr.position - pointObjectPosition).normalized);
             pointObjects.transform.position = pointObjectPosition;
             pointObjects.transform.rotation = pointObjectRotation;
-            pointObjects.transform.SetParent(timeKeeper.transform);
             pointObjects.PointObjectPos = pointObjectPos;
-            pointObjects.Indicator = StageUI_manager.Current.GenerateIndicatorToTarget(pointObjects.transform);
-            pointObjects.TimeKeeper = timeKeeper;
-
-            timeKeeper.PointObjectsList.Add(pointObjects);
-            timeKeeper.BaseActivationDelay = _currentBaseActivationDelay;
-
             generatedCount++;
         }
-        if (generatedCount > 0)
+        //要求された回数分生成出来た時
+        if(generatedCount == _generateCount)
         {
-            _isGenerationComplete = true;
-            _isGeneratable = false;
-            timeKeeper.Begin();
-        }
-        
-        //#予算と言う観点において生成可能なPointObjectを持つゲームオブジェクトを返す関数。
-        PointObjects GetGeneratablePointObjects()
-        {
-            float pointObjectBudget = MaxPointObjectCost - _sumPointObjectCost;
-            int basisPointObjectArrayIndex = Random.Range(0, _pointObjects.Length);
-            PointObjects generatablePointObject = null;
-            for (int offsetPointObjectsIndex = 0; offsetPointObjectsIndex < _pointObjects.Length; offsetPointObjectsIndex++)
+            //TimeKeeperの設定を行う処理
+            TimeKeeper timeKeeper = _timeKeeperPool.Get();
+            timeKeeper.transform.SetParent(transform.root);
+            foreach(PointObjects pointObjects in generatablePointObjectsList)
             {
-                int generatablePointObjectArrayIndex = (int)Mathf.Repeat(offsetPointObjectsIndex + basisPointObjectArrayIndex, _pointObjects.Length);
-                if (_pointObjects[generatablePointObjectArrayIndex].PointObjectCost <= pointObjectBudget)
-                {
-                    generatablePointObject = _pointObjects[generatablePointObjectArrayIndex];
-                }
+                pointObjects.transform.SetParent(timeKeeper.transform);
+                pointObjects.Indicator = StageUI_manager.Current.GenerateIndicatorToTarget(pointObjects.transform);
+                pointObjects.TimeKeeper = timeKeeper;
+
+                timeKeeper.PointObjectsList.Add(pointObjects);
+                timeKeeper.BaseActivationDelay = _currentBaseActivationDelay;
+
 
             }
-            //予算と言う観点において生成可能なPointObjectが無い時 nullを返す処理
-            if(generatablePointObject == null) return null;
+            timeKeeper.Begin();
+            return true;
+        }//要求された回数分生成できなかったとき
+        else
+        {
+            Debug.Log("生成失敗しました");
+            foreach(PointObjects pointObjects in generatablePointObjectsList)
+            {
+                pointObjects.Release();
+                _pointObjectMap[(int)pointObjects.PointObjectPos.x, (int)pointObjects.PointObjectPos.y] = false;
 
-            return GetPointObjectsWithDownCast(generatablePointObject);
+            }
+            return false;
         }
+        
         //#空いている生成可能な場所を探し、見つけたら、そこを返す関数。
         Vector2Int SearchPointObjectPos()
         {
@@ -250,6 +256,27 @@ public abstract class PointObjectGenerater : MonoBehaviour
             }
         }
     }
+    //#予算と言う観点において生成可能なPointObjectを持つゲームオブジェクトを返す関数。
+    PointObjects GetGeneratablePointObjects()
+    {
+        float pointObjectBudget = MaxPointObjectCost - _sumPointObjectCost;
+        int basisPointObjectArrayIndex = Random.Range(0, _pointObjects.Length);
+        PointObjects generatablePointObject = null;
+        for (int offsetPointObjectsIndex = 0; offsetPointObjectsIndex < _pointObjects.Length; offsetPointObjectsIndex++)
+        {
+            int generatablePointObjectArrayIndex = (int)Mathf.Repeat(offsetPointObjectsIndex + basisPointObjectArrayIndex, _pointObjects.Length);
+            if (_pointObjects[generatablePointObjectArrayIndex].PointObjectCost <= pointObjectBudget)
+            {
+                generatablePointObject = _pointObjects[generatablePointObjectArrayIndex];
+            }
+
+        }
+        //予算と言う観点において生成可能なPointObjectが無い時 nullを返す処理
+        if(generatablePointObject == null) return null;
+
+        return GetPointObjectsWithDownCast(generatablePointObject);
+    }
+
     //あるPointObjectのインスタンスが与えられて、それが、ある具象クラスに属していたら、それにダウンキャストして返す関数。PointObjectGeneratorにより呼ばれる。
     protected abstract PointObjects GetPointObjectsWithDownCast(PointObjects pointObject);
 
@@ -267,19 +294,19 @@ public abstract class PointObjectGenerater : MonoBehaviour
     public void AddSumPointObjectCost(float pointObjectCost){
         _sumPointObjectCost += pointObjectCost;
     }
-    public void SubtractSumPointObjectCost(float pointObjectCost){
-        _sumPointObjectCost -= pointObjectCost;
-        _isGeneratable = true;
-    }
-    public void RemovePointObjectPos(Vector2 pointObjectPos, float delay)
-    {
+    public void RemovePointObject(float subtractPointObjectCost,Vector2 pointObjectPos,float delay){
         StartCoroutine(OneShot());
         IEnumerator OneShot()
         {
             yield return new WaitForSeconds(delay);
             _pointObjectMap[(int)pointObjectPos.x, (int)pointObjectPos.y] = false;
+            _sumPointObjectCost -= subtractPointObjectCost;
+            _isGeneratable = true;
+
         }
+
     }
+    
 
     public Vector2Int WorldPosToPointObjectPos(Vector3 worldPos)
     {

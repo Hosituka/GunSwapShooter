@@ -98,7 +98,7 @@ public class PointObjectGenerator2 : PointObjectGenerater
                 {return _redTargetPool2.Get();}
                 break;
             case BlueTarget:
-                if(pointObject.NextGeneratableCount == 1)
+                if(pointObject.NextGeneratableCount == 9)
                 {return _blueTargetPool1.Get();}
                 else if(pointObject.NextGeneratableCount == 2)
                 {return _blueTargetPool2.Get();}

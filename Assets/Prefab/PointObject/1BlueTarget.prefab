@@ -163,14 +163,14 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 3153822431969660074}
   PointObjectCost: 1
-  _mainObj: {fileID: 7848461985884779351}
-  NextGeneratableCount: 1
-  _pointObjectAnimator: {fileID: 8476748975805284806}
+  NextGeneratableCount: 9
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}
   NormalizePointObjectPosAsCenter: {x: 0, y: 0}
   TimeKeeper: {fileID: 0}
+  _pointObjectAnimator: {fileID: 8476748975805284806}
+  _mainObj: {fileID: 7848461985884779351}
   _isDestruction: 0
 --- !u!114 &8476748975805284806
 MonoBehaviour:
@@ -190,6 +190,7 @@ MonoBehaviour:
     - {fileID: 3178191841172089844}
     - {fileID: 8976815972985193884}
   _lifeTimeGUI_MR: {fileID: 8976815972985193884}
+  <CurtSpinThenExplodePhase>k__BackingField: 0
 --- !u!1 &7848461985884779351
 GameObject:
   m_ObjectHideFlags: 0

@@ -39,7 +39,6 @@ public abstract class PointObjects : MonoBehaviour
         }
     }
     public abstract InitializeResult Initialize();
-    //PointObjectのメインとなる部分を有効化する関数。
     public abstract void ActivateMain(float activateAnimDuration);
     public abstract void TimeOver(float animDuration);
 
@@ -47,6 +46,7 @@ public abstract class PointObjects : MonoBehaviour
     public abstract void PlayActivationTimer(float duration);
 
     protected abstract void BreakCoroutine();
+    public abstract void Release();
 
 }
 /*ここは全ての的に共通する振る舞いや状態を書く抽象クラスです。ジェネリックなフィールドを扱うために、これはジェネリッククラスです。
@@ -79,8 +79,7 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
 
         void BaseBreakProcess()
         {
-            PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-            PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+            PointObjectGenerater.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
             TimeKeeper.NoticeUnLink(this);
             Indicator.Destroy();
         }
@@ -97,8 +96,7 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
         IEnumerator BaseTimeOver(float animDuration)
         {
             Utility.ChangeEnabledColliders(ColliderList,false);
-            PointObjectGenerater.Current.SubtractSumPointObjectCost(PointObjectCost);
-            PointObjectGenerater.Current.RemovePointObjectPos(PointObjectPos,2);
+            PointObjectGenerater.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
             TimeKeeper.NoticeUnLink(this);
             Indicator.Destroy();
             _pointObjectAnimator.PlayTimeOverAnim(animDuration);
@@ -144,7 +142,7 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
     }
 
     protected abstract void SubOnCreate();
-    public void OnRelease()
+    public  void OnRelease()
     {
         SubOnRelease();
         BaseOnRelease();
@@ -160,6 +158,10 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
 
     }
     protected abstract void SubOnRelease();
+    public override void Release()
+    {
+        _onRelease.Invoke((T)this);
+    }
 
 
 
