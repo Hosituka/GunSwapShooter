@@ -163,7 +163,7 @@ MonoBehaviour:
   ColliderList:
   - {fileID: 3153822431969660074}
   PointObjectCost: 1
-  NextGeneratableCount: 9
+  NextGeneratableCount: 1
   PointObjectPos: {x: 0, y: 0}
   DebugPointObjectPos: {x: 0, y: 0}
   PointObjectPosAsCenter: {x: 0, y: 0}

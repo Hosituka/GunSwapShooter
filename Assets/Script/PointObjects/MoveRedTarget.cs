@@ -23,11 +23,11 @@ public class MoveRedTarget : PointObject<MoveRedTarget>
     {
         _playerTr = Player.Current.GetComponent<Transform>();
         _isVerticalToRotate = Random.Range(0, 2) == 1;
-        _distanceForGenerate = PointObjectGenerater.Current.DistanceOfGenerate;
-        _generateYawStep = PointObjectGenerater.Current.GenerateYawStep;
-        _generatePitchStep = PointObjectGenerater.Current.GeneratePitchStep;
-        _startGenerateYaw = PointObjectGenerater.Current.GetYawPitch(transform.position).yaw;
-        _startGeneratePitch = PointObjectGenerater.Current.GetYawPitch(transform.position).pitch;
+        _distanceForGenerate = PointObjectsGenerator.Current.DistanceOfGenerate;
+        _generateYawStep = PointObjectsGenerator.Current.GenerateYawStep;
+        _generatePitchStep = PointObjectsGenerator.Current.GeneratePitchStep;
+        _startGenerateYaw = PointObjectsGenerator.Current.GetYawPitch(transform.position).yaw;
+        _startGeneratePitch = PointObjectsGenerator.Current.GetYawPitch(transform.position).pitch;
         if (_isVerticalToRotate)
         {
             _pingPongTime = 1 * _intervalForMove / 2; 

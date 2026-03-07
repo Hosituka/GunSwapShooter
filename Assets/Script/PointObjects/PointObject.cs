@@ -14,7 +14,7 @@ public abstract class PointObjects : MonoBehaviour
     //このフィールドを持つインスタンスの有効化に必要な時間のoffset
     public float OffsetActivationDelay{get;protected set;}
     [Header("表示用")]
-    public Vector2 PointObjectPos;
+    public Vector2Int PointObjectPos;
     public Vector2 DebugPointObjectPos;
     public Vector2 PointObjectPosAsCenter;
     public Vector2 NormalizePointObjectPosAsCenter;
@@ -66,10 +66,10 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
             _mainObj.SetActive(true);
             this.enabled = true;
             _pointObjectAnimator.PlayShowAnimOfMain(_mainObj.transform,activateAnimDuration);
-            PointObjectPosAsCenter = new Vector2(PointObjectPos.x - PointObjectGenerater.Current.PointObjectMapLength.x / 2, PointObjectPos.y - PointObjectGenerater.Current.PointObjectMapLength.y / 2);
-            NormalizePointObjectPosAsCenter = new Vector2(PointObjectPosAsCenter.x / (PointObjectGenerater.Current.PointObjectMapLength.x / 2), PointObjectPosAsCenter.y / (PointObjectGenerater.Current.PointObjectMapLength.y / 2));
+            PointObjectPosAsCenter = new Vector2(PointObjectPos.x - PointObjectsGenerator.Current.PointObjectMapLength.x / 2, PointObjectPos.y - PointObjectsGenerator.Current.PointObjectMapLength.y / 2);
+            NormalizePointObjectPosAsCenter = new Vector2(PointObjectPosAsCenter.x / (PointObjectsGenerator.Current.PointObjectMapLength.x / 2), PointObjectPosAsCenter.y / (PointObjectsGenerator.Current.PointObjectMapLength.y / 2));
             yield return new WaitWhile(() =>_pointObjectAnimator.CurtShowAnimOfMainPhase != PointObjectAnimator.ShowAnimOfMainPhase.Completed);
-            PointObjectGenerater.Current.AddSumPointObjectCost(PointObjectCost);
+            PointObjectsGenerator.Current.AddSumPointObjectCost(PointObjectCost);
         }
     }
     protected override void BreakCoroutine()
@@ -79,7 +79,7 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
 
         void BaseBreakProcess()
         {
-            PointObjectGenerater.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
+            PointObjectsGenerator.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
             TimeKeeper.NoticeUnLink(this);
             Indicator.Destroy();
         }
@@ -96,7 +96,7 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
         IEnumerator BaseTimeOver(float animDuration)
         {
             Utility.ChangeEnabledColliders(ColliderList,false);
-            PointObjectGenerater.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
+            PointObjectsGenerator.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
             TimeKeeper.NoticeUnLink(this);
             Indicator.Destroy();
             _pointObjectAnimator.PlayTimeOverAnim(animDuration);
