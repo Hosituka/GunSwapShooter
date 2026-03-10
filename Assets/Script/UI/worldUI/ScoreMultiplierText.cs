@@ -26,7 +26,7 @@ public class ScoreMultiplierText : MonoBehaviour,IPoolable<ScoreMultiplierText>
             for (float i = 0; i <= 1; i += Time.deltaTime * (1 / ShowAnimDuration))
             {
                 transform.position = directionForMove *_distance * i;
-                await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
+                await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
             }
             Color outlineColor = _TMP_meshRenderer.sharedMaterials[0].GetColor("_OutlineColor");
             Color glowColor = _TMP_meshRenderer.sharedMaterials[0].GetColor("_GlowColor");
@@ -46,7 +46,7 @@ public class ScoreMultiplierText : MonoBehaviour,IPoolable<ScoreMultiplierText>
                 _propBlock.SetFloat("_OutlineWidth",outlineWidth);
                 _propBlock.SetFloat("_GlowOuter",glowOuter);
                 _TMP_meshRenderer.SetPropertyBlock(_propBlock);
-                await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
+                await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
             }
             _onRelease.Invoke(this);
         }

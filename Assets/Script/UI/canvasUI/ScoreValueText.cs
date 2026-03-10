@@ -26,13 +26,13 @@ public class ScoreValueText : MonoBehaviour
         _textMeshProUGUI.SetText("{0:1}",score);
         _cts = new CancellationTokenSource();
         UpdateAnimCoroutine(_cts.Token).Forget();
-        async UniTaskVoid UpdateAnimCoroutine(CancellationToken cts)
+        async UniTaskVoid UpdateAnimCoroutine(CancellationToken ct)
         {
             //増加するアニメーション
             for(float playback = 0;playback <= 1;playback += Time.deltaTime * (1 / _addScaleTime))
             {
                 _scoreValueTextRectTr.localScale = Vector3.one + new Vector3(playback * _addScale,playback * _addScale,0);
-                await UniTask.Yield(PlayerLoopTiming.Update,cts);
+                await UniTask.Yield(PlayerLoopTiming.Update,ct);
             }
             _scoreValueTextRectTr.localScale = Vector3.one + new Vector3(_addScale,_addScale,0);
 
@@ -40,7 +40,7 @@ public class ScoreValueText : MonoBehaviour
             for(float playback = 0;playback <= 1;playback += Time.deltaTime * (1 / _subtractScaleTime))
             {
                 _scoreValueTextRectTr.localScale = Vector3.one + new Vector3((1 - playback) * _addScale,(1 - playback) * _addScale,0);
-                await UniTask.Yield(PlayerLoopTiming.Update,cts);
+                await UniTask.Yield(PlayerLoopTiming.Update,ct);
             }
             _scoreValueTextRectTr.localScale = Vector3.one;
             _cts = null;

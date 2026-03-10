@@ -30,17 +30,17 @@ public class ExplosionEffect : MonoBehaviour,IPoolable<ExplosionEffect>
             _propBlock.SetFloat("_fadeIn",playFadeInTime / FadeInTime);
             MeshRenderer.SetPropertyBlock(_propBlock);
             playFadeInTime += Time.deltaTime;
-            await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
         _propBlock.SetFloat("_fadeIn",1);
         MeshRenderer.SetPropertyBlock(_propBlock);
-        await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
+        await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         while(playClippingTime < ClippingTime)
         {
             _propBlock.SetFloat("_clipping",playClippingTime / ClippingTime);
             MeshRenderer.SetPropertyBlock(_propBlock);
             playClippingTime += Time.deltaTime;
-            await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
         _onRelease.Invoke(this);
         CurrentAnimPhase = AnimPhase.Completed;

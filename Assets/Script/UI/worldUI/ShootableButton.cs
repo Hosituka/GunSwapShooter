@@ -1,5 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -33,14 +34,15 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
         _needShotCount3dTMP.gameObject.SetActive(false);
         _propBlock = new MaterialPropertyBlock();
     }
-    IEnumerator Regen(float delay)
+    CancellationTokenSource _cts;
+    async UniTaskVoid Regen(float delay,CancellationToken ct)
     {
-        yield return new WaitForSeconds(delay);
+        await UniTask.WaitForSeconds(delay,cancellationToken:ct);
         while (_needShotCount < _maxNeedShotCount)
         {
             _needShotCount++;
             _needShotCount3dTMP.text = _needShotCount.ToString();
-            yield return new WaitForSeconds(0.4f);
+            await UniTask.WaitForSeconds(0.4f,cancellationToken:ct);
         }
         _needShotCount3dTMP.gameObject.SetActive(false);
         _explain3dTMP.gameObject.SetActive(true);
@@ -79,9 +81,10 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
         {
             _needShotCount--;
             _needShotCount3dTMP.text = _needShotCount.ToString();
-            if(_currentRegenCoroutine != null)
-            { StopCoroutine(_currentRegenCoroutine);}
-            _currentRegenCoroutine = StartCoroutine(Regen(_regenDelay));
+            if(_cts != null)
+            { _cts.Cancel();_cts.Dispose();}
+            _cts = new CancellationTokenSource();
+            Regen(_regenDelay,_cts.Token).Forget();
 
             if(_needShotCount == _maxNeedShotCount - 1)
             {
@@ -91,7 +94,7 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
 
             if(_needShotCount == 0)
             {
-                StartCoroutine(InvokeCoroutine());
+                BreakAsync().Forget();
             }
         }
     }
@@ -99,12 +102,12 @@ public class ShootableButton : MonoBehaviour,IAimEnterHandler,IAimExitHandler
     {
         _collisionCount--;
     }
-    IEnumerator InvokeCoroutine()
+    async UniTaskVoid BreakAsync()
     {
-        _breakAnimator.PlaySpinThenExplode(transform.position,Color.magenta,14);
-        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
+        _breakAnimator.PlaySpinThenExplode(transform.position,Color.magenta,14).Forget();
+        await UniTask.WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(_colliderArray,false);
-        yield return new WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        await UniTask.WaitWhile(()=> _breakAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onShoot.Invoke();
         Destroy(gameObject);
     }
