@@ -6,7 +6,6 @@ public class SelectingDifficultTexts : MonoBehaviour
     public GameObject NormalTextObj;
     public GameObject HardTextObj;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         switch (GameManager.Current.CurrentDifficult)
@@ -31,9 +30,4 @@ public class SelectingDifficultTexts : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

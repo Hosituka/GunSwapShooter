@@ -25,8 +25,8 @@ public class ScoreValueText : MonoBehaviour
         }
         _textMeshProUGUI.SetText("{0:1}",score);
         _cts = new CancellationTokenSource();
-        UpdateAnimCoroutine(_cts.Token).Forget();
-        async UniTaskVoid UpdateAnimCoroutine(CancellationToken ct)
+        UpdateAnimAsync(_cts.Token).Forget();
+        async UniTaskVoid UpdateAnimAsync(CancellationToken ct)
         {
             //増加するアニメーション
             for(float playback = 0;playback <= 1;playback += Time.deltaTime * (1 / _addScaleTime))

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 //PointObjectの具象クラスの位置を表示する責務を持つ∧StageUI_managerによりオブジェクトプールされています。
 public class Indicator : MonoBehaviour,IPoolable<Indicator>
 {
@@ -26,6 +27,7 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
 
     bool _isInCamera;
     Action<Indicator> _onRelease{get;set;}
+    CancellationTokenSource _disableCts;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Initialize(Transform targetTr)
@@ -33,6 +35,7 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
         _targetTr = targetTr;
         transform.SetParent(_indicatorsUI_Tr);
         transform.SetSiblingIndex(0);
+        _disableCts = new CancellationTokenSource();
     }
 
     // Update is called once per frame
@@ -96,7 +99,7 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
         {
             _innerArrowColor.a = playback / duration;
             _innerArrowImage.color = _innerArrowColor;
-            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
+            await UniTask.Yield(PlayerLoopTiming.Update,_disableCts.Token);
         }
         _innerArrowColor.a = 1;
         _innerArrowImage.color = _innerArrowColor;
@@ -110,7 +113,7 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
         {
             _innerArrowColor.a = 1 - playback / duration;
             _innerArrowImage.color = _innerArrowColor;
-            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
+            await UniTask.Yield(PlayerLoopTiming.Update,_disableCts.Token);
         }
         _innerArrowColor.a = 0;
         _innerArrowImage.color = _innerArrowColor;
@@ -127,6 +130,8 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
 
     public void OnRelease()
     {
+        _disableCts.Cancel();
+        _disableCts.Dispose();
     }
 
 

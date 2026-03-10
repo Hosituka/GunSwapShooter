@@ -20,11 +20,11 @@ public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
             StageManager.Current.AddCombo();
 
             if(_dot >= 0.95f)
-            {StageManager.Current.AddScore(2f,TimingState.PerfectTiming);}
+            {StageManager.Current.AddScore(3f,TimingState.PerfectTiming);}
             else if(_dot >= 0.8f)
-            {StageManager.Current.AddScore(1.4f,TimingState.GreatTiming);}
+            {StageManager.Current.AddScore(2.1f,TimingState.GreatTiming);}
             else
-            {StageManager.Current.AddScore(0.8f,TimingState.GoodTiming);}
+            {StageManager.Current.AddScore(1.2f,TimingState.GoodTiming);}
 
             Break();
         }
