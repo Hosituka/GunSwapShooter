@@ -91,10 +91,9 @@ public class StageUI_manager : MonoBehaviour
         addScoreText.Play(addScore);
     }
     ObjectPool<ExplosionEffect> _explosionEffectPool;
-    public ExplosionEffect GenerateExplosionEffect(Vector3 pos,Color color,float size)
+    public ExplosionEffect GetExplosionEffect()
     {
         ExplosionEffect explosionEffect = _explosionEffectPool.Get();
-        explosionEffect.Play(pos,color ,size);
         return explosionEffect;
     }
     ObjectPool<JudgeText> _goodTextPool;

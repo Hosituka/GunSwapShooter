@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Cysharp.Threading.Tasks;
 //PlayerGunが生成する銃弾です。　オブジェクトプールにより管理されています。
 public class Bullet : MonoBehaviour,IPoolable<Bullet>
 {
@@ -34,14 +35,14 @@ public class Bullet : MonoBehaviour,IPoolable<Bullet>
     
     void OnCollisionEnter(Collision collision)
     {
-        StartCoroutine(Explosion());
-        IEnumerator Explosion()
+        Explosion().Forget();
+        async UniTaskVoid Explosion()
         {
             _isExplosion = true;
             _explosion.Play();
             _meshRenderer.enabled = false;
             _rb.isKinematic = true;
-            yield return new WaitWhile(() => _explosion.isPlaying == true);
+            await UniTask.WaitWhile(() => _explosion.isPlaying == true);
             _onRelease.Invoke(this);
         }
     }

@@ -1,7 +1,6 @@
 using UnityEngine;
-using System.Collections;
-using System;
 using Random = UnityEngine.Random;
+using Cysharp.Threading.Tasks;
 public class MoveBlueTarget : PointObject<MoveBlueTarget>
 {
     [Header("MoveBlueTargetの設定用プロパティ")]
@@ -18,7 +17,7 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
     float _startGenerateYaw;
     float _startGeneratePitch;
     float _pingPongTime;
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         _playerTr = Player.Current.GetComponent<Transform>();
         _isVerticalToRotate = Random.Range(0, 2) == 1;
@@ -62,16 +61,15 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
         }
 
     }
-    protected override IEnumerator SubTimeOver(float duration)
+    protected override async UniTaskVoid SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        yield break;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(TimeKeeper == null)return;
+        if(TimeKeeper == null) return;
         if(TimeKeeper.CurrentTargetState != TimeKeeper.TargetState.ActivationCompleted) return;
         
         _pingPongTime += Time.deltaTime;
@@ -115,14 +113,13 @@ public class MoveBlueTarget : PointObject<MoveBlueTarget>
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-            BreakCoroutine();
+            BreakAsync();
         }
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
         Utility.ChangeEnabledColliders(ColliderList,false);
-        _pointObjectAnimator.PlaySpinAndFadeOut();
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinAndFadeOutPhase != PointObjectAnimator.SpinAndFadeOutPhase.Completed);
+        await _pointObjectAnimator.PlaySpinAndFadeOut();
         _onRelease.Invoke(this);
     }
     protected override void SubOnCreate()

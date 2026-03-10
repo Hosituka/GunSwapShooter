@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using System;
 using Random = UnityEngine.Random;
+using Cysharp.Threading.Tasks;
 public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
 {
     [Header("ButtonMashingTargetの設定用プロパティ")]
@@ -10,8 +11,7 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
     [SerializeField] int _minHp = 4;
     [SerializeField] int _hp;
     [SerializeField] TextMeshPro _needShotCountText;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         _hp = Random.Range(_minHp, _maxHp);
         _needShotCountText.SetText(_hp.ToString());
@@ -41,14 +41,12 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
              
         }
     }
-    protected override IEnumerator SubTimeOver(float duration)
+    protected override async UniTaskVoid SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(_hp);
-        yield break;
     }
     protected override void OnValidCollisionEnter(Collision collision)
     {
-        Debug.Log("test2");
         if(_hp <= 0) return;
         if (collision.gameObject.CompareTag("BlueBullet") || collision.gameObject.CompareTag("RedBullet"))
         {
@@ -70,17 +68,16 @@ public class ButtonMashingTarget : PointObject<ButtonMashingTarget>
 
             if(_hp == 0)
             {
-                BreakCoroutine();
+                BreakAsync();
             }
         }
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {        
-        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.magenta,17).Forget();
+        await UniTask.WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(ColliderList,false);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
-        Debug.Log("test");
+        await UniTask.WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onRelease.Invoke(this);
     }
     protected override void SubOnCreate()

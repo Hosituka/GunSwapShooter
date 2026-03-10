@@ -222,7 +222,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: GenerateHalfYawAngle
-      value: 20
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: _difficultAsGenerater
@@ -397,7 +397,7 @@ PrefabInstance:
     - target: {fileID: -4872281284517521104, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: '_pointObjects.Array.data[0]'
       value: 
-      objectReference: {fileID: 1869257154555620567, guid: 51ca28e9b9fa5c248a8de9a25bbe8840, type: 3}
+      objectReference: {fileID: 6367512014505706332, guid: 0a4f0efe4a1ab834f8926f299be9b887, type: 3}
     - target: {fileID: 1245945917111376567, guid: bdb621f177afb2d459be5f2aa7bd5992, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

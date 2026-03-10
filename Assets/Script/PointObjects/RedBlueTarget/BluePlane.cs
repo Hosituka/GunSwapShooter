@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 public class BluePlane : MonoBehaviour
 {
     [SerializeField]RedBlueTarget _redBlueTarget;
@@ -30,31 +31,25 @@ public class BluePlane : MonoBehaviour
                 StageManager.Current.AddScore(1.5f,TimingState.PerfectTiming);
                 break;
             }
-            BlueBreaking();
+            BlueBreaking().Forget();
         }
     }
     void OnCollisionExit(Collision collision)
     {
         _collisionCount--;
     }
-    void BlueBreaking()
+    async UniTaskVoid BlueBreaking()
     {
-        StartCoroutine(OneShot());
-        IEnumerator OneShot()
-        {
-            Utility.ChangeEnabledColliders(_blueColliderList,false);
-            _redBlueTarget.DecrementCurrentPlaneCount();
-
-            _pointObjectAnimator.PlayExplosion(transform.position,Color.blue,14);
-            yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
-            gameObject.SetActive(false);
-        }
+        Utility.ChangeEnabledColliders(_blueColliderList,false);
+        _redBlueTarget.DecrementCurrentPlaneCount();
+        await _pointObjectAnimator.PlayExplosion(transform.position,Color.blue,14);
+        gameObject.SetActive(false);
     }
     public void Reset()
     {
         _collisionCount = 0;
         Utility.ChangeEnabledColliders(_blueColliderList,true);
-        _pointObjectAnimator.Reset();
+        _pointObjectAnimator.Initialize();
         gameObject.SetActive(true);
     }
 }

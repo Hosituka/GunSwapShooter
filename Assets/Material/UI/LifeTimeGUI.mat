@@ -129,7 +129,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _intensity: 10
-    - _outerFrameAnim: 1
+    - _outerFrameAnim: 0
     - _outerFrameSize: 0.1
     m_Colors:
     - _BaseColor: {r: 5.9921565, g: 5.9921565, b: 5.9921565, a: 1}

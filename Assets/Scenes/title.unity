@@ -193,6 +193,10 @@ PrefabInstance:
       value: NextButton
       objectReference: {fileID: 0}
     - target: {fileID: 5878516579662678869, guid: aee6cae856a75b641a9b7af3b70cf337, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5878516579662678869, guid: aee6cae856a75b641a9b7af3b70cf337, type: 3}
       propertyPath: _unityEvent.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -14318,7 +14322,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 512c90d06da5e1f4e93305d61421592c, type: 2}
+  - {fileID: 2100000, guid: dd4fa9cd26de76b42a556cffe7762593, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

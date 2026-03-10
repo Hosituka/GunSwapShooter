@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System;
+using Cysharp.Threading.Tasks;
 /*10コンボ感覚で発生する、スコア増加率増加を表すテキストのアニメーションを責務として持つ∧
 StageUI_managerによりオブジェクトプールされています。*/
 public class ScoreMultiplierText : MonoBehaviour,IPoolable<ScoreMultiplierText>
@@ -19,13 +20,13 @@ public class ScoreMultiplierText : MonoBehaviour,IPoolable<ScoreMultiplierText>
     {
         Vector3 directionForMove;
         Initialize(scoreMultiplier);
-        StartCoroutine(Anim());
-        IEnumerator  Anim()
+        Anim().Forget();
+        async UniTaskVoid  Anim()
         {
             for (float i = 0; i <= 1; i += Time.deltaTime * (1 / ShowAnimDuration))
             {
                 transform.position = directionForMove *_distance * i;
-                yield return null;
+                await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
             }
             Color outlineColor = _TMP_meshRenderer.sharedMaterials[0].GetColor("_OutlineColor");
             Color glowColor = _TMP_meshRenderer.sharedMaterials[0].GetColor("_GlowColor");
@@ -45,7 +46,7 @@ public class ScoreMultiplierText : MonoBehaviour,IPoolable<ScoreMultiplierText>
                 _propBlock.SetFloat("_OutlineWidth",outlineWidth);
                 _propBlock.SetFloat("_GlowOuter",glowOuter);
                 _TMP_meshRenderer.SetPropertyBlock(_propBlock);
-                yield return null;
+                await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
             }
             _onRelease.Invoke(this);
         }

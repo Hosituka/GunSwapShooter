@@ -2,7 +2,7 @@ using UnityEngine.Pool;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
+using Cysharp.Threading.Tasks;
 using Random = UnityEngine.Random;
 using System.Linq;
 public class LineUpTarget : PointObject<LineUpTarget>
@@ -20,7 +20,6 @@ public class LineUpTarget : PointObject<LineUpTarget>
     [Header("表示用")]
     //次の的が来るまでに必要な時間
     [SerializeField] float _nextShowPlaneInterval;
-    [SerializeField] GameObject[] _setPlaneArray;
     [SerializeField] int _planeCount;
     [SerializeField] List<PlanesForLineUp> _planesForLineUpList; 
     float _pitchRotationStep;
@@ -30,7 +29,7 @@ public class LineUpTarget : PointObject<LineUpTarget>
     ObjectPool<BluePlaneForLineUp>_bluePlaneForLineUpPool;
     ObjectPool<GunSwapPlaneForLineUp>_gunSwapPlaneForLineUpPool;
 
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         _planeCount = Random.Range(_minPlaneCount, _maxPlaneCount + 1);
         PlanesForLineUp planeForLineUp;
@@ -99,26 +98,24 @@ public class LineUpTarget : PointObject<LineUpTarget>
         }
 
     }
-    protected override IEnumerator SubTimeOver(float animDuration)
+    protected override async UniTaskVoid SubTimeOver(float animDuration)
     {
         StageManager.Current.AddOverlookCount(_planeCount);
         foreach(PlanesForLineUp planesForLineUp in _planesForLineUpList)
         {
             planesForLineUp.TimeOver(animDuration);
         }
-        yield break;
+        await UniTask.Yield(PlayerLoopTiming.Update,this.GetCancellationTokenOnDestroy());
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
-        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        await _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.yellow,18);
         _onRelease.Invoke(this);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(TimeKeeper == null)return;
+        if(TimeKeeper == null) return;
         if(TimeKeeper.CurrentTargetState == TimeKeeper.TargetState.Activating) return;
         _axisTr.rotation = Quaternion.AngleAxis(1 / _rotationInterval * Time.deltaTime * 360, transform.up) * _axisTr.rotation;
     }
@@ -132,7 +129,7 @@ public class LineUpTarget : PointObject<LineUpTarget>
         }
         UnLinkPlanesForLineUp(planesForLineUp);
         if (_planeCount == 0)
-        {BreakCoroutine();}
+        {BreakAsync();}
     }
     //PlanesForLineUpがLineUpTargetの管理から外れるための関数メンバ  
     void UnLinkPlanesForLineUp(PlanesForLineUp planesForLineUp)

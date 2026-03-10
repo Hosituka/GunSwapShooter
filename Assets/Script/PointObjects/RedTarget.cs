@@ -1,12 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using System;
+using Cysharp.Threading.Tasks;
 
 public class RedTarget : PointObject<RedTarget>
 {
     [Header("RedTargetの設定用プロパティ")]
     [SerializeField]bool _isDestruction;
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         switch (GameManager.Current.CurrentDifficult)
         {
@@ -34,10 +35,9 @@ public class RedTarget : PointObject<RedTarget>
              
         }
     }
-    protected override IEnumerator SubTimeOver(float duration)
+    protected override async UniTaskVoid SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        yield break;
     }
     protected override void OnValidCollisionEnter(Collision collision)
     {
@@ -63,15 +63,13 @@ public class RedTarget : PointObject<RedTarget>
                 StageManager.Current.AddScore(1f,TimingState.PerfectTiming);
                 break;
             }
-            BreakCoroutine();
+            BreakAsync();
         }
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
-        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.red,12);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(ColliderList,false); 
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        await _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.red,12);
         _onRelease.Invoke(this);
     }
     protected override void SubOnCreate()

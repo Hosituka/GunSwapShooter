@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Pool;
 using System;
+using Cysharp.Threading.Tasks;
 
 using Random = UnityEngine.Random;
 //stageごとに存在するPointObjectGeneraterの親クラスです。
@@ -30,10 +31,6 @@ public abstract class PointObjectsGenerator : MonoBehaviour
     [Header("##設定必須項目")]
     [SerializeField]protected TimeKeeper _timeKeeper;
     [Header("##表示専用")]
-    //生成が完了したことを表すフラグ
-    [SerializeField]bool _isRequestComplete;
-    //生成可能であることを伝えるフラグ、生成失敗時にはfalseとなり、PointObjectの数が減ったらtrueとなる。
-    [SerializeField]bool _isGeneratable;
     [SerializeField]float _fourthNote;
     [SerializeField]float _eighthNote;
     [SerializeField]float _sixteenthNote;
@@ -99,39 +96,45 @@ public abstract class PointObjectsGenerator : MonoBehaviour
     }
     //#こいつの子クラスでオブジェクトプールを設定する処理、こいつにより呼ばれる。
     protected abstract void SettingObjectPool();
-    public void RequestGeneration(float nextActivationDelay,float delay,float perlinNoiseMagni,int generataCount)
+    //#生成中であることを表すフラグ
+    bool _isGenerating;
+    //#生成が完了したことを表すフラグ
+    bool _isRequestComplete;
+    //#生成可能であることを伝えるフラグ、生成失敗時にはfalseとなり、PointObjectの数が減ったらtrueとなる。
+    bool _isGeneratable;
+
+    public void RequestGeneration(float nextActivationDelay,float delay,float perlinNoiseMagni,int generateCount)
     {
-        StartCoroutine(OneShot());
-        IEnumerator OneShot()
+        if(StageManager.Current.GamePhase == StageManager.GameState.end) return;
+        if(_isGenerating) return;
+        _isGenerating = true;
+        GenerationLifeCycle().Forget();
+        async UniTaskVoid GenerationLifeCycle()
         {
-            if(StageManager.Current.GamePhase == StageManager.GameState.end) yield break;
-            yield return new WaitForSeconds(delay);            
+            await UniTask.WaitForSeconds(delay);            
             _currentBaseActivationDelay = nextActivationDelay;
             PerlinNoiseMagni = perlinNoiseMagni;
             _perlinNoiseSeed += Random.Range(0f,1f) * PerlinNoiseScale * PerlinNoiseMagni;
-            _generateCount = generataCount;
+            _generateCount = generateCount;
             _isRequestComplete = TryGeneratePointObjects();
-            //一発目の生成成功時
+            //#一発目で生成成功したらそこで終了
             if(_isRequestComplete)
             {
-                yield break;
-            }//一発目の生成失敗時
-            else
-            {
-                _isGeneratable = false;
-                while(_isRequestComplete == false)
-                {
-                    if(!_isGeneratable)
-                    {
-                        yield return null;
-                        continue;
-                    }
-                    if(StageManager.Current.GamePhase == StageManager.GameState.end) yield break;
-                    _isRequestComplete = TryGeneratePointObjects();
-                    yield return null;
-                }
+                _isGenerating = false;
+                return;
             }
+            //#一発目で生成失敗したら成功するまで定期的に生成を試みる処理
+            while(_isRequestComplete == false)
+            {
+                if(!_isGeneratable){
+                    await UniTask.Yield(PlayerLoopTiming.Update);
+                    continue;
+                }
+                if(StageManager.Current.GamePhase == StageManager.GameState.end) return;
 
+                _isRequestComplete = TryGeneratePointObjects();                
+            }
+            _isGenerating = false;
         }
     }
     public float DistanceOfGenerate{get;protected set;}
@@ -139,6 +142,11 @@ public abstract class PointObjectsGenerator : MonoBehaviour
     bool TryGeneratePointObjects()
     {
         //#計画フェーズ
+        //##前回の生成によりPointObjectCostが最大値を超えていたら、失敗を返す。
+        if(_sumPointObjectCost > MaxPointObjectCost){/*Debug.Log("生成失敗:現在のコストが最大コストを超えている")*/;
+            _isGeneratable = false;
+             return false;
+        }
         int generatedCount = 0;
         Array.Copy(_currentPointObjectMap,_nextPointObjectMap,_currentPointObjectMap.Length);
         //##生成予定となる場所の配列
@@ -148,13 +156,10 @@ public abstract class PointObjectsGenerator : MonoBehaviour
         while (generatedCount < _generateCount)
         {
             Vector2Int pointObjectPos = FindEmptyPointObjectPos();
-            if(pointObjectPos == -Vector2Int.one){Debug.Log(generatedCount + 1 + "個目で生成可能な場所がありません");
+            if(pointObjectPos == -Vector2Int.one){/*Debug.Log(生成失敗：generatedCount + 1 + "個目で生成可能な場所がありません")*/;
                 break;
             }
-            PointObjects pointObjectsPrefab = FindGeneratablePointObjectsPrefab();
-            if(pointObjectsPrefab == null){Debug.Log(generatedCount + 1 + "個目で生成予算オーバーです。");
-                break;
-            }
+            PointObjects pointObjectsPrefab = GetRandomPointObjectsPrefab();
             //#生成候補の場所として登録
             plannedPointObjectPostions.Add(pointObjectPos);
             //#予算と場所の観点から生成可能なpointObjectsとして登録する。
@@ -202,7 +207,8 @@ public abstract class PointObjectsGenerator : MonoBehaviour
         }//##生成失敗時、具体的には要求された回数分生成できなかったとき
         else
         {
-            Debug.Log("生成失敗しました");
+            //Debug.Log("生成失敗しました");
+            _isGeneratable = false;
             return false;
         }
         
@@ -268,29 +274,10 @@ public abstract class PointObjectsGenerator : MonoBehaviour
             }
         }
     }
-    //#予算と言う観点において生成可能なPointObjectを持つゲームオブジェクトを返す関数。
-    PointObjects FindGeneratablePointObjectsPrefab()
+    //#リストからランダムなPointObjectsのprefabを返す処理。
+    PointObjects GetRandomPointObjectsPrefab()
     {
-        float pointObjectBudget = MaxPointObjectCost - _sumPointObjectCost;
-        int basisPointObjectArrayIndex = Random.Range(0, _pointObjects.Length);
-        PointObjects generatablePointObjectsPrefab = null;
-        for (int offsetPointObjectsIndex = 0; offsetPointObjectsIndex < _pointObjects.Length; offsetPointObjectsIndex++)
-        {
-            int generatablePointObjectArrayIndex = (int)Mathf.Repeat(offsetPointObjectsIndex + basisPointObjectArrayIndex, _pointObjects.Length);
-            if (_pointObjects[generatablePointObjectArrayIndex].PointObjectCost <= pointObjectBudget)
-            {
-                generatablePointObjectsPrefab = _pointObjects[generatablePointObjectArrayIndex];
-            }
-
-        }
-        //予算と言う観点において生成可能なPointObjectsのprefabが無い時 nullを返す処理
-        if(generatablePointObjectsPrefab == null) {
-            return null;
-        }
-        else{//予算と言う観点において生成可能なpointObjectsのprefabを返す処理
-            return generatablePointObjectsPrefab;           
-        }
-
+        return _pointObjects[Random.Range(0, _pointObjects.Length)];
     }
 
     //あるPointObjectのインスタンスが与えられて、それが、ある具象クラスに属していたら、それにダウンキャストして返す関数。PointObjectGeneratorにより呼ばれる。
@@ -311,10 +298,10 @@ public abstract class PointObjectsGenerator : MonoBehaviour
         _sumPointObjectCost += pointObjectCost;
     }
     public void RemovePointObject(float subtractPointObjectCost,Vector2Int pointObjectPos,float delay){
-        StartCoroutine(OneShot());
-        IEnumerator OneShot()
+        OneShot().Forget();
+        async UniTaskVoid OneShot()
         {
-            yield return new WaitForSeconds(delay);
+            await UniTask.WaitForSeconds(delay);
             _currentPointObjectMap[pointObjectPos.x, pointObjectPos.y] = false;
             _sumPointObjectCost -= subtractPointObjectCost;
             _isGeneratable = true;

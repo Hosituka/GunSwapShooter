@@ -2,8 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Drawing;
-using UnityEngine.Pool;
+using Cysharp.Threading.Tasks;
 
 //ある時刻におけるpointObject群のライフサイクルを管理するクラスである。pointObjectGeneraterとの連携も行っている。
 public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
@@ -40,34 +39,34 @@ public class TimeKeeper : MonoBehaviour,IPoolable<TimeKeeper>
     }
     public void Begin()
     {
-        StartCoroutine(ManageLifeCycle());
-        IEnumerator ManageLifeCycle()
+        ManageLifeCycleAsync().Forget();
+        async UniTaskVoid ManageLifeCycleAsync()
         {
             //対応するポイントオブジェクトの有効化に必要な情報や次のポイントオブジェクトの生成に有効な情報を取得、またPointObjectにおけるStartでもある。
             AllInitializePointObject();
             //対応するポイントオブジェクトの有効化までの時間可視化する関数を実行
             AllPlayActivationTimer(_finalActivationDelay);
             //ポイントオブジェクトの有効化時の出現アニメーションの所要時間を考慮して待機
-            yield return new WaitForSeconds(_finalActivationDelay - _activateAnimRate *_finalActivationDelay);
+            await UniTask.WaitForSeconds(_finalActivationDelay - _activateAnimRate *_finalActivationDelay,cancellationToken:destroyCancellationToken);
             CurrentTargetState = TargetState.Activating;
             CurrentTaimingState = TimingState.GoodTiming;
             //ポイントオブジェクトの有効化処理と出現アニメーションの再生
             AllActivateMain(_activateAnimRate * _finalActivationDelay);
             //出現アニメーションの所要時間分待機
-            yield return new WaitForSeconds(_activateAnimRate * _finalActivationDelay);
+            await UniTask.WaitForSeconds(_activateAnimRate * _finalActivationDelay,cancellationToken:destroyCancellationToken);
             CurrentTargetState = TargetState.ActivationCompleted;
             CurrentTaimingState = TimingState.PerfectTiming;
             PointObjectsGenerator.Current.RequestGeneration(_sumNextActivationDelay,0,_perlinNoiseMagni,_nextGeneratableCount);
             AllPlayDeactivationTimer(_sumLifeTime);
-            yield return new WaitForSeconds(_sumLifeTime * 0.5f);
+            await UniTask.WaitForSeconds(_sumLifeTime * 0.5f,cancellationToken:destroyCancellationToken);
             CurrentTaimingState = TimingState.GreatTiming;
-            yield return new WaitForSeconds(_sumLifeTime * 0.25f);
+            await UniTask.WaitForSeconds(_sumLifeTime * 0.25f,cancellationToken:destroyCancellationToken);
             CurrentTaimingState = TimingState.GoodTiming;
-            yield return new WaitForSeconds(_sumLifeTime * 0.25f);
+            await UniTask.WaitForSeconds(_sumLifeTime * 0.25f,cancellationToken:destroyCancellationToken);
             CurrentTargetState = TargetState.Deactivating;
             //デスポーンの処理とそれのアニメーションの開始
             AllDeactivatePointObject(_deactivateAnimDuration);
-            yield return new WaitForSeconds(_deactivateAnimDuration);
+            await UniTask.WaitForSeconds(_deactivateAnimDuration);
             _onRelease.Invoke(this);
         }
         void AllInitializePointObject(){

@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System;
+using Cysharp.Threading.Tasks;
 //スコアの増加量を表すテキストのアニメーションを表す責務を持つ∧StageUI_managerによりオブジェクトプールされている。
 public class AddScoreText : MonoBehaviour,IPoolable<AddScoreText>
 {
@@ -17,8 +18,8 @@ public class AddScoreText : MonoBehaviour,IPoolable<AddScoreText>
     public void Play(float addScore)
     {
         Initialize(addScore);
-        StartCoroutine(FadeOut());
-        IEnumerator  FadeOut()
+        FadeOut().Forget();
+        async UniTaskVoid FadeOut()
         {
             _textMeshProUGUI.SetText("{0:1}＋",_addScore);
             Color vertexColor = _textMeshProUGUI.color;
@@ -27,7 +28,7 @@ public class AddScoreText : MonoBehaviour,IPoolable<AddScoreText>
                 vertexColor.a = animTime;
                 _textMeshProUGUI.color = vertexColor;
                 _rectTransform.position += Vector3.up * Time.deltaTime * (1/_animDuration) * _moveUpDistance;              
-                yield return null;
+                await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
             }
             vertexColor.a = 0;
             _textMeshProUGUI.color = vertexColor;

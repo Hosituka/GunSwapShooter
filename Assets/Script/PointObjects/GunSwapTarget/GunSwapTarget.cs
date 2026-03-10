@@ -1,4 +1,4 @@
-using System;
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using UnityEngine;
 
@@ -6,8 +6,7 @@ public class GunSwapTarget : PointObject<GunSwapTarget>,IHitGunSwapRayHandler
 {
     [Header("GunSwapTargetの設定用プロパティ")]
     [SerializeField]int temp;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         switch (GameManager.Current.CurrentDifficult)
         {
@@ -35,10 +34,9 @@ public class GunSwapTarget : PointObject<GunSwapTarget>,IHitGunSwapRayHandler
              
         }
     }
-    protected override IEnumerator SubTimeOver(float duration)
+    protected override async UniTaskVoid SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        yield break;
     }
     protected override void OnValidCollisionEnter(Collision collision)
     {
@@ -64,13 +62,12 @@ public class GunSwapTarget : PointObject<GunSwapTarget>,IHitGunSwapRayHandler
             StageManager.Current.AddScore(1f,TimingState.PerfectTiming);
             break;
         }
-        BreakCoroutine();
+        BreakAsync();
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
         Utility.ChangeEnabledColliders(ColliderList,false);
-        _pointObjectAnimator.PlayExplosion(transform.position,Color.gray,12);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtExplosionPhase != PointObjectAnimator.ExplosionPhase.Completed);
+        await _pointObjectAnimator.PlayExplosion(transform.position,Color.gray,12);
         _onRelease.Invoke(this);
     }
     protected override void SubOnCreate()

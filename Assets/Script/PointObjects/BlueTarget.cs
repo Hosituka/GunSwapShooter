@@ -1,13 +1,11 @@
-using System;
 using System.Collections;
 using UnityEngine;
-
+using Cysharp.Threading.Tasks;
 public class BlueTarget : PointObject<BlueTarget>
 {
     [Header("BlueTargetの設定用プロパティ")]
     [SerializeField]bool _isDestruction;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         switch (GameManager.Current.CurrentDifficult)
         {
@@ -35,10 +33,9 @@ public class BlueTarget : PointObject<BlueTarget>
              
         }
     }
-    protected override IEnumerator SubTimeOver(float duration)
+    protected override async UniTaskVoid SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(1);
-        yield break;
     }
 
     protected override void OnValidCollisionEnter(Collision collision)
@@ -65,15 +62,15 @@ public class BlueTarget : PointObject<BlueTarget>
                 StageManager.Current.AddScore(1,TimingState.PerfectTiming);
                 break;
             }
-            BreakCoroutine();
+            BreakAsync();
         }
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
-        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12);
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
+        _pointObjectAnimator.PlaySpinThenExplode(transform.position,Color.blue,12).Forget();
+        await UniTask.WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Exploding);
         Utility.ChangeEnabledColliders(ColliderList,false); 
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
+        await UniTask.WaitWhile(()=> _pointObjectAnimator.CurtSpinThenExplodePhase != PointObjectAnimator.SpinThenExplodePhase.Completed);
         _onRelease.Invoke(this);
     }
     protected override void SubOnCreate()

@@ -1,8 +1,8 @@
 using System;
 using TMPro;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 //このクラスはpointObjectのアニメーションを担当します。アタッチされるゲームオブジェクトはPointObjectの各具象クラスがアタッチされている対象と同じです。
 public class PointObjectAnimator : MonoBehaviour
 {
@@ -22,215 +22,177 @@ public class PointObjectAnimator : MonoBehaviour
     bool _isPlayingBreakAnim;
     MaterialPropertyBlock _propBlock;
     //#PointObjectが銃撃された時のアニメーション群、PointObjectの具象クラスにより呼ばれる。
-    public void PlayExplosion(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize)
+    public async UniTask PlayExplosion(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize)
     {
-        StartCoroutine(ExplosionCoroutine());
-        IEnumerator ExplosionCoroutine()
-        {
-            _isPlayingBreakAnim = true;
-            ExplosionEffect explosionEffect = StageUI_manager.Current.GenerateExplosionEffect(explosionEffectPos,explosionEffectColor,explosionEffectSize);
-            Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
-            CurtExplosionPhase = ExplosionPhase.Explosion;
-            yield return new WaitWhile(() => explosionEffect.CurrentAnimPhase != ExplosionEffect.AnimPhase.Exploding);
-            CurtExplosionPhase = ExplosionPhase.Completed;
-            yield return null;
-        }
+        _isPlayingBreakAnim = true;
+        ExplosionEffect explosionEffect = StageUI_manager.Current.GetExplosionEffect();
+        Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
+        CurtExplosionPhase = ExplosionPhase.Explosion;
+        await explosionEffect.Explosion(explosionEffectPos,explosionEffectColor,explosionEffectSize);
+        CurtExplosionPhase = ExplosionPhase.Completed;
     }
     public enum ExplosionPhase
     { NotPlayed,Explosion,Completed,}
 
-    public void PlaySpinThenExplode(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize)
+    public async UniTask PlaySpinThenExplode(Vector3 explosionEffectPos,Color explosionEffectColor,float explosionEffectSize)
     {
-        StartCoroutine(RotateThenExplosionCoroutine());
-        IEnumerator RotateThenExplosionCoroutine()
-        {
-            _isPlayingBreakAnim = true;
-            CurtSpinThenExplodePhase = SpinThenExplodePhase.Spin;
-            Quaternion startRotation = transform.rotation;
-            Vector3 angleAxis = transform.right;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
-                transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
-                yield return null;
-            }
-            ExplosionEffect explosionEffect = StageUI_manager.Current.GenerateExplosionEffect(explosionEffectPos,explosionEffectColor,explosionEffectSize);
-            Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
-            CurtSpinThenExplodePhase = SpinThenExplodePhase.Exploding;
-            yield return new WaitWhile(() => explosionEffect.CurrentAnimPhase != ExplosionEffect.AnimPhase.Completed);
-            CurtSpinThenExplodePhase = SpinThenExplodePhase.Completed;
+        _isPlayingBreakAnim = true;
+        CurtSpinThenExplodePhase = SpinThenExplodePhase.Spin;
+        Quaternion startRotation = transform.rotation;
+        Vector3 angleAxis = transform.right;
+        for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
+            transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
-
+        ExplosionEffect explosionEffect = StageUI_manager.Current.GetExplosionEffect();
+        Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,false);
+        CurtSpinThenExplodePhase = SpinThenExplodePhase.Exploding;
+        await explosionEffect.Explosion(explosionEffectPos,explosionEffectColor,explosionEffectSize);
+        CurtSpinThenExplodePhase = SpinThenExplodePhase.Completed;
     }
     public enum SpinThenExplodePhase
     {NotPlayed,Spin,Exploding,Completed,}
 
-    public void PlaySpinAndFadeOut()
+    public async UniTask PlaySpinAndFadeOut()
     {
-        StartCoroutine(PlayRotateAndFadeOutCoroutine());
-        IEnumerator PlayRotateAndFadeOutCoroutine()
-        {
-            _isPlayingBreakAnim = true;
-            CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.SpinAndFadeout;
-            Quaternion startRotation = transform.rotation;
-            Vector3 angleAxis = transform.right;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
-                transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
-                foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
-                {
-                    fadeTarget.SetFadeOfMeshRenderers(playback);
-                    fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
-                }
-                yield return null;
+        _isPlayingBreakAnim = true;
+        CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.SpinAndFadeout;
+        Quaternion startRotation = transform.rotation;
+        Vector3 angleAxis = transform.right;
+        for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
+            transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
+            foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
+            {
+                fadeTarget.SetFadeOfMeshRenderers(playback);
+                fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
             }
-            CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.Completed;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
+        CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.Completed;
     }
     public enum SpinAndFadeOutPhase
     {NotPlayed,SpinAndFadeout,Completed,}
-    public void PlaySpinThenFadeOut()
+    public async UniTask PlaySpinThenFadeOut()
     {
-        StartCoroutine(PlayRotateAndFadeOutCoroutine());
-        IEnumerator PlayRotateAndFadeOutCoroutine()
-        {
-            _isPlayingBreakAnim = true;
-            CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.Spin;
-            //ただ回転するだけのアニメーション
-            Quaternion startRotation = transform.rotation;
-            Vector3 angleAxis = transform.right;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
-                transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
-                yield return null;
-            }
-            CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.SpinAndFadeOutPhase;
-            //回転とフェードアウトのアニメーション
-            startRotation = transform.rotation;
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
-                transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
-                foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
-                {
-                    fadeTarget.SetFadeOfMeshRenderers(playback);
-                    fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
-                }
-                yield return null;
-            }
-            CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.Completed;
+        _isPlayingBreakAnim = true;
+        CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.Spin;
+        //ただ回転するだけのアニメーション
+        Quaternion startRotation = transform.rotation;
+        Vector3 angleAxis = transform.right;
+        for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
+            transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
+        CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.SpinAndFadeOutPhase;
+        //回転とフェードアウトのアニメーション
+        startRotation = transform.rotation;
+        for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / 0.5f)){
+            transform.rotation = Quaternion.AngleAxis(360 * playback,angleAxis) * startRotation;
+            foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
+            {
+                fadeTarget.SetFadeOfMeshRenderers(playback);
+                fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
+            }
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
+        }
+        CurtSpinThenFadeOutPhase = SpinThenFadeOutPhase.Completed;
     }
     public enum SpinThenFadeOutPhase
     {NotPlayed,Spin,SpinAndFadeOutPhase,Completed,}
 
-    public void PlayFadeOut(float duration)
+    public async UniTask PlayFadeOut(float duration)
     {
-        StartCoroutine(FadeOutCoroutine());
-        IEnumerator FadeOutCoroutine()
-        {
-            _isPlayingBreakAnim = true;
-            CurtFadeOutPhase = FadeOutPhase.Fade;
-            //フェードアウトのアニメーション
-            for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / duration)){
-                foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
-                {
-                    fadeTarget.SetFadeOfMeshRenderers(playback);
-                    fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
-                }
-                yield return null;
+        _isPlayingBreakAnim = true;
+        CurtFadeOutPhase = FadeOutPhase.Fade;
+        //フェードアウトのアニメーション
+        for(float playback = 0;playback < 1; playback += Time.deltaTime * (1 / duration)){
+            foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
+            {
+                fadeTarget.SetFadeOfMeshRenderers(playback);
+                fadeTarget.SetAlphaOfTextMeshPros(1 - playback);
             }
-            CurtFadeOutPhase = FadeOutPhase.Completed;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
-
+        CurtFadeOutPhase = FadeOutPhase.Completed;
     }
     public enum FadeOutPhase
     {NotPlayed,Fade,Completed,}
 
     //#PointObjectのライフサイクルによるアニメーション、TimeKeeperにより呼ばれる。
     //##PointObjectのメイン部分が有効化された時に呼ばれるアニメーション
-    public void PlayActivationTimer(float duration)
+    public async UniTaskVoid PlayActivationTimer(float duration)
     {
-        StartCoroutine(ActivationTimer());
-        IEnumerator ActivationTimer(){
-            for(float playback = 0;playback < duration; playback += Time.deltaTime)
-            {
-                if(_isPlayingBreakAnim)yield break;
-                _propBlock.SetFloat("_outerFrameAnim",playback / duration);
-                _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
-                yield return null;
-            }
-            _lifeTimeGUI_MR.GetPropertyBlock(_propBlock);
+        for(float playback = 0;playback < duration; playback += Time.deltaTime)
+        {
+            if(_isPlayingBreakAnim)return;
+            _propBlock.SetFloat("_outerFrameAnim",playback / duration);
+            _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
     }
 
-    public void PlayShowAnimOfMain(Transform mainTr,float activateAnimDuration)
+    public async UniTask PlayShowAnimOfMain(Transform mainTr,float activateAnimDuration)
     {
-        StartCoroutine(ExpandCoroutine());
-        IEnumerator ExpandCoroutine()
+        CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.Expanding;
+        float playBackActiveAnimTime = 0;
+        while(playBackActiveAnimTime < activateAnimDuration)
         {
-            CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.Expanding;
-            float playBackActiveAnimTime = 0;
-            while(playBackActiveAnimTime < activateAnimDuration)
-            {
-                playBackActiveAnimTime += Time.deltaTime;
-                mainTr.localScale = Vector3.one * (playBackActiveAnimTime / activateAnimDuration);
-                mainTr.localScale = Vector3.ClampMagnitude(mainTr.localScale,Vector3.one.magnitude);
-                yield return null;
-            }
-                CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.Completed;
-         }
-    
+            playBackActiveAnimTime += Time.deltaTime;
+            mainTr.localScale = Vector3.one * (playBackActiveAnimTime / activateAnimDuration);
+            mainTr.localScale = Vector3.ClampMagnitude(mainTr.localScale,Vector3.one.magnitude);
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
+        }
+        CurtShowAnimOfMainPhase = ShowAnimOfMainPhase.Completed;    
     }
     public enum ShowAnimOfMainPhase
     {NotPlayed,Expanding,Completed,}
 
-    public void PlayDeactivationTimer(float duration)
+    public async UniTask PlayDeactivationTimer(float duration)
     {
-        StartCoroutine(DeactivationTimer());
-        IEnumerator DeactivationTimer(){
-            for(float playback = 0;playback < duration; playback += Time.deltaTime)
-            {
-                if(_isPlayingBreakAnim)yield break;
-                _propBlock.SetFloat("_outerFrameAnim",1 - playback / duration);
-                _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
-                yield return null;
-            }
+        for(float playback = 0;playback < duration; playback += Time.deltaTime)
+        {
+            if(_isPlayingBreakAnim)return;
+            _propBlock.SetFloat("_outerFrameAnim",1 - playback / duration);
+            _lifeTimeGUI_MR.SetPropertyBlock(_propBlock);
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
     }
 
     //##PointObjectの時間制限を超えて的が撃たれなかったときに呼ばれるアニメーション
-    public void PlayTimeOverAnim(float animDuration)
+    public async UniTask PlayTimeOverAnim(float animDuration)
     {
-        StartCoroutine(FadeOutCoroutine());
-        IEnumerator FadeOutCoroutine()
-        {
-            CurtTimeOverAnimPhase = TimeOverAnimPhase.Fading;
-            float playbackDeSpawnTime = 0;
+        CurtTimeOverAnimPhase = TimeOverAnimPhase.Fading;
+        float playbackDeSpawnTime = 0;
 
-            while(playbackDeSpawnTime < animDuration)
+        while(playbackDeSpawnTime < animDuration)
+        {
+            playbackDeSpawnTime += Time.deltaTime;
+            foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
             {
-                playbackDeSpawnTime += Time.deltaTime;
-                foreach(TMPandMeshRenderer fadeTarget in _tmpAndMeshRendererList)
-                {
-                    fadeTarget.SetFadeOfMeshRenderers(playbackDeSpawnTime / animDuration);
-                    fadeTarget.SetAlphaOfTextMeshPros(1 - playbackDeSpawnTime / animDuration);
-                }
-                yield return null;
+                fadeTarget.SetFadeOfMeshRenderers(playbackDeSpawnTime / animDuration);
+                fadeTarget.SetAlphaOfTextMeshPros(1 - playbackDeSpawnTime / animDuration);
             }
-            foreach(TMPandMeshRenderer tMPorMeshRenderer in _tmpAndMeshRendererList)
-            {
-                tMPorMeshRenderer.SetFadeOfMeshRenderers(1);
-                tMPorMeshRenderer.SetAlphaOfTextMeshPros(0);
-            }
-            CurtTimeOverAnimPhase = TimeOverAnimPhase.Completed;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
+        foreach(TMPandMeshRenderer tMPorMeshRenderer in _tmpAndMeshRendererList)
+        {
+            tMPorMeshRenderer.SetFadeOfMeshRenderers(1);
+            tMPorMeshRenderer.SetAlphaOfTextMeshPros(0);
+        }
+        CurtTimeOverAnimPhase = TimeOverAnimPhase.Completed;
+
     }
     public enum TimeOverAnimPhase
     {NotPlayed,Fading,Completed,}
     //#その他
     //##各アニメーションをもう一度再生できるようにするためリセットする処理
-    public void Reset()
+    public void Initialize()
     {
-        ResetPhase();
-        ResetPropBlock();
-        ResetEnabled();
+        InitializePhase();
+        InitializePropBlock();
+        InitializeEnabled();
         //#各アニメーションの進捗を表す物のリセット
-        void ResetPhase()
+        void InitializePhase()
         {
             CurtExplosionPhase = ExplosionPhase.NotPlayed;
             CurtSpinAndFadeOutPhase = SpinAndFadeOutPhase.NotPlayed;
@@ -241,14 +203,14 @@ public class PointObjectAnimator : MonoBehaviour
             CurtTimeOverAnimPhase = TimeOverAnimPhase.NotPlayed;
             _isPlayingBreakAnim = false;
         }
-        void ResetPropBlock(){
+        void InitializePropBlock(){
             foreach(TMPandMeshRenderer tMPorMeshRenderer in _tmpAndMeshRendererList)
             {
                 tMPorMeshRenderer.SetFadeOfMeshRenderers(0);
                 tMPorMeshRenderer.SetAlphaOfTextMeshPros(1);
             }
         }
-        void ResetEnabled(){
+        void InitializeEnabled(){
             Utility.ChangeEnabledTMPorMeshRenderers(_tmpAndMeshRendererList,true);
         }
     }
@@ -259,7 +221,6 @@ public class PointObjectAnimator : MonoBehaviour
         {
             tMPorMeshRenderer.Initialize();
         }
-
     }
     public void AddFadeTargetList(List<TMPandMeshRenderer> addFadeTargets)
     {

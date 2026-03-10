@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 //ジェネリックなクラスであるPointObjectの型変数を意識せずにフィールドとして持ちたいときに使うPointObjectの親クラスです。
 public abstract class PointObjects : MonoBehaviour
@@ -45,7 +46,7 @@ public abstract class PointObjects : MonoBehaviour
     public abstract void PlayDeactivationTimer(float duration);
     public abstract void PlayActivationTimer(float duration);
 
-    protected abstract void BreakCoroutine();
+    protected abstract void BreakAsync();
     public abstract void Release();
 
 }
@@ -57,25 +58,33 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
     [SerializeField]GameObject _mainObj;
     //##オブジェクトプールに戻るためのアクション
     protected Action<T> _onRelease;
-
+    public override InitializeResult Initialize()
+    {
+        BaseInitialize();
+        return SubInitialize();
+        void BaseInitialize()
+        {
+            _pointObjectAnimator.Initialize();
+        }
+    }
+    protected abstract InitializeResult SubInitialize();
     public override void ActivateMain(float activateAnimDuration)
     {
-        StartCoroutine(BaseActivateMain());
-        IEnumerator BaseActivateMain()
+        BaseActivateMain().Forget();
+        async UniTaskVoid BaseActivateMain()
         {
             _mainObj.SetActive(true);
             this.enabled = true;
-            _pointObjectAnimator.PlayShowAnimOfMain(_mainObj.transform,activateAnimDuration);
             PointObjectPosAsCenter = new Vector2(PointObjectPos.x - PointObjectsGenerator.Current.PointObjectMapLength.x / 2, PointObjectPos.y - PointObjectsGenerator.Current.PointObjectMapLength.y / 2);
             NormalizePointObjectPosAsCenter = new Vector2(PointObjectPosAsCenter.x / (PointObjectsGenerator.Current.PointObjectMapLength.x / 2), PointObjectPosAsCenter.y / (PointObjectsGenerator.Current.PointObjectMapLength.y / 2));
-            yield return new WaitWhile(() =>_pointObjectAnimator.CurtShowAnimOfMainPhase != PointObjectAnimator.ShowAnimOfMainPhase.Completed);
+            await _pointObjectAnimator.PlayShowAnimOfMain(_mainObj.transform,activateAnimDuration);
             PointObjectsGenerator.Current.AddSumPointObjectCost(PointObjectCost);
         }
     }
-    protected override void BreakCoroutine()
+    protected override void BreakAsync()
     {
         BaseBreakProcess();
-        StartCoroutine(SubBreakCoroutine());
+        SubBreakAsync().Forget();
 
         void BaseBreakProcess()
         {
@@ -84,38 +93,37 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
             Indicator.Destroy();
         }
     }
-    protected abstract IEnumerator SubBreakCoroutine();
+    protected abstract UniTaskVoid SubBreakAsync();
 
 
     //時間制限内に射撃されなかったとき、TimeKeeperにより呼ばれる
     public override void TimeOver(float animDuration)
     {
-        StartCoroutine(SubTimeOver(animDuration));
-        StartCoroutine(BaseTimeOver(animDuration));
+        SubTimeOver(animDuration).Forget();
+        BaseTimeOver(animDuration).Forget();
 
-        IEnumerator BaseTimeOver(float animDuration)
+        async UniTaskVoid BaseTimeOver(float animDuration)
         {
             Utility.ChangeEnabledColliders(ColliderList,false);
             PointObjectsGenerator.Current.RemovePointObject(PointObjectCost,PointObjectPos,2);
             TimeKeeper.NoticeUnLink(this);
             Indicator.Destroy();
-            _pointObjectAnimator.PlayTimeOverAnim(animDuration);
-            yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+            await _pointObjectAnimator.PlayTimeOverAnim(animDuration);
             _onRelease.Invoke((T)this);
         }
         
     }
 
-    protected abstract IEnumerator SubTimeOver(float animDuration);
+    protected abstract UniTaskVoid SubTimeOver(float animDuration);
     public override void PlayDeactivationTimer(float duration)
     {
-        _pointObjectAnimator.PlayDeactivationTimer(duration);
-        Indicator.PlayDeActivationTimer(duration);
+        _pointObjectAnimator.PlayDeactivationTimer(duration).Forget();
+        Indicator.PlayDeActivationTimer(duration).Forget();
     }
     public override void PlayActivationTimer(float duration)
     {
-        _pointObjectAnimator.PlayActivationTimer(duration);
-        Indicator.PlayActivationTimer(duration);
+        _pointObjectAnimator.PlayActivationTimer(duration).Forget();
+        Indicator.PlayActivationTimer(duration).Forget();
     }
     int _lastProcessedFrame = -1;
     GameObject _currentCollisionGameObject;
@@ -136,6 +144,7 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
         BaseOnCreate();
         void BaseOnCreate()
         {
+            _pointObjectAnimator.Initialize();
             _onRelease = onRelease;
             _mainObj.SetActive(false); 
         }
@@ -150,7 +159,6 @@ public abstract class PointObject<T> :PointObjects,IPoolable<T> where T: PointOb
         {
             this.enabled = false;
             _mainObj.SetActive(false);
-            _pointObjectAnimator.Reset();
             Utility.ChangeEnabledColliders(ColliderList, true);
             _lastCollisionGameObject = null;
             _lastProcessedFrame = -1;

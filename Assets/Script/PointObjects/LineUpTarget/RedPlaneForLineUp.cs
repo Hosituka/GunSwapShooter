@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 
 public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
 {  
@@ -25,12 +26,11 @@ public class RedPlaneForLineUp : PlaneForLineUp<RedPlaneForLineUp>
             else
             {StageManager.Current.AddScore(0.8f,TimingState.GoodTiming);}
 
-            BreakCoroutine();
+            Break();
         }
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
-        yield break;
     }
     protected override void SubOnCreate()
     {

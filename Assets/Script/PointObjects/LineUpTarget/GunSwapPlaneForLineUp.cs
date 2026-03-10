@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 
 public class GunSwapPlaneForLineUp : PlaneForLineUp<GunSwapPlaneForLineUp>,IHitGunSwapRayHandler
 {
@@ -25,11 +26,10 @@ public class GunSwapPlaneForLineUp : PlaneForLineUp<GunSwapPlaneForLineUp>,IHitG
         {StageManager.Current.AddScore(1.4f,TimingState.GreatTiming);}
         else
         {StageManager.Current.AddScore(0.8f,TimingState.GoodTiming);}
-        BreakCoroutine();
+        Break();
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
-        yield break;
     }
     protected override void SubOnCreate()
     {

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 public class JudgeText : MonoBehaviour,IPoolable<JudgeText>
 {
     [SerializeField]TextMeshProUGUI _textMeshProUGUI;
@@ -12,8 +13,8 @@ public class JudgeText : MonoBehaviour,IPoolable<JudgeText>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Play()
     {
-        StartCoroutine(FadeOut());
-        IEnumerator  FadeOut()
+        FadeOut().Forget();
+        async UniTaskVoid  FadeOut()
         {
             Color vertexColor = _textMeshProUGUI.color;
             for (float a = 1; a >= 0; a -= Time.deltaTime * (1 / _addScaleTime))
@@ -21,7 +22,7 @@ public class JudgeText : MonoBehaviour,IPoolable<JudgeText>
                 vertexColor.a = a;
                 _textMeshProUGUI.color = vertexColor;
                 _rectTransform.position += Vector3.up * Time.deltaTime * (1 / _addScaleTime) * _moveUpDistance;              
-                yield return null;
+                await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
             }
             vertexColor.a = 0;
             _textMeshProUGUI.color = vertexColor;

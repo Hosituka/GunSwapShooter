@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using Cysharp.Threading.Tasks;
 //PointObjectの具象クラスの位置を表示する責務を持つ∧StageUI_managerによりオブジェクトプールされています。
 public class Indicator : MonoBehaviour,IPoolable<Indicator>
 {
@@ -86,40 +88,32 @@ public class Indicator : MonoBehaviour,IPoolable<Indicator>
             }
         }
     }
-    public void PlayActivationTimer(float duration)
+    public async UniTaskVoid PlayActivationTimer(float duration)
     {
-        StartCoroutine(ActivationTimer());
-        IEnumerator ActivationTimer(){
-            Color _innerArrowColor = Color.black + new Color(0.04f,0.04f,0.04f);
-            _ArrowOutlineImage.color = Color.white;
-            for(float playback = 0;playback < duration; playback += Time.deltaTime)
-            {
-                _innerArrowColor.a = playback / duration;
-                _innerArrowImage.color = _innerArrowColor;
-                yield return null;
-            }
-            _innerArrowColor.a = 1;
+        Color _innerArrowColor = Color.black + new Color(0.04f,0.04f,0.04f);
+        _ArrowOutlineImage.color = Color.white;
+        for(float playback = 0;playback < duration; playback += Time.deltaTime)
+        {
+            _innerArrowColor.a = playback / duration;
             _innerArrowImage.color = _innerArrowColor;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
-
+        _innerArrowColor.a = 1;
+        _innerArrowImage.color = _innerArrowColor;
     }
 
-    public void PlayDeActivationTimer(float duration)
+    public async UniTaskVoid PlayDeActivationTimer(float duration)
     {
-        StartCoroutine(DeActivationTimer());
-        IEnumerator DeActivationTimer(){
-            Color _innerArrowColor = Color.white;
-            _ArrowOutlineImage.color = Color.black;
-            for(float playback = 0;playback < duration; playback += Time.deltaTime)
-            {
-                _innerArrowColor.a = 1 - playback / duration;
-                _innerArrowImage.color = _innerArrowColor;
-                yield return null;
-            }
-            _innerArrowColor.a = 0;
+        Color _innerArrowColor = Color.white;
+        _ArrowOutlineImage.color = Color.black;
+        for(float playback = 0;playback < duration; playback += Time.deltaTime)
+        {
+            _innerArrowColor.a = 1 - playback / duration;
             _innerArrowImage.color = _innerArrowColor;
+            await UniTask.Yield(PlayerLoopTiming.Update,destroyCancellationToken);
         }
-
+        _innerArrowColor.a = 0;
+        _innerArrowImage.color = _innerArrowColor;
     }
     
     public void Destroy()

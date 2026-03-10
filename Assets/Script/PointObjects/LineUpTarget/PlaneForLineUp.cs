@@ -3,11 +3,11 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Cysharp.Threading.Tasks;
 //ジェネリックなクラスであるPlaneForLineUpの型引数を明示せずに保持したい場合に引用するクラス。
 public abstract class PlanesForLineUp : MonoBehaviour
 {
     public LineUpTarget LineUpTarget;
-    public Collider[] Colliders;
     //#LineUpTargetクラスから呼ばれる
     //##初期化処理
     public abstract void Initialize(LineUpTarget lineUpTarget,Transform axisTr,float pitchRotation); 
@@ -18,7 +18,7 @@ public abstract class PlanesForLineUp : MonoBehaviour
     //#Unityにより呼ばれる処理
     protected abstract void Update();
     //#具象クラス側により呼ばれる処理
-    protected abstract void BreakCoroutine();
+    protected abstract void Break();
 
 }
 /*・LineUpTargetが持つ複数の板の抽象クラスです。
@@ -28,15 +28,17 @@ public abstract class PlaneForLineUp<T> : PlanesForLineUp,IPoolable<T>where T:Pl
     protected float _dot;
     [SerializeField]bool _isShow = false;
     [SerializeField]Transform _lineUpTargetTr;
+    [SerializeField]Collider[] _colliders;
     [SerializeField]List<TMPandMeshRenderer> _showAndHideTarget;
     [SerializeField]TextMeshPro _needShotCountTMPro;
     [SerializeField]PointObjectAnimator _pointObjectAnimator;
     Action<T> _onRelease;
     public override void Initialize(LineUpTarget lineUpTarget,Transform axisTr,float pitchRotation)
     {
+        _pointObjectAnimator.Initialize();
         LineUpTarget = lineUpTarget;
         _lineUpTargetTr = lineUpTarget.transform;
-        //回転軸となるゲームオブジェクトを親として設定し、そこを中心に花びらのような感じで配置
+        //#回転軸となるゲームオブジェクトを親として設定し、そこを中心に花びらのような感じで配置
         transform.SetParent(axisTr,false);
         transform.rotation = Quaternion.AngleAxis(pitchRotation, axisTr.up) * axisTr.rotation;
         transform.localPosition = new Vector3(0,0,0);
@@ -48,11 +50,11 @@ public abstract class PlaneForLineUp<T> : PlanesForLineUp,IPoolable<T>where T:Pl
     }
     public override void TimeOver(float duration)
     {
-        StartCoroutine(BaseTimeOver());
-        IEnumerator BaseTimeOver()
+        BaseTimeOver().Forget();
+        async UniTaskVoid BaseTimeOver()
         {
-            _pointObjectAnimator.PlayTimeOverAnim(duration);
-            yield return new WaitWhile(()=> _pointObjectAnimator.CurtTimeOverAnimPhase != PointObjectAnimator.TimeOverAnimPhase.Completed);
+            Utility.ChangeEnabledColliders(_colliders,false);
+            await _pointObjectAnimator.PlayTimeOverAnim(duration);
             _onRelease.Invoke((T)this);
         }
     }
@@ -67,14 +69,14 @@ public abstract class PlaneForLineUp<T> : PlanesForLineUp,IPoolable<T>where T:Pl
             {
                 if (_isShow == true) return;
                 _isShow = true;
-                Utility.ChangeEnabledColliders(Colliders,true);
+                Utility.ChangeEnabledColliders(_colliders,true);
                 Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,true);
             }
             else
             {
                 if (_isShow == false) return;
                 _isShow = false;
-                Utility.ChangeEnabledColliders(Colliders,false);
+                Utility.ChangeEnabledColliders(_colliders,false);
                 Utility.ChangeEnabledTMPorMeshRenderers(_showAndHideTarget,false);
             }
         }
@@ -95,21 +97,20 @@ public abstract class PlaneForLineUp<T> : PlanesForLineUp,IPoolable<T>where T:Pl
     //#複合コライダーによる複数のOnCollisionEnter発火を疑似的に一回だけ呼ばれてるように見せる奴、
     protected abstract void OnValidCollisionEnter(Collision collision);
 
-    protected override void BreakCoroutine()
+    protected override void Break()
     {
-        StartCoroutine(BaseBreakCoroutine());
-        StartCoroutine(SubBreakCoroutine());
-        IEnumerator BaseBreakCoroutine()
+        BaseBreakAsync().Forget();
+        SubBreakAsync().Forget();
+        async UniTaskVoid BaseBreakAsync()
         {
             LineUpTarget.NoticeDestruction(this);
-            Utility.ChangeEnabledColliders(Colliders,false);
-            _pointObjectAnimator.PlayFadeOut(0.05f);
-            yield return new WaitWhile(()=> _pointObjectAnimator.CurtFadeOutPhase != PointObjectAnimator.FadeOutPhase.Completed);
+            Utility.ChangeEnabledColliders(_colliders,false);
+            await _pointObjectAnimator.PlayFadeOut(0.05f);
             _onRelease.Invoke((T)this);
 
         }
     }
-    abstract protected IEnumerator SubBreakCoroutine();
+    abstract protected UniTaskVoid SubBreakAsync();
 
 
 
@@ -129,8 +130,7 @@ public abstract class PlaneForLineUp<T> : PlanesForLineUp,IPoolable<T>where T:Pl
         BaseOnRelease();
         void BaseOnRelease()
         {
-            Utility.ChangeEnabledColliders(Colliders,true);
-            _pointObjectAnimator.Reset();
+            Utility.ChangeEnabledColliders(_colliders,true);
             _isShow = true;
         }
     }

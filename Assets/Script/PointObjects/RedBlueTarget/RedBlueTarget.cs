@@ -1,6 +1,6 @@
 using UnityEngine;
-using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 
 public class RedBlueTarget : PointObject<RedBlueTarget>
 {
@@ -12,8 +12,7 @@ public class RedBlueTarget : PointObject<RedBlueTarget>
     //レッドプレーン＋ブループレンの個数
     int _currentPlaneCount = 2;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public override InitializeResult Initialize()
+    protected override InitializeResult SubInitialize()
     {
         switch (GameManager.Current.CurrentDifficult)
         {
@@ -41,15 +40,13 @@ public class RedBlueTarget : PointObject<RedBlueTarget>
              
         }
     }
-    protected override IEnumerator SubTimeOver(float duration)
+    protected override async UniTaskVoid SubTimeOver(float duration)
     {
         StageManager.Current.AddOverlookCount(_currentPlaneCount);
-        yield break;
     }
-    protected override IEnumerator SubBreakCoroutine()
+    protected override async UniTaskVoid SubBreakAsync()
     {
-        _pointObjectAnimator.PlaySpinThenFadeOut();
-        yield return new WaitWhile(()=> _pointObjectAnimator.CurtSpinThenFadeOutPhase != PointObjectAnimator.SpinThenFadeOutPhase.Completed);
+        await _pointObjectAnimator.PlaySpinThenFadeOut();
         _onRelease.Invoke(this);
     }
 
@@ -63,7 +60,7 @@ public class RedBlueTarget : PointObject<RedBlueTarget>
     {
         _currentPlaneCount--;
         if(_currentPlaneCount == 0)
-        {BreakCoroutine();}
+        {BreakAsync();}
 
     }
     protected override void SubOnCreate()

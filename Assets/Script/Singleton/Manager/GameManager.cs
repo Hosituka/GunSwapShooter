@@ -109,7 +109,6 @@ public class GameManager : MonoBehaviour
     //このメソッドはFadeOutと言う名のAnimationClipによるAnimationEventにより呼び出されます。
     public void OnFadeOutComplete()
     {
-        Debug.Log("test1");
         FadeInComplete = false;
         StartCoroutine(SliderCoroutine());
         IEnumerator SliderCoroutine()
