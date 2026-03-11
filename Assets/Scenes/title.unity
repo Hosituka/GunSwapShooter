@@ -5470,7 +5470,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'ver1.45
+  m_text: 'ver1.48
 
 '
   m_isRightToLeft: 0
